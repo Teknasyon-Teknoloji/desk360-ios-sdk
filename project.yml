@@ -7,7 +7,7 @@ options:
   tabWidth: 4
   indentWidth: 4
   deploymentTarget:
-    iOS: 10.0
+    iOS: 9.0
 
 settings:
   base:
@@ -17,7 +17,7 @@ targets:
   Desk360:
     type: framework
     platform: iOS
-    deploymentTarget: 10.0
+    deploymentTarget: 9.0
     sources: [Sources]
     settings:
       INFOPLIST_FILE: Sources/Desk360.plist
