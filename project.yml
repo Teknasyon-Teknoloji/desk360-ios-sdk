@@ -1,0 +1,26 @@
+name: Desk360
+
+options:
+  developmentLanguage: en
+  xcodeVersion: 10.2
+  usesTabs: true
+  tabWidth: 4
+  indentWidth: 4
+  deploymentTarget:
+    iOS: 10.0
+
+settings:
+  base:
+    PRODUCT_BUNDLE_IDENTIFIER: com.teknasyon.desk360
+
+targets:
+  Desk360:
+    type: framework
+    platform: iOS
+    deploymentTarget: 10.0
+    sources: [Sources]
+    settings:
+      INFOPLIST_FILE: Sources/Desk360.plist
+    postbuildScripts:
+      - script: swiftlint
+        name: SwiflLint

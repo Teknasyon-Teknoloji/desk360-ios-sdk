@@ -2,6 +2,10 @@
 build/
 DerivedData/
 
+## Xcode project files
+*.xcodeproj
+*.xcworkspace
+
 # Various settings
 *.pbxuser
 !default.pbxuser
@@ -41,3 +45,9 @@ Pods/
 # Carthage
 Carthage/Checkouts
 Carthage/Build
+
+## Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
