@@ -43,64 +43,12 @@ public final class Desk360 {
 // MARK: - Networking
 public extension Desk360 {
 
-	func createTicket(request: DeskTicketCreateRequest, _ completionHandler: @escaping  CreateResult) {
-		let data = encode(object: request)
-		let request = createRequest(path: "tickets", body: data, method: "POST")
-		session.dataTask(with: request) { (data, response, error) in
+	func createTicket(request: DeskTicketCreateRequest, _ completionHandler: @escaping  CreateResult) {}
 
-		}
-	}
+	func addMessage(request: DeskMessageCreateRequest, toTicketWithId id: Int, _ completionHandler: @escaping  CreateResult) {}
 
-	func addMessage(request: DeskMessageCreateRequest, toTicketWithId id: Int, _ completionHandler: @escaping  CreateResult) {
-		let data = encode(object: request)
-		let request = createRequest(path: "tickets/\(id)/messages", body: data, method: "POST")
-		session.dataTask(with: request) { (data, response, error) in
+	func fetchTickets(_ completionHandler: @escaping  TicketsResult) {}
 
-		}
-	}
-
-	func fetchTickets(_ completionHandler: @escaping  TicketsResult) {
-		let request = createRequest(path: "tickets", body: nil, method: "GET")
-		session.dataTask(with: request) { (data, response, error) in
-
-		}
-	}
-
-	func fetchTicket(withId id: Int, _ completionHandler: @escaping  TicketResult) {
-		let request = createRequest(path: "tickets/\(id)", body: nil, method: "GET")
-		session.dataTask(with: request) { (data, response, error) in
-
-		}
-	}
-
-}
-
-private extension Desk360 {
-
-	func createRequest(path: String, body: Data?, method: String) -> URLRequest {
-		let url = baseUrl.appendingPathComponent(path)
-		var request = URLRequest(url: url)
-		request.httpMethod = method
-		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-		request.addValue("application/json", forHTTPHeaderField: "Accept")
-		request.httpBody = body
-		return request
-	}
-
-	func encode<T: Encodable>(object: T) -> Data {
-		let data = try! JSONEncoder().encode(object)
-		return injectingMeta(into: data)
-	}
-
-	func injectingMeta(into data: Data) -> Data {
-		var dict = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-		dict["app_id"] = appId
-		dict["app_secret"] = appSecret
-		dict["source"] = "Mobile"
-		dict["platform"] = "iOS"
-		dict["device_id"] = UIDevice.current.uniqueIdentifier
-		dict["country_code"] = Locale.current.countryCode
-		return try! JSONSerialization.data(withJSONObject: dict, options: [])
-	}
+	func fetchTicket(withId id: Int, _ completionHandler: @escaping  TicketResult) {}
 
 }

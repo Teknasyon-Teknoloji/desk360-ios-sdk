@@ -3,8 +3,8 @@ build/
 DerivedData/
 
 ## Xcode project files
-*.xcodeproj
-*.xcworkspace
+Desk360.xcodeproj
+Desk360.xcworkspace
 
 # Various settings
 *.pbxuser
