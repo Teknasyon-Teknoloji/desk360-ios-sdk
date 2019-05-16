@@ -1,0 +1,23 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by Omar on 5/13/19.
+  
+*/
+
+"listing.nav.title" = "Contact Us";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "You have made no support calls yet";
+"listing.placeholder.submit" = "Create a support task!";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Full Name";
+"create.form.email" = "Email Address";
+"create.form.message" = "Message";
+"create.form.request_type" = "Request Type";
+"create.form.submit" = "Send";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Create New Request";

@@ -12,7 +12,11 @@ Pod::Spec.new do |s|
     s.module_name  = "Desk360"
     s.source = { :git => "https://github.com/Teknasyon-Teknoloji/desk360-ios-sdk.git", :tag => s.version }
     s.source_files = "Sources/**/*.swift"
+    s.resource_bundle = { "Desk360" => ["Sources/Assets/*.lproj/*.strings"] }
     s.swift_version = "5.0"
     s.requires_arc = true
-    s.ios.deployment_target = "9.0"
+    s.ios.deployment_target = "10.0"
+    s.dependency "SnapKit"
+    s.dependency "Moya"
+    s.dependency "SwiftMessages"
 end
