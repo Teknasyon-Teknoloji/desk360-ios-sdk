@@ -16,7 +16,11 @@ Pod::Spec.new do |s|
     s.swift_version = "5.0"
     s.requires_arc = true
     s.ios.deployment_target = "10.0"
+
     s.dependency "SnapKit"
     s.dependency "Moya"
     s.dependency "SwiftMessages"
+    s.dependency "PersistenceKit"
+    s.dependency "DeviceKit"
+    s.dependency "NVActivityIndicatorView"
 end

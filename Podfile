@@ -8,5 +8,7 @@ target 'Desk360' do
   pod 'SnapKit'
   pod 'Moya'
   pod 'SwiftMessages'
-
+  pod 'PersistenceKit'
+  pod 'DeviceKit'
+  pod 'NVActivityIndicatorView'
 end
