@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-		Desk360.start(appId: "id", appSecret: "secret")
+		Desk360.start(appId: "123456")
 
 		return true
 	}

@@ -5,18 +5,22 @@
 //  Created by Omar on 5/7/19.
 //
 
-import Foundation
+import UIKit
+import Moya
 
 private var desk: Desk360?
 
 public final class Desk360 {
 
-	private(set) public var appId: String!
+	private(set) public static var appId: String!
 
-	var token: String?
+	static var token: String? = ""
+
+	static let authPlugin = AccessTokenPlugin { Desk360.token ?? "" }
+	static let apiProvider = MoyaProvider<Service>(plugins: [authPlugin])
 
 	public init(appId: String) {
-		self.appId = appId
+		Desk360.appId = appId
 	}
 
 	public static var shared: Desk360 {
@@ -28,6 +32,8 @@ public final class Desk360 {
 
 	public static func start(appId: String) {
 		desk = Desk360(appId: appId)
+		Stores.setStoresInitialValues()
+		Desk360.register()
 		print("Desk360 SDK was initialized successfully!")
 	}
 
@@ -36,11 +42,30 @@ public final class Desk360 {
 			fatalError("Unable to push Desk360 because \(viewController.self) is not embedded in UINavigationController.")
 		}
 		navController.pushViewController(ListingViewController(), animated: animated)
+
 	}
 
 	public static func present(in viewController: UIViewController, animated: Bool = true) {
 		let navController = UINavigationController(rootViewController: ListingViewController())
 		viewController.present(navController, animated: animated)
+	}
+
+	static func register() {
+
+		guard let date = Stores.registerExpiredAt.object else { return }
+		guard date < Date() else { return }
+
+		Desk360.apiProvider.request(.register(appKey: Desk360.appId)) {  result in
+			switch result {
+			case .failure:
+				print("error")
+			case .success(let response):
+				guard let register = try? response.map(DataResponse<RegisterRequest>.self) else { return }
+				Desk360.token = register.data?.accessToken
+
+				try? Stores.registerExpiredAt.save(register.data?.expiredDate)
+			}
+		}
 	}
 
 }
