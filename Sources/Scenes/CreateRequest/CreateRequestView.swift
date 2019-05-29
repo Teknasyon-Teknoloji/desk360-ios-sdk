@@ -93,11 +93,22 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		let view = HADropDown()
 		view.title = Desk360.Strings.Support.subjectTypeListPlaceHolder
 		view.textAllignment = NSTextAlignment.left
-		view.itemTextColor = Desk360.Config.Requests.Create.SubjectTextField.textColor
+		view.itemTextColor = Desk360.Config.Requests.Create.DropDownListView.textColor
 		view.titleColor = Desk360.Config.Requests.Create.SubjectTextField.PlaceholderTextColor ?? .black
+		view.itemBackground = Desk360.Config.Requests.Create.DropDownListView.backgroundColor
 		view.isCollapsed = true
 		view.delegate = self
+
+		view.addSubview(arrowIcon)
 		return view
+	}()
+
+	private lazy var arrowIcon: UIImageView = {
+		let imageView = UIImageView()
+		imageView.contentMode = .scaleAspectFit
+		imageView.tintColor = Desk360.Config.Requests.Create.DropDownListView.arrowTintColor
+		imageView.image = Desk360.Config.Requests.Create.DropDownListView.arrowIcon
+		return imageView
 	}()
 
 	lazy var messageTextView: UITextView = {
@@ -166,6 +177,11 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 			make.width.equalTo(UIScreen.main.bounds.width - preferredSpacing * 6)
 		}
 
+		arrowIcon.snp.makeConstraints { make in
+			make.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
+			make.centerY.equalToSuperview()
+		}
+
 		messageTextView.snp.makeConstraints { make in
 			make.height.equalTo(UIScreen.main.bounds.height * 0.3)
 		}
@@ -228,7 +244,7 @@ extension CreateRequestView: HADropDownDelegate {
 extension CreateRequestView: UITextViewDelegate {
 
 	func textViewDidBeginEditing(_ textView: UITextView) {
-		let offset = CGPoint(x: 0, y: textView.frame.minY - 70)
+		let offset = CGPoint(x: 0, y: textView.frame.minY)
 		scrollView.setContentOffset(offset, animated: true)
 	}
 
@@ -239,6 +255,7 @@ extension CreateRequestView {
 
 	@objc func didTap() {
 		self.endEditing(true)
+		guard !dropDownListView.isCollapsed else { return }
 		dropDownListView.hideList()
 	}
 
@@ -306,7 +323,7 @@ private extension CreateRequestView {
 		field.layer.cornerRadius = Desk360.Config.Requests.Create.cornerRadius
 		field.layer.masksToBounds = true
 		field.layer.borderWidth = Desk360.Config.Requests.Create.borderWidth
-		field.layer.borderColor = Desk360.Config.Requests.Create.borderColor?.cgColor
+		field.layer.borderColor = Desk360.Config.Requests.Create.borderColor.cgColor
 		field.tintColor = Desk360.Config.Requests.Create.tintColor
 
 		let font = Desk360.Config.Requests.Create.font

@@ -12,7 +12,6 @@ final class RequestTableViewCell: UITableViewCell, Reusable, Layoutable {
 	private lazy var containerView: UIView = {
 		var view = UIView()
 		view.backgroundColor = Desk360.Config.Requests.Listing.Cell.backgroundColor
-		view.layer.cornerRadius = Desk360.Config.Requests.Listing.Cell.cornerRadius
 		view.clipsToBounds = true
 		return view
 	}()

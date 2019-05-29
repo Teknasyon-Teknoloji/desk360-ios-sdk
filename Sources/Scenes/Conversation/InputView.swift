@@ -28,10 +28,10 @@ final class InputView: UIView, Layoutable {
 		view.backgroundColor = Desk360.Config.Conversation.Input.TextView.backgroundColor
 		view.textColor = Desk360.Config.Conversation.Input.TextView.textColor
 		view.tintColor = Desk360.Config.Conversation.Input.TextView.tintColor
-		view.font = Desk360.Config.Conversation.Input.TextView.font
-		view.layer.cornerRadius = Desk360.Config.Conversation.Input.TextView.cornerRadius
-		view.layer.borderWidth = Desk360.Config.Conversation.Input.TextView.borderWidth
 		view.layer.borderColor = Desk360.Config.Conversation.Input.TextView.borderColor.cgColor
+		view.font = UIFont.systemFont(ofSize: 18)
+		view.layer.cornerRadius = 8
+		view.layer.borderWidth = 1
 		view.clipsToBounds = true
 		view.textContainerInset = UIEdgeInsets.init(top: 8, left: 8, bottom: 8, right: 8)
 		return view
@@ -39,7 +39,7 @@ final class InputView: UIView, Layoutable {
 
 	private lazy var placeholderLabel: UILabel = {
 		let label = UILabel()
-		label.font = Desk360.Config.Conversation.Input.TextView.font
+		label.font = UIFont.systemFont(ofSize: 18)
 		label.text = Desk360.Strings.Support.conversationMessageTextViewPlaceholder
 		label.backgroundColor = Desk360.Config.Conversation.Input.TextView.backgroundColor
 		label.textColor = Desk360.Config.Conversation.Input.TextView.Placeholder.textColor
@@ -72,12 +72,15 @@ final class InputView: UIView, Layoutable {
 		return view
 	}()
 
-	private lazy var createRequestButton: UIButton = {
+	lazy var createRequestButton: UIButton = {
 		let button = UIButton(type: .system)
 		button.backgroundColor = Desk360.Config.Conversation.Input.CreateRequestButton.backgroundColor
 		button.tintColor = Desk360.Config.Conversation.Input.CreateRequestButton.tintColor
 		button.setTitle(Desk360.Strings.Support.conversationExpiredButtonTitle, for: .normal)
 		button.titleLabel?.font = Desk360.Config.Conversation.Input.CreateRequestButton.font
+		button.setTitleColor(Desk360.Config.Conversation.Input.CreateRequestButton.textColor, for: .normal)
+		button.layer.cornerRadius = Desk360.Config.Conversation.Input.CreateRequestButton.cornerRadius
+		button.clipsToBounds = true
 		return button
 	}()
 
@@ -135,11 +138,15 @@ final class InputView: UIView, Layoutable {
 
 		activityIndicator.snp.makeConstraints { $0.center.equalTo(sendButton) }
 
-		createRequestButton.snp.makeConstraints { $0.edges.equalToSuperview() }
+		createRequestButton.snp.makeConstraints { make in
+			make.height.equalTo(UIButton.preferredHeight)
+			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
+			make.center.equalToSuperview()
+		}
 	}
 
 	func reset() {
-//		setLoading(false)
+		setLoading(false)
 
 		textView.text = ""
 

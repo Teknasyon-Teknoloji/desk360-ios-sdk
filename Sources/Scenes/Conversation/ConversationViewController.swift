@@ -58,15 +58,18 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 			view.backgroundColor = Desk360.Config.Conversation.Input.CreateRequestButton.backgroundColor
 		}
 
+
 		layoutableView.tableView.dataSource = self
 		layoutableView.tableView.delegate = self
 		layoutableView.conversationInputView.delegate = self
+
 		NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidChangeState(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
+		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
 		navigationItem.title = request.subject
 //			Desk360.Config.Conversation.title ?? request.message.ars.truncate(toLength: 15)
 		scrollToBottom(animated: false)
@@ -155,10 +158,9 @@ extension ConversationViewController {
 				print(response.localizedDescription)
 
 			case .success(let response):
-				guard let tickets = try? response.map(DataResponse<[Ticket]>.self) else { return }
+				guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
 				guard let data = tickets.data else { return }
-				guard data.count > 0 else { return }
-				self.request = data[0]
+				self.request = data
 				self.layoutableView.tableView.reloadData()
 			}
 		}
@@ -173,8 +175,9 @@ extension ConversationViewController {
 			case .failure(let error):
 				print(error.localizedDescription)
 			case .success(let response):
-				guard let message = try? response.map(DataResponse<NewMessage>.self) else { return }
-				self.appendMessage(message: String(message.data?.message ?? ""))
+				guard let responseObject = try? response.map(DataResponse<Message>.self) else { return }
+				guard let message = responseObject.data else { return }
+				self.appendMessage(message: message)
 //				self.layoutableView.tableView.reloadData()
 			}
 		}
@@ -185,15 +188,15 @@ extension ConversationViewController {
 // MARK: - Helpers
 private extension ConversationViewController {
 
-	func appendMessage(message: String?) {
+	func appendMessage(message: Message) {
 		layoutableView.conversationInputView.resignFirstResponder()
 
-		let formatter = DateFormatter()
-		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-		let random = Int.random(in: 0 ... 10)
-		let newMessage = Message(id: random, message: message ?? "", isAnswer: false, createdAt: formatter.string(from: Date()))
+//		let formatter = DateFormatter()
+//		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+//		let random = Int.random(in: 0 ... 10)
+//		let newMessage = Message(id: random, message: message ?? "", isAnswer: false, createdAt: formatter.string(from: Date()))
 
-		request.messages.append(newMessage)
+		request.messages.append(message)
 
 		layoutableView.tableView.beginUpdates()
 		let indexPath = IndexPath(row: request.messages.count - 1, section: 0)
@@ -237,6 +240,15 @@ private extension ConversationViewController {
 		DispatchQueue.main.async {
 			self.layoutableView.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: animated)
 		}
+	}
+
+}
+
+// MARK: - Actions
+extension ConversationViewController {
+
+	@objc func didTapNewRequestButton() {
+		navigationController?.pushViewController(CreateRequestViewController(checkLastClass: true), animated: true)
 	}
 
 }

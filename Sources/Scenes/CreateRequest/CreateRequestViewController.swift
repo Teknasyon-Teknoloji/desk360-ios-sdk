@@ -14,18 +14,28 @@ final class CreateRequestViewController: UIViewController, Layouting {
 		view = ViewType.create()
 	}
 
+	var checkLastClass: Bool?
+
+	convenience init(checkLastClass: Bool) {
+		self.init()
+		self.checkLastClass = checkLastClass
+	}
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
 		layoutableView.sendButton.addTarget(self, action: #selector(didTapSendRequestButton), for: .touchUpInside)
 		registerForKeyboardEvents()
+
+		guard let check = checkLastClass, check else { return }
+		let count = navigationController?.viewControllers.count ?? 0
+		navigationController?.viewControllers.removeSubrange(count-2..<count-1)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
 		navigationItem.title = Desk360.Strings.Support.createTitle
-
 		fetchTicketType()
 
 		if let icon = Desk360.Config.Requests.Create.backBarButtonIcon {

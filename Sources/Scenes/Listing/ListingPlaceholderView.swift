@@ -12,7 +12,7 @@ final class ListingPlaceholderView: UIView, Layoutable {
 	internal lazy var imageView: UIImageView = {
 		let view = UIImageView()
 		view.contentMode = .scaleAspectFit
-		view.tintColor = Desk360.Config.Requests.Listing.tintColor
+		view.tintColor = Desk360.Config.Requests.Listing.Placeholder.tintColor
 		view.image = Desk360.Config.Requests.Listing.Placeholder.image
 		view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
 		return view
@@ -53,11 +53,13 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		return view
 	}()
 
-	private lazy var logoImageView: UIImageView = {
-		let imageView = UIImageView()
-		imageView.image = #imageLiteral(resourceName: "logo")
-		imageView.contentMode = .scaleAspectFit
-		return imageView
+	private lazy var desk360Label: UILabel = {
+		let label = UILabel()
+		label.textColor = Desk360.Config.Requests.Listing.Placeholder.desk360LabelTextColor
+		label.text = "Desk360"
+		label.font = UIFont.systemFont(ofSize: 12)
+		label.textAlignment = .center
+		return label
 	}()
 
 	public override var backgroundColor: UIColor? {
@@ -68,9 +70,9 @@ final class ListingPlaceholderView: UIView, Layoutable {
 	}
 
 	func setupViews() {
-		backgroundColor = Desk360.Config.Requests.Listing.backgroundColor
+		backgroundColor = Desk360.Config.Requests.Listing.Placeholder.backgroundColor
 		addSubview(stackView)
-		addSubview(logoImageView)
+		addSubview(desk360Label)
 	}
 
 	func setupLayout() {
@@ -88,8 +90,8 @@ final class ListingPlaceholderView: UIView, Layoutable {
 			make.center.equalToSuperview()
 		}
 
-		logoImageView.snp.makeConstraints { make in
-			make.bottom.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
+		desk360Label.snp.makeConstraints { make in
+			make.bottom.leading.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
 		}
 
 	}
