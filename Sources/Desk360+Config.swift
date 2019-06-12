@@ -12,7 +12,7 @@ import Foundation
 /// Use `Desk360.Config` to set up the contact us page in your application.
 public extension Desk360 {
 
-	enum Theme: String {
+	enum ThemeType: String {
 		case light
 		case dark
 	}
@@ -20,39 +20,30 @@ public extension Desk360 {
 	struct Config {
 		private init() {}
 
-		public static var theme: Theme = .light
+		static let bundle = Bundle.assetsBundle
 
-		/// The background color for view controller. _default is #f3f3f3
-		static var backgroundColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "f3f3f3")!
-			case .dark:
-				return UIColor.init(hex: "2b2b2b")!
+		public static var theme: ThemeType = .light {
+			didSet {
+				switch theme {
+				case .light:
+					Config.currentTheme = LightTheme()
+
+				case .dark:
+					Config.currentTheme = DarkTheme()
+				}
 			}
-		}()
+		}
 
-		/// The text color for view controller. _default is white
-		static var textColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return .white
-			case .dark:
-				return .black
-			}
-		}()
-
-		/// The tint color for view controller. _default is black_
-		public static var tintColor: UIColor = .black
+		public private(set) static var currentTheme: DeskTheme = LightTheme()
 
 		/// The corner radius for buttons. _default is 8_
-		public static var cornerRadius: CGFloat = 8
+		static var cornerRadius: CGFloat = 8
 
 		/// The font for labels and text fields _default is system font with size 18.0_
-		public static var font: UIFont = .systemFont(ofSize: 18)
+		static var font: UIFont = .systemFont(ofSize: 18)
 
 		/// The icon to be used instead of system's default back icon in the navigation bar. _default is nil_
-		public static var backBarButtonIcon: UIImage?
+		static var backBarButtonIcon: UIImage?
 	}
 }
 
@@ -66,38 +57,19 @@ public extension Desk360.Config {
 		private init() {}
 
 		/// Title
-		public static var title: String?
-
-		/// Background color.
-		static var backgroundColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "f3f3f3")!
-			case .dark:
-				return UIColor.init(hex: "2b2b2b")!
-			}
-		}()
+		static var title: String?
 
 		/// Corner radius.
-		public static var cornerRadius: CGFloat = Desk360.Config.cornerRadius
+		static var cornerRadius: CGFloat = Desk360.Config.cornerRadius
 
 		/// Border width. _dafault is 0_
-		public static var borderWidth: CGFloat = 0
-
-		/// Border color.
-		public static var borderColor: UIColor?
-
-		/// Text color.
-		public static var textColor: UIColor = Desk360.Config.textColor
-
-		/// Tint color.
-		public static var tintColor: UIColor = Desk360.Config.tintColor
+		static var borderWidth: CGFloat = 0
 
 		/// Font.
-		public static var font: UIFont = Desk360.Config.font
+		static var font: UIFont = Desk360.Config.font
 
 		/// The icon to be used instead of system's default back icon in the navigation bar. _default is nil_
-		public static var backBarButtonIcon: UIImage? = Desk360.Config.backBarButtonIcon
+		static var backBarButtonIcon: UIImage? = Desk360.Config.backBarButtonIcon
 
 	}
 }
@@ -107,105 +79,35 @@ public extension Desk360.Config.Requests {
 	struct Create {
 		private init() {}
 
-		/// Background color
-		static var backgroundColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "F3F3F3")!
-			case .dark:
-				return UIColor.init(hex: "2b2b2b")!
-			}
-		}()
-
 		/// Corner radius
-		public static var cornerRadius: CGFloat = Desk360.Config.cornerRadius
+		static var cornerRadius: CGFloat = Desk360.Config.cornerRadius
 
 		/// Buttons border width. _default is 0_
-		public static var borderWidth: CGFloat = 1
-
-		/// Buttons border color.
-		static var borderColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "A6A6A8")!
-			case .dark:
-				return UIColor.init(hex: "bfbfc1")!
-			}
-		}()
-
-		/// Text color.
-		static var textColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return .black
-			case .dark:
-				return .white
-			}
-		}()
-
-		/// Placeholder text color.
-		static var PlaceholderTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "A6A6A8")!
-			case .dark:
-				return UIColor.init(hex: "A6A6A8")!
-			}
-		}()
-
-		/// Tint color.
-		static var tintColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "bababa")!
-			case .dark:
-				return .white
-			}
-		}()
-
+		static var borderWidth: CGFloat = 1
 
 		/// Font.
-		public static var font: UIFont = Desk360.Config.font.withSize(18)
+		static var font: UIFont = Desk360.Config.font.withSize(18)
 
 		/// The icon to be used instead of system's default back icon in the navigation bar. _default is nil_
-		public static var backBarButtonIcon: UIImage? = Desk360.Config.backBarButtonIcon
+		static var backBarButtonIcon: UIImage? = Desk360.Config.backBarButtonIcon
 
 	}
 
 	struct Listing {
 		private init() {}
 
-		/// Background color.
-		public static var backgroundColor: UIColor = Desk360.Config.backgroundColor
 
 		/// Corner radius.
-		public static var cornerRadius: CGFloat = Desk360.Config.cornerRadius
+		static var cornerRadius: CGFloat = Desk360.Config.cornerRadius
 
 		/// Buttons border width. _default is 0_
-		public static var borderWidth: CGFloat = 1
-
-		/// Buttons border color.
-		public static var borderColor: UIColor?
-
-		/// Text color.
-		public static var textColor: UIColor = Desk360.Config.textColor
-
-		/// Tint color.
-		static var tintColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "f3f3f3")!
-			case .dark:
-				return .black
-			}
-		}()
+		static var borderWidth: CGFloat = 1
 
 		/// Font.
-		public static var font: UIFont = Desk360.Config.font.withSize(20)
-
+		static var font: UIFont = Desk360.Config.font.withSize(20)
 
 		/// The icon to be used instead of system's default back icon in the navigation bar. _default is nil_
-		public static var backBarButtonIcon: UIImage? = Desk360.Config.backBarButtonIcon
+		static var backBarButtonIcon: UIImage? = Desk360.Config.backBarButtonIcon
 	}
 }
 
@@ -216,16 +118,8 @@ public extension Desk360.Config.Requests.Create {
 		private init() {}
 
 		/// Text field icon.
-		public static var icon: UIImage?
+		static var icon: UIImage?
 
-		/// Background color.
-		public static var backgroundColor: UIColor = .clear
-
-		/// Text color.
-		public static var textColor: UIColor = Desk360.Config.Requests.Create.textColor
-
-		/// Placeholder text color.
-		public static var PlaceholderTextColor: UIColor? = Desk360.Config.Requests.Create.PlaceholderTextColor
 	}
 
 	/// Use `SupportConfig.Create.NameTextField` to set up the name text field in create request page in your application.
@@ -233,16 +127,8 @@ public extension Desk360.Config.Requests.Create {
 		private init() {}
 
 		/// Text field icon.
-		public static var icon: UIImage?
+		static var icon: UIImage?
 
-		/// Background color.
-		public static var backgroundColor: UIColor = .clear
-
-		/// Text color.
-		public static var textColor: UIColor = Desk360.Config.Requests.Create.textColor
-
-		/// Placeholder text color.
-		public static var PlaceholderTextColor: UIColor? = Desk360.Config.Requests.Create.PlaceholderTextColor
 	}
 
 	/// Use `SupportConfig.Create.EmailTextField` to set up the email text field in create request page in your application.
@@ -250,16 +136,7 @@ public extension Desk360.Config.Requests.Create {
 		private init() {}
 
 		/// Text field icon.
-		public static var icon: UIImage?
-
-		/// Background color.
-		public static var backgroundColor: UIColor = .clear
-
-		/// Text color.
-		public static var textColor: UIColor = Desk360.Config.Requests.Create.textColor
-
-		/// Placeholder text color.
-		public static var PlaceholderTextColor: UIColor? = Desk360.Config.Requests.Create.PlaceholderTextColor
+		static var icon: UIImage?
 
 	}
 
@@ -267,63 +144,35 @@ public extension Desk360.Config.Requests.Create {
 	struct DropDownListView {
 		private init() {}
 
-		/// Background color.
-		static var backgroundColor: UIColor = Desk360.Config.Requests.Create.backgroundColor
-
-		/// Text color.
-		static var textColor: UIColor = {
+		/// DropDown list arrow icon.
+		static var arrowIcon: UIImage = {
 			switch Desk360.Config.theme {
 			case .light:
-				return UIColor.init(hex: "6e6e6e")!
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/arrowLight", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
 			case .dark:
-				return UIColor.init(hex: "cbcbcb")!
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/arrowDark", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
 			}
 		}()
 
-
-		/// Border color.
-		public static var borderColor: UIColor = UIColor.black.withAlphaComponent(0.5)
-
-		/// Placeholder text color.
-		public static var arrowColor: UIColor = .white
-
-		/// DropDown list arrow icon.
-		public static var arrowIcon: UIImage?
-
-		/// DropDown list arrow icon.
-		static var arrowTintColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "58b0fa")!
-			case .dark:
-				return UIColor.init(hex: "cbcbcb")!
-			}
-		}()
-
-
-		/// Placeholder text color.
-		public static var placeholderTextColor: UIColor = UIColor.init(hex: "A6A6A8")!
-
-		/// Selected row color.
-		public static var selectedRowColor: UIColor? = .white
-
-		/// Row background  color.
-		public static var rowBackgroundColor: UIColor = .white
 
 		/// Arrow Size
-		public static var arrowSize: CGFloat = 20
+		static var arrowSize: CGFloat = 20
 
 		/// Border width
-		public static var borderWidth: CGFloat = 1
+		static var borderWidth: CGFloat = 1
 
 		/// Corner Radius
-		public static var cornerRadius: CGFloat = 5
+		static var cornerRadius: CGFloat = 5
 
 		/// List Height
-		public static var listHeight: CGFloat = 150
+		static var listHeight: CGFloat = 150
 
 		/// List Height
-		public static var rowHeight: CGFloat = 30
+		static var rowHeight: CGFloat = 30
 	}
 
 	/// Use `SupportConfig.Create.MessageTextView` to set up the message text view in create request page in your application.
@@ -331,19 +180,10 @@ public extension Desk360.Config.Requests.Create {
 		private init() {}
 
 		/// Text view icon.
-		public static var icon: UIImage?
-
-		/// Background color.
-		public static var backgroundColor: UIColor = .clear
-
-		/// Text color.
-		public static var textColor: UIColor = Desk360.Config.Requests.Create.textColor
-
-		/// Border color.
-		public static var borderColor: UIColor = Desk360.Config.Requests.Create.PlaceholderTextColor
+		static var icon: UIImage?
 
 		/// Border width.
-		public static var borderWidth: CGFloat = 1
+		static var borderWidth: CGFloat = 1
 
 	}
 
@@ -351,24 +191,11 @@ public extension Desk360.Config.Requests.Create {
 	struct SendButton {
 		private init() {}
 
-		/// Background color.
-		static var backgroundColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "58B0FA")!
-			case .dark:
-				return UIColor.init(hex: "3b97e5")!
-			}
-		}()
-
-		/// Tint color.
-		public static var tintColor: UIColor = .white
-
 		/// Corner radius.
-		public static var cornerRadius: CGFloat = 20
+		static var cornerRadius: CGFloat = 20
 
 		/// Title font.
-		public static var font: UIFont = Desk360.Config.Requests.Create.font
+		static var font: UIFont = Desk360.Config.Requests.Create.font
 
 	}
 
@@ -380,37 +207,16 @@ public extension Desk360.Config.Requests.Listing {
 		private init() {}
 
 		/// Image.
-		public static var image: UIImage?
-
-		/// Tint color.
-		static var tintColor: UIColor = {
+		static var image: UIImage = {
 			switch Desk360.Config.theme {
 			case .light:
-				return UIColor.init(hex: "b5b5b7")!
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/supportCreateLight", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
 			case .dark:
-				return UIColor.init(hex: "d1d1d1")!
-			}
-		}()
-
-		/// Tint color.
-		static var desk360LabelTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "dcdcdc")!
-			case .dark:
-				return UIColor.init(hex: "626262")!
-			}
-		}()
-
-
-
-		/// Background color.
-		static var backgroundColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "F3F3F3")!
-			case .dark:
-				return UIColor.init(hex: "2b2b2b")!
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/supportCreateDark", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
 			}
 		}()
 
@@ -419,17 +225,31 @@ public extension Desk360.Config.Requests.Listing {
 	/// Use `SupportConfig.Listing.NavItem` to set up the navigation item in request listing page in your application.
 	struct NavItem {
 		private init() {}
-
-		/// Button icon.
-		public static var icon: UIImage?
-
-		// Tint color
-		static var tintColor: UIColor = {
+		/// Back button icon.
+		static var closeIcon: UIImage = {
 			switch Desk360.Config.theme {
 			case .light:
-				return UIColor.init(hex: "5c5c5c")!
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/closeLight", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
 			case .dark:
-				return .white
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/closeDark", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
+			}
+		}()
+
+		/// Add button icon.
+		static var addIcon: UIImage = {
+			switch Desk360.Config.theme {
+			case .light:
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/iconNavigationbarAdd", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
+			case .dark:
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/iconNavigationbarAddDark", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
 			}
 		}()
 
@@ -439,38 +259,8 @@ public extension Desk360.Config.Requests.Listing {
 	struct Cell {
 		private init() { }
 
-		/// Cell background color.
-		public static var backgroundColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return .white
-			case .dark:
-				return UIColor.init(hex: "3c3c3c")!
-			}
-		}()
-
-		/// Cell title color.
-		static var tintColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return .black
-			case .dark:
-				return .white
-			}
-		}()
-
 		/// Cell corner radius.
 		static var cornerRadius: CGFloat = Desk360.Config.Requests.Listing.cornerRadius
-
-		/// Bottom line color.
-		static var lineColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "D5D5D5")!
-			case .dark:
-				return UIColor.init(hex: "2b2b2b")!
-			}
-		}()
 
 	}
 }
@@ -481,18 +271,8 @@ public extension Desk360.Config.Requests.Listing.Placeholder {
 	struct Title {
 		private init() {}
 
-		/// Text color.
-		static var textColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "868686")!
-			case .dark:
-				return UIColor.init(hex: "bababa")!
-			}
-		}()
-
 		/// Font.
-		public static var font: UIFont =  UIFont.systemFont(ofSize: 18, weight: .regular)
+		static var font: UIFont =  UIFont.systemFont(ofSize: 18, weight: .regular)
 
 	}
 
@@ -500,40 +280,14 @@ public extension Desk360.Config.Requests.Listing.Placeholder {
 	struct CreateButton {
 		private init() {}
 
-		/// Background color.
-		static var backgroundColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "58b0fa")!
-			case .dark:
-				return UIColor.init(hex: "3b97e5")!
-			}
-		}()
-
-		/// title color
-		public static var titleColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return .white
-			case .dark:
-				return .white
-			}
-		}()
-
 		/// Corner radius.
-		public static var cornerRadius: CGFloat = 20
+		static var cornerRadius: CGFloat = 20
 
 		/// Border width.
-		public static var borderWidth: CGFloat = 0
-
-		/// Border color.
-		public static var borderColor: UIColor? = .clear
-
-		/// Tint color.
-		public static var tintColor: UIColor = Desk360.Config.textColor
+		static var borderWidth: CGFloat = 0
 
 		/// Font
-		public static var font: UIFont = UIFont.systemFont(ofSize: 18, weight: .bold)
+		static var font: UIFont = UIFont.systemFont(ofSize: 18, weight: .bold)
 
 	}
 }
@@ -543,44 +297,8 @@ public extension Desk360.Config.Requests.Listing.Cell {
 	struct Expired {
 		private init() {}
 
-		/// Cell background color.
-		static var backgroundColor: UIColor = Desk360.Config.Requests.Listing.Cell.backgroundColor
-
-		/// Cell tint color.
-		static var tintColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "a7b2c4")!
-			case .dark:
-				return UIColor.init(hex: "cecece")!
-			}
-		}()
-
-		/// Cell icon image.
-		public static var icon: UIImage?
-
-		/// Cell title text color.
-		static var titleTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "636363")!
-			case .dark:
-				return .white
-			}
-		}()
-
 		/// Cell title text font.
 		static var titleFont: UIFont = Desk360.Config.Requests.Listing.font
-
-		/// Cell date text color.
-		static var dateTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "b0b0b0")!
-			case .dark:
-				return UIColor.init(hex: "b0b0b0")!
-			}
-		}()
 
 		/// Cell date font.
 		static var dateFont: UIFont = Desk360.Config.Requests.Listing.font.withSize(12)
@@ -591,44 +309,8 @@ public extension Desk360.Config.Requests.Listing.Cell {
 	struct Open {
 		private init() {}
 
-		/// Cell background color.
-		static var backgroundColor: UIColor = Desk360.Config.Requests.Listing.Cell.backgroundColor
-
-		/// Cell tint color.
-		static var tintColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "a7b2c4")!
-			case .dark:
-				return UIColor.init(hex: "cecece")!
-			}
-		}()
-
-		/// Cell icon image.
-		public static var icon: UIImage?
-
-		/// Cell title text color.
-		static var titleTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "636363")!
-			case .dark:
-				return .white
-			}
-		}()
-
 		/// Cell title text font.
 		static var titleFont: UIFont = Desk360.Config.Requests.Listing.font
-
-		/// Cell date text color.
-		static var dateTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "b0b0b0")!
-			case .dark:
-				return UIColor.init(hex: "b0b0b0")!
-			}
-		}()
 
 		/// Cell date font.
 		static var dateFont: UIFont = Desk360.Config.Requests.Listing.font.withSize(12)
@@ -639,44 +321,22 @@ public extension Desk360.Config.Requests.Listing.Cell {
 	struct Read {
 		private init() {}
 
-		/// Cell background color.
-		static var backgroundColor: UIColor = Desk360.Config.Requests.Listing.Cell.backgroundColor
-
-		/// Cell tint color.
-		static var tintColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "a7b2c4")!
-			case .dark:
-				return UIColor.init(hex: "cecece")!
-			}
-		}()
-
 		/// Cell icon image.
-		public static var icon: UIImage?
-
-		/// Cell title text color.
-		static var titleTextColor: UIColor = {
+		static var icon: UIImage = {
 			switch Desk360.Config.theme {
 			case .light:
-				return UIColor.init(hex: "636363")!
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/readLight", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
 			case .dark:
-				return .white
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/readDark", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
 			}
 		}()
-		
+
 		/// Cell title text font.
 		static var titleFont: UIFont = Desk360.Config.Requests.Listing.font
-
-		/// Cell date text color.
-		static var dateTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "b0b0b0")!
-			case .dark:
-				return UIColor.init(hex: "b0b0b0")!
-			}
-		}()
 
 		/// Cell date font.
 		static var dateFont: UIFont = Desk360.Config.Requests.Listing.font.withSize(12)
@@ -686,44 +346,22 @@ public extension Desk360.Config.Requests.Listing.Cell {
 	struct Unread {
 		private init() {}
 
-		/// Cell background color.
-		static var backgroundColor: UIColor = Desk360.Config.Requests.Listing.Cell.backgroundColor
-
-		/// Cell tint color.
-		static var tintColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "a7b2c4")!
-			case .dark:
-				return UIColor.init(hex: "cecece")!
-			}
-		}()
-
 		/// Cell icon image.
-		public static var icon: UIImage?
-
-		/// Cell title text color.
-		static var titleTextColor: UIColor = {
+		static var icon: UIImage = {
 			switch Desk360.Config.theme {
 			case .light:
-				return UIColor.init(hex: "2d2d2d")!
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/unreadLight", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
 			case .dark:
-				return .white
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/unreadDark", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
 			}
 		}()
 
 		/// Cell title text font.
 		static var titleFont: UIFont = UIFont.systemFont(ofSize: 20, weight: .bold)
-
-		/// Cell date text color.
-		static var dateTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "b0b0b0")!
-			case .dark:
-				return .white
-			}
-		}()
 
 		/// Cell date font.
 		static var dateFont: UIFont = UIFont.systemFont(ofSize: 12, weight: .bold)
@@ -738,21 +376,10 @@ public extension Desk360.Config.Conversation {
 		private init() {}
 
 		/// Bar height. _dafault is 66.0_
-		public static var height: CGFloat = 75
+		static var height: CGFloat = 75
 
 		/// Bar maximum allowe height. _dafault is 200.0_
-		public static var maxHeight: CGFloat = 200.0
-
-		/// Bar background color.
-		static var backgroundColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "f3f3f3")!
-			case .dark:
-				return UIColor.init(hex: "2b2b2b")!
-			}
-		}()
-
+		static var maxHeight: CGFloat = 200.0
 
 	}
 
@@ -761,22 +388,13 @@ public extension Desk360.Config.Conversation {
 		private init() {}
 
 		/// message text font.
-		public static var messageFont: UIFont = Desk360.Config.Conversation.font.withSize(20)
+		static var messageFont: UIFont = Desk360.Config.Conversation.font.withSize(20)
 
 		/// Message date font.
-		public static var dateFont: UIFont = Desk360.Config.Conversation.font.withSize(14)
+		static var dateFont: UIFont = Desk360.Config.Conversation.font.withSize(14)
 
 		/// Corner radius.
-		public static var cornerRadius: CGFloat = Desk360.Config.Conversation.cornerRadius
-
-		/// Background color.
-		public static var backgroundColor: UIColor = Desk360.Config.Conversation.backgroundColor
-
-		/// Message text color.
-		public static var messageTextColor: UIColor = Desk360.Config.Conversation.textColor
-
-		/// Date text color.
-		public static var dateTextColor: UIColor = Desk360.Config.Conversation.textColor
+		static var cornerRadius: CGFloat = 19
 	}
 
 }
@@ -802,38 +420,9 @@ public extension Desk360.Config.Conversation.Input {
 
 public extension Desk360.Config.Conversation.Input.TextView {
 
-	/// Background color.
-	static var backgroundColor: UIColor = {
-		switch Desk360.Config.theme {
-		case .light:
-			return .clear
-		case .dark:
-			return .clear
-		}
-	}()
-
 	/// Font.
 	static var font: UIFont = .systemFont(ofSize: 18)
 
-	/// Tint color.
-	static var tintColor: UIColor = {
-		switch Desk360.Config.theme {
-		case .light:
-			return .black
-		case .dark:
-			return .white
-		}
-	}()
-
-	/// Text color.
-	static var textColor: UIColor = {
-		switch Desk360.Config.theme {
-		case .light:
-			return .black
-		case .dark:
-			return .white
-		}
-	}()
 
 	/// Corner radius.
 	static var cornerRadius: CGFloat = Desk360.Config.Conversation.cornerRadius
@@ -841,46 +430,23 @@ public extension Desk360.Config.Conversation.Input.TextView {
 	/// Border width.
 	static var borderWidth: CGFloat = 1
 
-	/// Border color
-	static var borderColor: UIColor = {
-		switch Desk360.Config.theme {
-		case .light:
-			return UIColor.init(hex: "bfbfc1")!
-		case .dark:
-			return UIColor.init(hex: "6e6e6e")!
-		}
-	}()
-
-	/// Use `SupportConfig.Conversation.Input.TextView.Placeholder` to set up the text view's Placeholder in input bar in conversation page in your application.
-	struct Placeholder {
-		private init() {}
-		/// Text color.
-		static var textColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "a6a6a8")!
-			case .dark:
-				return UIColor.init(hex: "a6a6a8")!
-			}
-		}()
-	}
-
 }
 
 public extension Desk360.Config.Conversation.Input.SendButton {
 
-	/// Tint color.
-	static var tintColor: UIColor = {
+	/// Button icon.
+	static var icon: UIImage = {
 		switch Desk360.Config.theme {
 		case .light:
-			return UIColor.init(hex: "436091")!
+			guard let path = Desk360.Config.bundle?.path(forResource: "Images/sendLight", ofType: "png") else { return UIImage() }
+			let image = UIImage(contentsOfFile: path)!
+			return image
 		case .dark:
-			return .white
+			guard let path = Desk360.Config.bundle?.path(forResource: "Images/sendDark", ofType: "png") else { return UIImage() }
+			let image = UIImage(contentsOfFile: path)!
+			return image
 		}
 	}()
-
-	/// Button icon.
-	static var icon: UIImage?
 
 	/// Button title font.
 	static var font: UIFont = Desk360.Config.Conversation.font
@@ -888,36 +454,6 @@ public extension Desk360.Config.Conversation.Input.SendButton {
 }
 
 public extension Desk360.Config.Conversation.Input.CreateRequestButton {
-
-	/// Background color
-	static var backgroundColor: UIColor = {
-		switch Desk360.Config.theme {
-		case .light:
-			return UIColor.init(hex: "58b0fa")!
-		case .dark:
-			return UIColor.init(hex: "3b97e5")!
-		}
-	}()
-
-	/// Tint color.
-	static var tintColor: UIColor = {
-		switch Desk360.Config.theme {
-		case .light:
-			return .white
-		case .dark:
-			return .black
-		}
-	}()
-
-	/// Text color.
-	static var textColor: UIColor = {
-		switch Desk360.Config.theme {
-		case .light:
-			return .white
-		case .dark:
-			return .white
-		}
-	}()
 
 	/// Button font.
 	static var font: UIFont = Desk360.Config.Conversation.font
@@ -934,43 +470,13 @@ public extension Desk360.Config.Conversation.MessageCell {
 		private init() {}
 
 		/// Message font.
-		public static var messageFont: UIFont = Desk360.Config.Conversation.MessageCell.messageFont
+		static var messageFont: UIFont = Desk360.Config.Conversation.MessageCell.messageFont
 
 		/// Date font.
-		public static var dateFont: UIFont = Desk360.Config.Conversation.MessageCell.dateFont
+		static var dateFont: UIFont = Desk360.Config.Conversation.MessageCell.dateFont
 
 		/// Corner radius.
-		public static var cornerRadius: CGFloat = Desk360.Config.Conversation.MessageCell.cornerRadius
-
-		/// Background color.
-		public static var backgroundColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return .white
-			case .dark:
-				return UIColor.init(hex: "4f5155")!
-			}
-		}()
-
-		/// Message text color.
-		public static var messageTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "525a7e")!
-			case .dark:
-				return .white
-			}
-		}()
-
-		/// Date text color.
-		public static var dateTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "525a7e")!
-			case .dark:
-				return UIColor.init(hex: "9e9e9e")!
-			}
-		}()
+		static var cornerRadius: CGFloat = Desk360.Config.Conversation.MessageCell.cornerRadius
 
 	}
 
@@ -986,36 +492,6 @@ public extension Desk360.Config.Conversation.MessageCell {
 
 		/// Corner radius.
 		static var cornerRadius: CGFloat = Desk360.Config.Conversation.MessageCell.cornerRadius
-
-		/// Background color.
-		static var backgroundColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "436091")!
-			case .dark:
-				return UIColor.init(hex: "e5e5e5")!
-			}
-		}()
-
-		/// Message text color.
-		static var messageTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return .white
-			case .dark:
-				return .black
-			}
-		}()
-
-		/// Date text color.
-		static var dateTextColor: UIColor = {
-			switch Desk360.Config.theme {
-			case .light:
-				return UIColor.init(hex: "b0b0b0")!
-			case .dark:
-				return UIColor.init(hex: "9e9e9e")!
-			}
-		}()
 
 	}
 }
