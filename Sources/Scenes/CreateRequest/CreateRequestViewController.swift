@@ -27,6 +27,10 @@ final class CreateRequestViewController: UIViewController, Layouting {
 		layoutableView.sendButton.addTarget(self, action: #selector(didTapSendRequestButton), for: .touchUpInside)
 		registerForKeyboardEvents()
 
+//		layoutableView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+
+//		navigationController?.navigationBar.isHidden = true
+
 		guard let check = checkLastClass, check else { return }
 		let count = navigationController?.viewControllers.count ?? 0
 		navigationController?.viewControllers.removeSubrange(count-2..<count-1)
@@ -81,6 +85,11 @@ final class CreateRequestViewController: UIViewController, Layouting {
 		guard ticketTypes.count > 0 else { return }
 		let ticketTypeId = ticketTypes[layoutableView.dropDownListView.getSelectedIndex].id
 		sendRequest(name: name, email: email, subject: subject, ticketType: String(ticketTypeId), message: message)
+	}
+
+	@objc
+	func didTapBackButton() {
+		navigationController?.popViewController(animated: true)
 	}
 
 }

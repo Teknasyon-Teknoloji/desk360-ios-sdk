@@ -37,12 +37,14 @@ public final class Desk360 {
 		print("Desk360 SDK was initialized successfully!")
 	}
 
-	public static func push(on viewController: UIViewController, animated: Bool = true) {
+	public static func show(on viewController: UIViewController, animated: Bool = true) {
 		guard let navController = viewController.navigationController else {
 			fatalError("Unable to push Desk360 because \(viewController.self) is not embedded in UINavigationController.")
 		}
-		navController.pushViewController(ListingViewController(), animated: animated)
-
+		let listingViewController = ListingViewController()
+		listingViewController.hidesBottomBarWhenPushed = true
+		let desk360Navcontroller = Desk360NavigationController(rootViewController: listingViewController)
+		navController.present(desk360Navcontroller, animated: true, completion: nil)
 	}
 
 	public static func present(in viewController: UIViewController, animated: Bool = true) {

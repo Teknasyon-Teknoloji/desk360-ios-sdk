@@ -12,7 +12,7 @@ final class ListingPlaceholderView: UIView, Layoutable {
 	internal lazy var imageView: UIImageView = {
 		let view = UIImageView()
 		view.contentMode = .scaleAspectFit
-		view.tintColor = Desk360.Config.Requests.Listing.Placeholder.tintColor
+		view.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
 		view.image = Desk360.Config.Requests.Listing.Placeholder.image
 		view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
 		return view
@@ -23,7 +23,7 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		label.numberOfLines = 0
 		label.textAlignment = .center
 		label.font = Desk360.Config.Requests.Listing.Placeholder.Title.font
-		label.textColor = Desk360.Config.Requests.Listing.Placeholder.Title.textColor
+		label.textColor = Desk360.Config.currentTheme.listingPlaceholderTextColor
 		label.text = Desk360.Strings.Support.listingPlaceholderLabelTitle
 		label.setContentCompressionResistancePriority(.required, for: .vertical)
 		return label
@@ -31,13 +31,11 @@ final class ListingPlaceholderView: UIView, Layoutable {
 
 	internal lazy var createRequestButton: UIButton = {
 		var button = UIButton(type: .system)
-		button.backgroundColor = Desk360.Config.Requests.Listing.Placeholder.CreateButton.backgroundColor
+		button.backgroundColor = Desk360.Config.currentTheme.requestSendButtonBackgroundColor
 		button.setTitle(Desk360.Strings.Support.listingPlaceholderButtonTitle, for: .normal)
-		button.titleLabel?.textColor =  Desk360.Config.Requests.Listing.Placeholder.CreateButton.titleColor
-		button.tintColor = Desk360.Config.Requests.Listing.Placeholder.CreateButton.titleColor
-		button.layer.borderWidth = Desk360.Config.Requests.Listing.Placeholder.CreateButton.borderWidth
+		button.setTitleColor(Desk360.Config.currentTheme.requestSendButtonTintColor, for: .normal)
+		button.tintColor = Desk360.Config.currentTheme.requestSendButtonTintColor
 		button.layer.cornerRadius = Desk360.Config.Requests.Listing.Placeholder.CreateButton.cornerRadius
-		button.layer.borderColor = Desk360.Config.Requests.Listing.Placeholder.CreateButton.borderColor?.cgColor
 		button.clipsToBounds = true
 		button.titleLabel?.font = Desk360.Config.Requests.Listing.Placeholder.CreateButton.font
 		button.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
@@ -53,15 +51,6 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		return view
 	}()
 
-	private lazy var desk360Label: UILabel = {
-		let label = UILabel()
-		label.textColor = Desk360.Config.Requests.Listing.Placeholder.desk360LabelTextColor
-		label.text = "Desk360"
-		label.font = UIFont.systemFont(ofSize: 12)
-		label.textAlignment = .center
-		return label
-	}()
-
 	public override var backgroundColor: UIColor? {
 		didSet {
 			imageView.backgroundColor = backgroundColor
@@ -70,9 +59,8 @@ final class ListingPlaceholderView: UIView, Layoutable {
 	}
 
 	func setupViews() {
-		backgroundColor = Desk360.Config.Requests.Listing.Placeholder.backgroundColor
+		backgroundColor = Desk360.Config.currentTheme.backgroundColor
 		addSubview(stackView)
-		addSubview(desk360Label)
 	}
 
 	func setupLayout() {
@@ -89,11 +77,6 @@ final class ListingPlaceholderView: UIView, Layoutable {
 			make.bottom.lessThanOrEqualTo(safeArea.bottom).inset(preferredSpacing)
 			make.center.equalToSuperview()
 		}
-
-		desk360Label.snp.makeConstraints { make in
-			make.bottom.leading.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
-		}
-
 	}
 
 }

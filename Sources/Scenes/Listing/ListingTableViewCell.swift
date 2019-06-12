@@ -7,11 +7,11 @@
 
 import UIKit
 
-final class RequestTableViewCell: UITableViewCell, Reusable, Layoutable {
+final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 
 	private lazy var containerView: UIView = {
 		var view = UIView()
-		view.backgroundColor = Desk360.Config.Requests.Listing.Cell.backgroundColor
+		view.backgroundColor = Desk360.Config.currentTheme.listingCellBackgroundColor
 		view.clipsToBounds = true
 		return view
 	}()
@@ -26,7 +26,7 @@ final class RequestTableViewCell: UITableViewCell, Reusable, Layoutable {
 	private lazy var iconImageView: UIImageView = {
 		let view = UIImageView()
 		view.contentMode = .scaleAspectFit
-		view.tintColor = Desk360.Config.Requests.Listing.Cell.tintColor
+		view.tintColor = Desk360.Config.currentTheme.listingCellTintColor
 		return view
 	}()
 
@@ -45,7 +45,7 @@ final class RequestTableViewCell: UITableViewCell, Reusable, Layoutable {
 
 	private lazy var lineView: UIView = {
 		let view = UIView()
-		view.backgroundColor = Desk360.Config.Requests.Listing.Cell.lineColor
+		view.backgroundColor = Desk360.Config.currentTheme.listingCellLineColor
 		return view
 	}()
 
@@ -59,7 +59,7 @@ final class RequestTableViewCell: UITableViewCell, Reusable, Layoutable {
 	}
 
 	func setupViews() {
-		backgroundColor = Desk360.Config.Requests.Listing.backgroundColor
+		backgroundColor = Desk360.Config.currentTheme.backgroundColor
 		selectionStyle = .none
 
 		containerView.addSubview(stackView)
@@ -92,7 +92,7 @@ final class RequestTableViewCell: UITableViewCell, Reusable, Layoutable {
 }
 
 // MARK: - Configure
-internal extension RequestTableViewCell {
+internal extension ListingTableViewCell {
 
 	func configure(for request: Ticket) {
 		messageLabel.text = request.subject
@@ -102,41 +102,48 @@ internal extension RequestTableViewCell {
 
 		switch request.status {
 		case .expired:
-			containerBackgroundColor = Config.Expired.backgroundColor
-			messageLabel.textColor = Config.Expired.titleTextColor
+			containerBackgroundColor = Desk360.Config.currentTheme.listingCellBackgroundColor
+			messageLabel.textColor = Desk360.Config.currentTheme.listingCellTitleColor
 			messageLabel.font = Config.Expired.titleFont
-			dateLabel.textColor = Config.Expired.dateTextColor
+			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
 			dateLabel.font = Config.Expired.dateFont
-			iconImageView.image = Config.Expired.icon
-			iconImageView.tintColor = Config.Expired.tintColor
+//			iconImageView.image = Config.Expired.icon
+			iconImageView.image = nil
+			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
 
 		case .open:
-			containerBackgroundColor = Config.Open.backgroundColor
-			messageLabel.textColor = Config.Open.titleTextColor
+			containerBackgroundColor = Desk360.Config.currentTheme.listingCellBackgroundColor
+			messageLabel.textColor = Desk360.Config.currentTheme.listingCellTitleColor
 			messageLabel.font = Config.Open.titleFont
-			dateLabel.textColor = Config.Open.dateTextColor
+			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
 			dateLabel.font = Config.Open.dateFont
 			iconImageView.image = nil
-			iconImageView.tintColor = Config.Open.tintColor
+			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
 
 		case .read:
-			containerBackgroundColor = Config.Read.backgroundColor
-			messageLabel.textColor = Config.Read.titleTextColor
+			containerBackgroundColor = Desk360.Config.currentTheme.listingCellBackgroundColor
+			messageLabel.textColor = Desk360.Config.currentTheme.listingCellTitleColor
 			messageLabel.font = Config.Read.titleFont
-			dateLabel.textColor = Config.Read.dateTextColor
+			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
 			dateLabel.font = Config.Read.dateFont
 			iconImageView.image = Config.Read.icon
-			iconImageView.tintColor = Config.Read.tintColor
+//			iconImageView.image = UIImage(named: "Image.bundle/test.png")
+			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
 
 		case .unread:
-			containerBackgroundColor = Config.Unread.backgroundColor
-			messageLabel.textColor = Config.Unread.titleTextColor
+			containerBackgroundColor = Desk360.Config.currentTheme.listingCellBackgroundColor
+			messageLabel.textColor = Desk360.Config.currentTheme.listingCellTitleColor
 			messageLabel.font = Config.Unread.titleFont
-			dateLabel.textColor = Config.Unread.dateTextColor
+			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
 			dateLabel.font = Config.Unread.dateFont
 			iconImageView.image = Config.Unread.icon
-			iconImageView.tintColor = Config.Unread.tintColor
+//			iconImageView.image = UIImage(named: "Assets/Image.bundle/test.png")
+			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
 		}
+
+//		iconImageView.image = let image = UIImage(named: "test", in: Bundle(for: Picture.self), compatibleWith: nil)
+
+//		iconImageView.image = UIImage(fromAssets: "iconSupportCreate@3x", type: "png")
 	}
 
 }

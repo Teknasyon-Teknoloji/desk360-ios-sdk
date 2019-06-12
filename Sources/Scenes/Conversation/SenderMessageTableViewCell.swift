@@ -11,8 +11,7 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 
 	private lazy var containerView: UIView = {
 		var view = UIView()
-		view.backgroundColor = Desk360.Config.Conversation.MessageCell.Sender.backgroundColor
-		view.layer.cornerRadius = Desk360.Config.Conversation.MessageCell.Sender.cornerRadius
+		view.backgroundColor = Desk360.Config.currentTheme.senderCellBackgroundColor
 		view.clipsToBounds = true
 		return view
 	}()
@@ -20,14 +19,14 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 	private lazy var messageLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 0
-		label.textColor = Desk360.Config.Conversation.MessageCell.Sender.messageTextColor
+		label.textColor = Desk360.Config.currentTheme.senderCellMessageTextColor
 		label.font = Desk360.Config.Conversation.MessageCell.Sender.messageFont
 		return label
 	}()
 
 	private lazy var dateLabel: UILabel = {
 		let label = UILabel()
-		label.textColor = Desk360.Config.Conversation.MessageCell.Sender.dateTextColor
+		label.textColor = Desk360.Config.currentTheme.senderCellDateTextColor
 		label.font = Desk360.Config.Conversation.MessageCell.Sender.dateFont
 		label.textAlignment = .right
 		return label
@@ -60,10 +59,16 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 
 	func setupLayout() {
 		containerView.snp.makeConstraints { make in
-			make.top.trailing.bottom.equalToSuperview().inset(preferredSpacing / 2)
+			make.top.leading.bottom.equalToSuperview().inset(preferredSpacing / 2)
 			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
 		}
 		stackView.snp.makeConstraints { $0.edges.equalToSuperview().inset(preferredSpacing / 2) }
+	}
+
+	override func layoutSubviews() {
+		super.layoutSubviews()
+
+		containerView.roundCorners([.bottomRight, .topLeft, .topRight], radius: Desk360.Config.Conversation.MessageCell.Sender.cornerRadius)
 	}
 
 }

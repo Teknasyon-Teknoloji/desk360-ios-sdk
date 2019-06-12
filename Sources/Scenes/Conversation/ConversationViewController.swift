@@ -55,9 +55,8 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		super.viewDidLoad()
 
 		if request.status == .expired {
-			view.backgroundColor = Desk360.Config.Conversation.Input.CreateRequestButton.backgroundColor
+			view.backgroundColor = Desk360.Config.currentTheme.requestSendButtonBackgroundColor
 		}
-
 
 		layoutableView.tableView.dataSource = self
 		layoutableView.tableView.delegate = self
@@ -72,13 +71,12 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
 		navigationItem.title = request.subject
 //			Desk360.Config.Conversation.title ?? request.message.ars.truncate(toLength: 15)
-		scrollToBottom(animated: false)
 
-		if let icon = Desk360.Config.Conversation.backBarButtonIcon {
-			navigationController?.navigationBar.backIndicatorImage = icon
-			navigationController?.navigationBar.backIndicatorTransitionMaskImage = icon
-			navigationItem.backBarButtonItem = .init(title: "", style: .plain, target: nil, action: nil)
-		}
+//		if let icon = Desk360.Config.Conversation.backBarButtonIcon {
+//			navigationController?.navigationBar.backIndicatorImage = icon
+//			navigationController?.navigationBar.backIndicatorTransitionMaskImage = icon
+//			navigationItem.backBarButtonItem = .init(title: "", style: .plain, target: nil, action: nil)
+//		}
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -152,7 +150,6 @@ extension ConversationViewController {
 		Desk360.apiProvider.request(.ticketWithId(request.id)) { [weak self] result in
 
 			guard let self = self else { return }
-			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let response):
 				print(response.localizedDescription)
@@ -162,7 +159,9 @@ extension ConversationViewController {
 				guard let data = tickets.data else { return }
 				self.request = data
 				self.layoutableView.tableView.reloadData()
+				self.scrollToBottom(animated: false)
 			}
+			self.layoutableView.setLoading(false)
 		}
 	}
 
@@ -178,7 +177,6 @@ extension ConversationViewController {
 				guard let responseObject = try? response.map(DataResponse<Message>.self) else { return }
 				guard let message = responseObject.data else { return }
 				self.appendMessage(message: message)
-//				self.layoutableView.tableView.reloadData()
 			}
 		}
 	}
@@ -190,11 +188,6 @@ private extension ConversationViewController {
 
 	func appendMessage(message: Message) {
 		layoutableView.conversationInputView.resignFirstResponder()
-
-//		let formatter = DateFormatter()
-//		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-//		let random = Int.random(in: 0 ... 10)
-//		let newMessage = Message(id: random, message: message ?? "", isAnswer: false, createdAt: formatter.string(from: Date()))
 
 		request.messages.append(message)
 

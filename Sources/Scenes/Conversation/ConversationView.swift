@@ -27,8 +27,8 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 	}()
 
 	func setupViews() {
-		tableView.backgroundColor = Desk360.Config.Conversation.backgroundColor
-		backgroundColor = Desk360.Config.Conversation.Input.backgroundColor
+		tableView.backgroundColor = Desk360.Config.currentTheme.conversationBackgroundColor
+		backgroundColor = Desk360.Config.currentTheme.conversationBackgroundColor
 		addSubview(tableView)
 
 		let tap = UITapGestureRecognizer(target: self, action: #selector(didTap))

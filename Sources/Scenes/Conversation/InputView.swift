@@ -23,12 +23,11 @@ final class InputView: UIView, Layoutable {
 		var view = UITextView()
 		view.setContentCompressionResistancePriority(.required, for: .vertical)
 		view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-		view.backgroundColor = .blue
 		view.translatesAutoresizingMaskIntoConstraints = false
-		view.backgroundColor = Desk360.Config.Conversation.Input.TextView.backgroundColor
-		view.textColor = Desk360.Config.Conversation.Input.TextView.textColor
-		view.tintColor = Desk360.Config.Conversation.Input.TextView.tintColor
-		view.layer.borderColor = Desk360.Config.Conversation.Input.TextView.borderColor.cgColor
+		view.backgroundColor = .clear
+		view.textColor = Desk360.Config.currentTheme.conversationInputTextColor
+		view.tintColor = Desk360.Config.currentTheme.conversationInputTextColor
+		view.layer.borderColor = Desk360.Config.currentTheme.conversationInputBorderColor.cgColor
 		view.font = UIFont.systemFont(ofSize: 18)
 		view.layer.cornerRadius = 8
 		view.layer.borderWidth = 1
@@ -41,24 +40,17 @@ final class InputView: UIView, Layoutable {
 		let label = UILabel()
 		label.font = UIFont.systemFont(ofSize: 18)
 		label.text = Desk360.Strings.Support.conversationMessageTextViewPlaceholder
-		label.backgroundColor = Desk360.Config.Conversation.Input.TextView.backgroundColor
-		label.textColor = Desk360.Config.Conversation.Input.TextView.Placeholder.textColor
+		label.textColor = Desk360.Config.currentTheme.requestPlaceholderTextColor
 		label.translatesAutoresizingMaskIntoConstraints = false
 		return label
 	}()
 
 	lazy var sendButton: UIButton = {
 		let button = UIButton(type: .system)
-		button.backgroundColor = Desk360.Config.Conversation.Input.backgroundColor
-		button.tintColor = Desk360.Config.Conversation.Input.SendButton.tintColor
-
-		if let icon = Desk360.Config.Conversation.Input.SendButton.icon {
-			button.setImage(icon, for: .normal)
-			button.imageView?.contentMode = .scaleAspectFit
-		} else {
-			button.setTitle(Desk360.Strings.Support.conversationSendButtonTitle, for: .normal)
-		}
-
+		button.backgroundColor = Desk360.Config.currentTheme.backgroundColor
+		button.tintColor = Desk360.Config.currentTheme.conversationSendButtonTintColor
+		button.setImage(Desk360.Config.Conversation.Input.SendButton.icon, for: .normal)
+		button.imageView?.contentMode = .scaleAspectFit
 		button.titleLabel?.font = Desk360.Config.Conversation.Input.SendButton.font
 		button.setContentCompressionResistancePriority(.required, for: .horizontal)
 		button.setContentHuggingPriority(.defaultLow, for: .horizontal)
@@ -68,17 +60,17 @@ final class InputView: UIView, Layoutable {
 
 	private lazy var activityIndicator: UIActivityIndicatorView = {
 		let view = UIActivityIndicatorView()
-		view.color = Desk360.Config.Conversation.Input.SendButton.tintColor
+		view.color = Desk360.Config.currentTheme.conversationSendButtonTintColor
 		return view
 	}()
 
 	lazy var createRequestButton: UIButton = {
 		let button = UIButton(type: .system)
-		button.backgroundColor = Desk360.Config.Conversation.Input.CreateRequestButton.backgroundColor
-		button.tintColor = Desk360.Config.Conversation.Input.CreateRequestButton.tintColor
+		button.backgroundColor = Desk360.Config.currentTheme.requestSendButtonBackgroundColor
+		button.tintColor = Desk360.Config.currentTheme.requestTintColor
 		button.setTitle(Desk360.Strings.Support.conversationExpiredButtonTitle, for: .normal)
 		button.titleLabel?.font = Desk360.Config.Conversation.Input.CreateRequestButton.font
-		button.setTitleColor(Desk360.Config.Conversation.Input.CreateRequestButton.textColor, for: .normal)
+		button.setTitleColor(Desk360.Config.currentTheme.requestSendButtonTintColor, for: .normal)
 		button.layer.cornerRadius = Desk360.Config.Conversation.Input.CreateRequestButton.cornerRadius
 		button.clipsToBounds = true
 		return button
@@ -101,7 +93,7 @@ final class InputView: UIView, Layoutable {
 
 	func setupViews() {
 		frame = initialFrame
-		backgroundColor = Desk360.Config.Conversation.Input.backgroundColor
+		backgroundColor = Desk360.Config.currentTheme.requestBackgroundColor
 
 		textView.addSubview(placeholderLabel)
 		textView.delegate = self

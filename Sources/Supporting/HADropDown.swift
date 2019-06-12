@@ -159,8 +159,8 @@ class HADropDown: UIView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 
-		self.layer.cornerRadius = 4
-		self.layer.borderColor = UIColor.gray.cgColor
+		self.layer.cornerRadius = 8
+		self.layer.borderColor = Desk360.Config.currentTheme.requestBorderColor.cgColor
 		self.layer.borderWidth = 1
 
 		label.frame = CGRect(x: 10, y: 0, width: self.frame.width, height: self.frame.height)
@@ -205,9 +205,9 @@ class HADropDown: UIView {
 			let height: CGFloat = CGFloat(items.count > 5 ? itemHeight*5 : itemHeight*Double(items.count))
 			self.table.layer.zPosition = 1
 			self.table.removeFromSuperview()
-			self.table.layer.borderColor = UIColor.lightGray.cgColor
+			self.table.layer.borderColor = Desk360.Config.currentTheme.requestBorderColor.cgColor
 			self.table.layer.borderWidth = 1
-			self.table.layer.cornerRadius = 4
+			self.table.layer.cornerRadius = 8
 			var rootView = self.superview
 			// adding tableview to root view( we can say first view in hierarchy)
 			while rootView?.superview != nil {
@@ -242,6 +242,7 @@ class HADropDown: UIView {
 		if delegate != nil {
 			delegate.willHide(dropDown: self)
 		}
+
 		if isCollapsed {
 			// removing tableview from rootview
 			UIView.animate(withDuration: 0.25, animations: {
@@ -292,6 +293,7 @@ extension HADropDown: UITableViewDelegate, UITableViewDataSource {
 
 		return cell!
 	}
+
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return CGFloat(itemHeight)
 	}
@@ -305,6 +307,7 @@ extension HADropDown: UITableViewDelegate, UITableViewDataSource {
 			delegate.didSelectItem(dropDown: self, at: selectedIndex)
 		}
 	}
+
 	func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
 		return UIView()
 	}

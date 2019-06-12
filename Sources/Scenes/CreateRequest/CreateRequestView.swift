@@ -29,6 +29,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		view.showsVerticalScrollIndicator = false
 		view.showsHorizontalScrollIndicator = false
 		view.keyboardDismissMode = .interactive
+//		view.alwaysBounceVertical = true
 		return view
 	}()
 
@@ -38,16 +39,10 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		setFieldStyle(field)
 
 		field.placeholder = Desk360.Strings.Support.createNameTextFieldPlaceholder
-		if let color = Desk360.Config.Requests.Create.NameTextField.PlaceholderTextColor {
-			field.setPlaceHolderTextColor(color)
-		}
+		field.setPlaceHolderTextColor(Desk360.Config.currentTheme.requestPlaceholderTextColor)
+		field.textColor = Desk360.Config.currentTheme.requestTextColor
+		field.tintColor = Desk360.Config.currentTheme.requestTintColor
 
-		field.backgroundColor = Desk360.Config.Requests.Create.NameTextField.backgroundColor
-		field.textColor = Desk360.Config.Requests.Create.NameTextField.textColor
-		field.tintColor = Desk360.Config.Requests.Create.tintColor
-		if let icon = Desk360.Config.Requests.Create.NameTextField.icon {
-			setIcon(icon, to: field)
-		}
 		return field
 	}()
 
@@ -57,16 +52,10 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		setFieldStyle(field)
 
 		field.placeholder = Desk360.Strings.Support.createEmailTextFieldPlaceholder
-		if let color = Desk360.Config.Requests.Create.NameTextField.PlaceholderTextColor {
-			field.setPlaceHolderTextColor(color)
-		}
+		field.setPlaceHolderTextColor(Desk360.Config.currentTheme.requestPlaceholderTextColor)
+		field.textColor = Desk360.Config.currentTheme.requestTextColor
+		field.tintColor = Desk360.Config.currentTheme.requestTintColor
 
-		field.backgroundColor = Desk360.Config.Requests.Create.EmailTextField.backgroundColor
-		field.textColor = Desk360.Config.Requests.Create.EmailTextField.textColor
-		field.tintColor = Desk360.Config.Requests.Create.tintColor
-		if let icon = Desk360.Config.Requests.Create.EmailTextField.icon {
-			setIcon(icon, to: field)
-		}
 		return field
 	}()
 
@@ -76,16 +65,10 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		setFieldStyle(field)
 
 		field.placeholder = Desk360.Strings.Support.createSubjectTextFieldPlaceholder
-		if let color = Desk360.Config.Requests.Create.SubjectTextField.PlaceholderTextColor {
-			field.setPlaceHolderTextColor(color)
-		}
+		field.setPlaceHolderTextColor(Desk360.Config.currentTheme.requestPlaceholderTextColor)
+		field.textColor = Desk360.Config.currentTheme.requestTextColor
+		field.tintColor = Desk360.Config.currentTheme.requestTintColor
 
-		field.backgroundColor = Desk360.Config.Requests.Create.SubjectTextField.backgroundColor
-		field.textColor = Desk360.Config.Requests.Create.SubjectTextField.textColor
-		field.tintColor = Desk360.Config.Requests.Create.tintColor
-		if let icon = Desk360.Config.Requests.Create.SubjectTextField.icon {
-			setIcon(icon, to: field)
-		}
 		return field
 	}()
 
@@ -93,9 +76,9 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		let view = HADropDown()
 		view.title = Desk360.Strings.Support.subjectTypeListPlaceHolder
 		view.textAllignment = NSTextAlignment.left
-		view.itemTextColor = Desk360.Config.Requests.Create.DropDownListView.textColor
-		view.titleColor = Desk360.Config.Requests.Create.SubjectTextField.PlaceholderTextColor ?? .black
-		view.itemBackground = Desk360.Config.Requests.Create.DropDownListView.backgroundColor
+		view.itemTextColor = Desk360.Config.currentTheme.dropDownListTextColor
+		view.titleColor = Desk360.Config.currentTheme.requestPlaceholderTextColor
+		view.itemBackground = Desk360.Config.currentTheme.dropDownListBackgroundColor
 		view.isCollapsed = true
 		view.delegate = self
 
@@ -106,7 +89,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	private lazy var arrowIcon: UIImageView = {
 		let imageView = UIImageView()
 		imageView.contentMode = .scaleAspectFit
-		imageView.tintColor = Desk360.Config.Requests.Create.DropDownListView.arrowTintColor
+		imageView.tintColor = Desk360.Config.currentTheme.arrowIconTintColor
 		imageView.image = Desk360.Config.Requests.Create.DropDownListView.arrowIcon
 		return imageView
 	}()
@@ -114,10 +97,10 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	lazy var messageTextView: UITextView = {
 		var view = UITextView()
 		setFieldStyle(view)
-		view.textColor = Desk360.Config.Requests.Create.MessageTextView.textColor
-		view.tintColor = Desk360.Config.Requests.Create.tintColor
-		view.backgroundColor = Desk360.Config.Requests.Create.MessageTextView.backgroundColor
-		view.layer.borderColor = Desk360.Config.Requests.Create.MessageTextView.borderColor.cgColor
+		view.backgroundColor = .clear
+		view.textColor = Desk360.Config.currentTheme.requestTextColor
+		view.tintColor = Desk360.Config.currentTheme.requestTintColor
+		view.layer.borderColor = Desk360.Config.currentTheme.requestPlaceholderTextColor.cgColor
 		view.layer.borderWidth = Desk360.Config.Requests.Create.MessageTextView.borderWidth
 		return view
 	}()
@@ -125,12 +108,21 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	lazy var sendButton: UIButton = {
 		var button = UIButton(type: .system)
 		button.setTitle(Desk360.Strings.Support.createMessageSendButtonTitle, for: .normal)
-		button.backgroundColor = Desk360.Config.Requests.Create.SendButton.backgroundColor
+		button.backgroundColor = Desk360.Config.currentTheme.requestSendButtonBackgroundColor
 		button.layer.cornerRadius = Desk360.Config.Requests.Create.SendButton.cornerRadius
 		button.clipsToBounds = true
-		button.tintColor = Desk360.Config.Requests.Create.SendButton.tintColor
+		button.tintColor = Desk360.Config.currentTheme.requestSendButtonTintColor
 		button.titleLabel?.font = Desk360.Config.Requests.Create.SendButton.font
 		return button
+	}()
+
+	private lazy var desk360Label: UILabel = {
+		let label = UILabel()
+		label.textColor = Desk360.Config.currentTheme.desk360LabelTextColor
+		label.text = "Desk360"
+		label.font = UIFont.systemFont(ofSize: 12)
+		label.textAlignment = .center
+		return label
 	}()
 
 	private lazy var stackView: UIStackView = {
@@ -143,7 +135,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	}()
 
 	func setupViews() {
-		backgroundColor = Desk360.Config.Requests.Create.backgroundColor
+		backgroundColor = Desk360.Config.currentTheme.requestBackgroundColor
 
 		let gesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
 		self.addGestureRecognizer(gesture)
@@ -156,7 +148,9 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 		scrollView.addSubview(stackView)
 		scrollView.addSubview(sendButton)
+		scrollView.addSubview(desk360Label)
 		addSubview(scrollView)
+
 	}
 
 	func setupLayout() {
@@ -183,7 +177,8 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		}
 
 		messageTextView.snp.makeConstraints { make in
-			make.height.equalTo(UIScreen.main.bounds.height * 0.3)
+//			make.height.equalToSuperview().multipliedBy(0.3)
+			make.height.equalTo(scrollView.snp.height).multipliedBy(0.3)
 		}
 
 		sendButton.snp.makeConstraints { make in
@@ -191,18 +186,28 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 			make.height.equalTo(UIButton.preferredHeight)
 			make.centerX.equalToSuperview()
 			make.width.equalTo(stackView)
-			make.bottom.equalToSuperview().inset(preferredSpacing)
+//			make.leading.trailing.equalToSuperview().inset(preferredSpacing)
+			make.bottom.equalTo(desk360Label.snp.top).inset(-preferredSpacing)
+//			make.bottom.equalToSuperview().inset(preferredSpacing)
+		}
+
+		desk360Label.snp.makeConstraints { make in
+//			make.leading.trailing.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
+			make.centerX.equalToSuperview()
+			make.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
 		}
 
 		stackView.snp.makeConstraints { make in
 			make.top.equalToSuperview().inset(preferredSpacing)
-			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
+//			make.leading.trailing.equalToSuperview().inset(preferredSpacing)
+//			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
+//			make.leading.trailing.equalToSuperview().inset(preferredSpacing)
+			make.width.equalTo(scrollView.snp.width).inset(preferredSpacing)
 			make.centerX.equalToSuperview()
 		}
 
-		scrollView.snp.makeConstraints { make in
-			make.edges.equalToSuperview()
-		}
+		scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
 	}
 
 }
@@ -225,7 +230,7 @@ extension CreateRequestView: HADropDownDelegate {
 
 	func didSelectItem(dropDown: HADropDown, at index: Int) {
 		guard index != -1 else { return }
-		dropDownListView.titleColor = Desk360.Config.Requests.Create.SubjectTextField.textColor
+		dropDownListView.titleColor = Desk360.Config.currentTheme.requestTextColor
 	}
 
 	func setTicketType(ticketTypes: [TicketType]?) {
@@ -311,20 +316,12 @@ extension CreateRequestView: UITextFieldDelegate {
 // MARK: - Helpers
 private extension CreateRequestView {
 
-	func setIcon(_ icon: UIImage, to field: UITextField) {
-		let view = UIImageView(image: icon)
-		view.contentMode = .scaleAspectFit
-		view.frame.size.width = 60
-		field.leftView = view
-		field.leftViewMode = .always
-	}
-
 	func setFieldStyle(_ field: UIView) {
 		field.layer.cornerRadius = Desk360.Config.Requests.Create.cornerRadius
 		field.layer.masksToBounds = true
 		field.layer.borderWidth = Desk360.Config.Requests.Create.borderWidth
-		field.layer.borderColor = Desk360.Config.Requests.Create.borderColor.cgColor
-		field.tintColor = Desk360.Config.Requests.Create.tintColor
+		field.layer.borderColor = Desk360.Config.currentTheme.requestBorderColor.cgColor
+		field.tintColor = Desk360.Config.currentTheme.requestTintColor
 
 		let font = Desk360.Config.Requests.Create.font
 

@@ -7,9 +7,22 @@
 
 import UIKit
 
+protocol ListingViewControllerDelegate: AnyObject {
+
+	func listingViewController(_ viewController: ListingViewController, didSelectTicket ticket: Ticket)
+
+}
+
 final class ListingViewController: UIViewController, Layouting, UITableViewDelegate, UITableViewDataSource {
 
 	typealias ViewType = ListingView
+
+	weak var delegate: ListingViewControllerDelegate?
+
+	convenience init(tickets: [Ticket]) {
+		self.init()
+		self.requests = tickets
+	}
 
 	var requests: [Ticket] = [] {
 		didSet {
@@ -35,15 +48,7 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 		super.viewWillAppear(animated)
 
 		navigationItem.title = Desk360.Strings.Support.createTitle
-//		navigationController?.navigationBar.makeTransparent(withTint: Desk360.Config.Requests.Listing.NavItem.tintColor)
-
-		if let icon = Desk360.Config.Requests.Listing.backBarButtonIcon {
-			navigationController?.navigationBar.backIndicatorImage = icon
-			navigationController?.navigationBar.backIndicatorTransitionMaskImage = icon
-			navigationItem.backBarButtonItem = .init(title: "", style: .plain, target: nil, action: nil)
-		}
-
-		navigationController?.navigationBar.setColors(background: Desk360.Config.backgroundColor, text: Desk360.Config.Requests.Listing.NavItem.tintColor)
+		navigationItem.leftBarButtonItem = NavigationItems.close(target: self, action: #selector(didTapCloseButton))
 
 		requests = Stores.ticketsStore.allObjects().sorted()
 		fetchRequests(showLoading: requests.isEmpty)
@@ -56,7 +61,7 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 	}
 
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(RequestTableViewCell.self)
+		let cell = tableView.dequeueReusableCell(ListingTableViewCell.self)
 		cell.configure(for: requests[indexPath.row])
 		return cell
 	}
@@ -95,18 +100,19 @@ private extension ListingViewController {
 			return
 		}
 
-		if let icon = Desk360.Config.Requests.Listing.NavItem.icon {
-			navigationItem.rightBarButtonItem = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(didTapCreateBarButtonItem(_:)))
-			navigationItem.rightBarButtonItem?.tintColor = Desk360.Config.Requests.Listing.NavItem.tintColor
-		} else {
-			navigationItem.rightBarButtonItem = UIBarButtonItem(title: Desk360.Strings.Support.listingNavButtonTitle, style: .plain, target: self, action: #selector(didTapCreateBarButtonItem(_:)))
-		}
+		navigationItem.rightBarButtonItem = NavigationItems.add(target: self, action: #selector(didTapCreateBarButtonItem(_:)))
+
 	}
 
 }
 
 // MARK: - Actions
 extension ListingViewController {
+
+	@objc
+	func didTapCloseButton() {
+		dismiss(animated: true, completion: nil)
+	}
 
 	@objc func didTapBackButton() {
 		if navigationController?.presentingViewController == nil {
