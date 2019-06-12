@@ -55,7 +55,6 @@ class ListingView: UIView, Layoutable, Loadingable {
 
 		desk360Label.snp.makeConstraints { make in
 			make.leading.trailing.equalToSuperview().inset(preferredSpacing)
-//			make.height.equalTo(preferredSpacing)
 			make.bottom.equalTo(safeArea.bottom).offset(-preferredSpacing * 0.5)
 		}
 

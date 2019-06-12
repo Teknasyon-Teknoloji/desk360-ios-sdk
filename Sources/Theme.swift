@@ -72,5 +72,4 @@ public protocol DeskTheme {
 	var desk360LabelTextColor: UIColor { get }
 
 	var navItemTintColor: UIColor { get }
-	
 }

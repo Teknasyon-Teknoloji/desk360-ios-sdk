@@ -107,7 +107,6 @@ internal extension ListingTableViewCell {
 			messageLabel.font = Config.Expired.titleFont
 			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
 			dateLabel.font = Config.Expired.dateFont
-//			iconImageView.image = Config.Expired.icon
 			iconImageView.image = nil
 			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
 
@@ -127,7 +126,6 @@ internal extension ListingTableViewCell {
 			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
 			dateLabel.font = Config.Read.dateFont
 			iconImageView.image = Config.Read.icon
-//			iconImageView.image = UIImage(named: "Image.bundle/test.png")
 			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
 
 		case .unread:
@@ -137,13 +135,9 @@ internal extension ListingTableViewCell {
 			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
 			dateLabel.font = Config.Unread.dateFont
 			iconImageView.image = Config.Unread.icon
-//			iconImageView.image = UIImage(named: "Assets/Image.bundle/test.png")
 			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
 		}
 
-//		iconImageView.image = let image = UIImage(named: "test", in: Bundle(for: Picture.self), compatibleWith: nil)
-
-//		iconImageView.image = UIImage(fromAssets: "iconSupportCreate@3x", type: "png")
 	}
 
 }

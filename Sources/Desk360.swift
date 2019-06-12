@@ -47,11 +47,6 @@ public final class Desk360 {
 		navController.present(desk360Navcontroller, animated: true, completion: nil)
 	}
 
-	public static func present(in viewController: UIViewController, animated: Bool = true) {
-		let navController = UINavigationController(rootViewController: ListingViewController())
-		viewController.present(navController, animated: animated)
-	}
-
 	static func register() {
 
 		guard let date = Stores.registerExpiredAt.object else { return }

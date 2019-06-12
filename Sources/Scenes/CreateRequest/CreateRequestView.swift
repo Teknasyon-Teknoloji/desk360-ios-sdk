@@ -29,7 +29,6 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		view.showsVerticalScrollIndicator = false
 		view.showsHorizontalScrollIndicator = false
 		view.keyboardDismissMode = .interactive
-//		view.alwaysBounceVertical = true
 		return view
 	}()
 
@@ -177,7 +176,6 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		}
 
 		messageTextView.snp.makeConstraints { make in
-//			make.height.equalToSuperview().multipliedBy(0.3)
 			make.height.equalTo(scrollView.snp.height).multipliedBy(0.3)
 		}
 
@@ -186,22 +184,16 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 			make.height.equalTo(UIButton.preferredHeight)
 			make.centerX.equalToSuperview()
 			make.width.equalTo(stackView)
-//			make.leading.trailing.equalToSuperview().inset(preferredSpacing)
 			make.bottom.equalTo(desk360Label.snp.top).inset(-preferredSpacing)
-//			make.bottom.equalToSuperview().inset(preferredSpacing)
 		}
 
 		desk360Label.snp.makeConstraints { make in
-//			make.leading.trailing.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
 			make.centerX.equalToSuperview()
 			make.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
 		}
 
 		stackView.snp.makeConstraints { make in
 			make.top.equalToSuperview().inset(preferredSpacing)
-//			make.leading.trailing.equalToSuperview().inset(preferredSpacing)
-//			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
-//			make.leading.trailing.equalToSuperview().inset(preferredSpacing)
 			make.width.equalTo(scrollView.snp.width).inset(preferredSpacing)
 			make.centerX.equalToSuperview()
 		}

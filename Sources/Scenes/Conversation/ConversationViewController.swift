@@ -70,13 +70,6 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
 		navigationItem.title = request.subject
-//			Desk360.Config.Conversation.title ?? request.message.ars.truncate(toLength: 15)
-
-//		if let icon = Desk360.Config.Conversation.backBarButtonIcon {
-//			navigationController?.navigationBar.backIndicatorImage = icon
-//			navigationController?.navigationBar.backIndicatorTransitionMaskImage = icon
-//			navigationItem.backBarButtonItem = .init(title: "", style: .plain, target: nil, action: nil)
-//		}
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
