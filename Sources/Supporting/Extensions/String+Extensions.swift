@@ -69,4 +69,12 @@ extension String {
 		return self.replacingOccurrences(of: "\\/", with: "/").replacingOccurrences(of: "\"", with: "")
 	}
 
+	/// Localize string
+	///
+	/// - Returns: return value locale strings
+	func localize() -> String {
+		guard let bundle = Bundle.localizedBundle else { return "" }
+		return NSLocalizedString(self, bundle: bundle, comment: "")
+	}
+
 }

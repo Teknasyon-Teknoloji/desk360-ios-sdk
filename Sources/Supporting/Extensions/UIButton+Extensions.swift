@@ -22,5 +22,5 @@ extension UIButton {
 	static var preferredHeight: CGFloat {
 		return height
 	}
-	
+
 }

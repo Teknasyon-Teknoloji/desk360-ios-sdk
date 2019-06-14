@@ -14,4 +14,24 @@ extension Bundle {
 		return resourceBundle
 	}
 
+	static var localizedBundle: Bundle? {
+		let bundle = Bundle(for: ListingView.self)
+		guard let path = bundle.path(forResource: "Desk360", ofType: "bundle") else { return nil }
+		guard let localizedBundle = Bundle(path: path) else { return nil }
+		return localizedBundle
+	}
+
+	static var base: Bundle? {
+		let bundle = Bundle(identifier: "test")
+		guard let resourceBundleUrl = bundle?.url(forResource: "Desk360", withExtension: "lproj") else { return nil }
+		guard let resourceBundle = Bundle(url: resourceBundleUrl) else { return nil }
+		return resourceBundle
+//		if let path = Bundle.main.path(forResource: "Desk360", ofType: "lproj") {
+//			if let baseBundle = Bundle(path: path) {
+//				return baseBundle
+//			}
+//		}
+//		return Bundle.main
+	}
+
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// Common local strings to use internally in Desk360.
 public extension Desk360 {
@@ -68,48 +69,52 @@ public extension Desk360.Strings {
 	struct Support {
 		private init() {}
 
+		static var listinNavTitle: String {
+			return "listing.nav.title".localize()
+		}
+
 		static var subjectTypeListPlaceHolder: String {
-			return "Please Select"
+			return "create.form.request_type".localize()
 		}
 
 		static var createTitle: String {
-			return "Contact Us"
+			return "listing.nav.create".localize()
 		}
 
 		static var createNameTextFieldPlaceholder: String {
-			return "Name"
+			return "create.form.name".localize()
 		}
 
 		static var createSubjectTextFieldPlaceholder: String {
-			return "Subject"
+			return "create.from.subject".localize()
 		}
 
 		static var createEmailTextFieldPlaceholder: String {
-			return "Email Address"
+			return "create.form.email".localize()
 		}
 
 		static var createMessageTextViewPlaceholder: String {
-			return "Your Message"
+			return "create.form.message".localize()
 		}
 
 		static var createMessageSendButtonTitle: String {
-			return "Send Message"
+			return "create.form.submit".localize()
 		}
 
 		static var listingNavButtonTitle: String {
-			return "Create Request"
+			return "listing.nav.title".localize()
 		}
 
 		static var listingPlaceholderLabelTitle: String {
-			return "You have made no support calls yet."
+			return "listing.placeholder.title".localize()
 		}
 
 		static var listingPlaceholderButtonTitle: String {
-			return "Create a support task"
+			return "listing.placeholder.submit".localize()
 		}
 
 		static var conversationMessageTextViewPlaceholder: String {
-			return "Message"
+			return "create.form.message".localize()
 		}
 
 		static var conversationSendButtonTitle: String {

@@ -8,7 +8,6 @@
 import UIKit
 import DeviceKit
 
-
 private var height: CGFloat = {
 	let diagonal = Device.current.realDevice.diagonal
 	if diagonal >= 6 && diagonal < 7 { return 58.0 }

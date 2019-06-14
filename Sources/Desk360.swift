@@ -14,13 +14,16 @@ public final class Desk360 {
 
 	private(set) public static var appId: String!
 
+	private(set) public static var deviceId: String!
+
 	static var token: String? = ""
 
 	static let authPlugin = AccessTokenPlugin { Desk360.token ?? "" }
 	static let apiProvider = MoyaProvider<Service>(plugins: [authPlugin])
 
-	public init(appId: String) {
+	public init(appId: String, deviceId: String) {
 		Desk360.appId = appId
+		Desk360.deviceId = deviceId
 	}
 
 	public static var shared: Desk360 {
@@ -30,8 +33,14 @@ public final class Desk360 {
 		return aDesk
 	}
 
-	public static func start(appId: String) {
-		desk = Desk360(appId: appId)
+	public static func start(appId: String, _ deviceId: String? = nil) {
+		var id: String = ""
+		if deviceId == nil {
+			id = UIDevice.current.uniqueIdentifier
+		} else {
+			id = deviceId ?? ""
+		}
+		desk = Desk360(appId: appId, deviceId: id)
 		Stores.setStoresInitialValues()
 		Desk360.register()
 		print("Desk360 SDK was initialized successfully!")
@@ -52,7 +61,7 @@ public final class Desk360 {
 		guard let date = Stores.registerExpiredAt.object else { return }
 		guard date < Date() else { return }
 
-		Desk360.apiProvider.request(.register(appKey: Desk360.appId)) {  result in
+		Desk360.apiProvider.request(.register(appKey: Desk360.appId, deviceId: Desk360.deviceId)) {  result in
 			switch result {
 			case .failure:
 				print("error")

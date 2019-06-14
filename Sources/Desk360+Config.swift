@@ -96,7 +96,6 @@ public extension Desk360.Config.Requests {
 	struct Listing {
 		private init() {}
 
-
 		/// Corner radius.
 		static var cornerRadius: CGFloat = Desk360.Config.cornerRadius
 
@@ -157,7 +156,6 @@ public extension Desk360.Config.Requests.Create {
 				return image
 			}
 		}()
-
 
 		/// Arrow Size
 		static var arrowSize: CGFloat = 20
@@ -422,7 +420,6 @@ public extension Desk360.Config.Conversation.Input.TextView {
 
 	/// Font.
 	static var font: UIFont = .systemFont(ofSize: 18)
-
 
 	/// Corner radius.
 	static var cornerRadius: CGFloat = Desk360.Config.Conversation.cornerRadius

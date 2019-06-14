@@ -8,8 +8,7 @@
 import Moya
 
 enum Service {
-
-	case register(appKey: String)
+	case register(appKey: String, deviceId: String)
 	case create(TicketRequest)
 	case getTickets
 	case ticketTypeList
@@ -63,8 +62,8 @@ extension Service: TargetType, AccessTokenAuthorizable {
 
 	var task: Task {
 		switch self {
-		case .register(let appKey):
-			return .requestParameters(parameters: ["app_key": appKey, "device_id": UIDevice.current.uniqueIdentifier], encoding: JSONEncoding.default)
+		case .register(let appKey, let deviceId):
+			return .requestParameters(parameters: ["app_key": appKey, "device_id": deviceId], encoding: JSONEncoding.default)
 		case .create(let ticket):
 			return .requestCustomJSONEncodable(ticket, encoder: JSONEncoder())
 		case .getTickets, .ticketTypeList, .ticketWithId:

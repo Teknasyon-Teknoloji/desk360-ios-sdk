@@ -66,12 +66,10 @@ extension SplitViewController: UISplitViewControllerDelegate {
 
 }
 
-
 // MARK: - ListingViewControllerDelegate
 extension SplitViewController: ListingViewControllerDelegate {
 
 	func listingViewController(_ viewController: ListingViewController, didSelectTicket ticket: Ticket) {
-		
 	}
 
 }

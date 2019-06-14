@@ -47,7 +47,7 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
-		navigationItem.title = Desk360.Strings.Support.createTitle
+		navigationItem.title = Desk360.Strings.Support.listinNavTitle
 		navigationItem.leftBarButtonItem = NavigationItems.close(target: self, action: #selector(didTapCloseButton))
 
 		requests = Stores.ticketsStore.allObjects().sorted()

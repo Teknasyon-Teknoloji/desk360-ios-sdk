@@ -18,7 +18,8 @@ final class ViewController: UIViewController {
 	}
 
 	@IBAction func didTapPresentButton(_ sender: UIButton) {
-		Desk360.present(in: self)
+//		Desk360.present(in: self)
+		Desk360.show(on: self, animated: true)
 	}
 
 	@IBAction func didTapPushButton(_ sender: UIButton) {
