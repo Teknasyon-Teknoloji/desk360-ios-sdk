@@ -2,7 +2,7 @@
   Localizable.strings
   Desk360
 
-  Created by Omar on 5/13/19.
+  Created by samet on 14.06.2019.
   
 */
 
@@ -25,4 +25,3 @@
 "conversation.expired" = "Create New Request";
 
 "error.message" = "Bir bağlantı hatası oluştu, lütfen tekrar deneyiniz.";
-

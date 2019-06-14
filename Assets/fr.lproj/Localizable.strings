@@ -2,11 +2,11 @@
   Localizable.strings
   Desk360
 
-  Created by Omar on 5/13/19.
+  Created by samet on 14.06.2019.
   
 */
 
-"listing.nav.title" = "Test";
+"listing.nav.title" = "Contact Us";
 "listing.nav.create" = "Create";
 "listing.placeholder.title" = "You have made no support calls yet";
 "listing.placeholder.submit" = "Create a support task!";
