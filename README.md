@@ -11,7 +11,6 @@
 - [Summary](#summary)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Versioning](#installation)
 - [Support](#installation)
 - [License](#license)
 
