@@ -10,10 +10,10 @@
 
 - [Summary](#summary)
 - [Installation](#installation)
-- [Usage](Usage)
+- [Usage](#usage)
 - [Versioning](#installation)
 - [Support](#installation)
-- [License](License)
+- [License](#license)
 
 # Summary
 
