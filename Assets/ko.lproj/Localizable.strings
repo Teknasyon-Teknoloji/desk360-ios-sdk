@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "문의하기";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "아직 지원 요청을 하지 않으셨습니다.";
+"listing.placeholder.submit" = "지원 요청하기";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "이름";
+"create.form.email" = "전자메일 주소";
+"create.form.message" = "요청 내용";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "타입";
+"create.form.submit" = "보내기";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "새 티켓 만들기";
+
+"ok.button" = "허용";
+"cancel.button" = "취소";
+"update.button" = "업데이트";
+"delete.button" = " 삭제";
+"try.again.button" = "다시 해 보다";
+"continue.button" = "계속";
+
+"maintenace.alert.title" = "점검중. 나중에 다시 시도해주십시오";
+"connection.error.message" = "네트워크 연결에 실패했습니다, 다시 시도해주세요.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

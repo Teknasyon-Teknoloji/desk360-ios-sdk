@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "Kontaktujte nás";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "Doposud jste neprovedli žádný hovor pro podporu.";
+"listing.placeholder.submit" = "Vytvořit úkol pro podporu";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Vaše celé jméno";
+"create.form.email" = "Vaše e-mailová adresa";
+"create.form.message" = "Vaše zpráva";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "Typ";
+"create.form.submit" = "Odeslat";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Vytvořit nový lístek";
+
+"ok.button" = "OK";
+"cancel.button" = "Zrušit";
+"update.button" = "Aktualizovat";
+"delete.button" = "Odstranit";
+"try.again.button" = "Opakujte";
+"continue.button" = "Pokračovat";
+
+"maintenace.alert.title" = "Probíhá údržba. Opakujte akci později";
+"connection.error.message" = "Připojení k síti selhalo, prosím, zkuste to znovu.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

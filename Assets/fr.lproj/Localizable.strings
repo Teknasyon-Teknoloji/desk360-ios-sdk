@@ -6,22 +6,32 @@
   
 */
 
-"listing.nav.title" = "Contact Us";
+"listing.nav.title" = "Contactez-nous";
 "listing.nav.create" = "Create";
-"listing.placeholder.title" = "You have made no support calls yet";
-"listing.placeholder.submit" = "Create a support task!";
+"listing.placeholder.title" = "Vous n'avez encore effectué aucun appel d'assistance.";
+"listing.placeholder.submit" = "Créer une tâche de support";
 "listing.supports.title" = "My Support Requests";
 
 "create.nav.title" = "New Support Task";
-"create.form.name" = "Full Name";
-"create.form.email" = "Email Address";
-"create.form.message" = "Message";
+"create.form.name" = "Votre nom complet";
+"create.form.email" = "Votre adresse email";
+"create.form.message" = "Votre message";
 "create.from.subject" = "Subject";
-"create.form.request_type" = "Request Type";
-"create.form.submit" = "Send";
+"create.form.request_type" = "Sorte";
+"create.form.submit" = "Envoyer";
 
 "conversation.input.placeholder" = "Message";
 "conversation.input.submit" = "Send";
-"conversation.expired" = "Create New Request";
+"conversation.expired" = "Créer un nouveau ticket";
 
-"error.message" = "Network connection failed, please try again.";
+"ok.button" = "OK";
+"cancel.button" = "Annuler";
+"update.button" = "Mettre à jour";
+"delete.button" = "Supprimer";
+"try.again.button" = "Recommencez";
+"continue.button" = "Continuer";
+
+"maintenace.alert.title" = "En maintenance. Veuillez réessayer plus tard";
+"connection.error.message" = "Perte de connexion réseau, veuillez réessayer plus tard.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

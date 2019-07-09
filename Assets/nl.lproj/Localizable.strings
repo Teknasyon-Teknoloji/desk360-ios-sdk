@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "Neem contact met ons op";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "U heeft nog geen contact met de klantenondersteuning opgenomen.";
+"listing.placeholder.submit" = "Maak een ondersteuningstaak aan";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Uw volledige naam";
+"create.form.email" = "Uw e-mailadres";
+"create.form.message" = "Uw bericht";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "Soort";
+"create.form.submit" = "Verzenden";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Maak een nieuw ticket aan";
+
+"ok.button" = "Ok";
+"cancel.button" = "Annuleren";
+"update.button" = "Updaten";
+"delete.button" = "Verwijderen";
+"try.again.button" = "Opnieuw proberen";
+"continue.button" = "Verder";
+
+"maintenace.alert.title" = "In onderhoud. Probeer het later opnieuw";
+"connection.error.message" = "Verbinding met netwerk mislukt, probeer alsjeblieft opnieuw.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

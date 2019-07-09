@@ -1,0 +1,41 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "Makipag-ugnayan sa Amin";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "Wala ka pang ginagawang support call.";
+"listing.placeholder.submit" = "Gumawa ng support task";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Buong pangalan mo";
+"create.form.email" = "E-mail address mo";
+"create.form.message" = "Mensahe mo";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "Uri/Klase";
+"create.form.submit" = "Ipadala";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Gumawa ng Bagong Tiket";
+
+"ok.button" = "OK";
+"cancel.button" = "Kanselahin";
+"update.button" = "Upang i-update";
+"delete.button" = "Tanggalin";
+"try.again.button" = "Subukang muli";
+"continue.button" = "Magpatuloy";
+
+"maintenace.alert.title" = "Minimentena. Pakisubukang muli mamaya";
+"connection.error.message" = "Hindi matagumpay ang pagkonekta sa network, pakisubukang muli.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";
+
+
+
+

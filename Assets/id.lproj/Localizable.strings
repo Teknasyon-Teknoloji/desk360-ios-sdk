@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "Hubungi Kami";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "Anda belum membuat dukungan panggilan.";
+"listing.placeholder.submit" = "Buat tugas dukungan";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Nama lengkap Anda";
+"create.form.email" = "Alamat email Anda";
+"create.form.message" = "Pesan Anda";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "Tipe";
+"create.form.submit" = "Kirim";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Buat Tiket Baru";
+
+"ok.button" = "Oke";
+"cancel.button" = "Batal";
+"update.button" = "Untuk memperbaharui";
+"delete.button" = "Hapus";
+"try.again.button" = "Mencoba kembali";
+"continue.button" = "Lanjutkan";
+
+"maintenace.alert.title" = "Dalam pemeliharaan. Harap dicoba kembali nanti";
+"connection.error.message" = "Koneksi jaringan gagal, silakan coba lagi.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

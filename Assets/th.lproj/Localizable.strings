@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "ติดต่อเรา";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "คุณยังไม่ได้ทำการโทรศัพท์ติดต่อแผนกสนับสนุน";
+"listing.placeholder.submit" = "สร้างรายการงานสำหรับการสนับสนุน";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "ชื่อเต็มของคุณ";
+"create.form.email" = "ที่อยู่อีเมลของคุณ";
+"create.form.message" = "ข้อความของคุณ";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "ประเภท";
+"create.form.submit" = "ส่ง";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "สร้างตั๋วใหม่";
+
+"ok.button" = "ตกลง";
+"cancel.button" = "ยกเลิก";
+"update.button" = "เพื่อปรับปรุง";
+"delete.button" = "ลบ";
+"try.again.button" = "ลองใหม่อีกครั้ง";
+"continue.button" = "ดำเนินการต่อ";
+
+"maintenace.alert.title" = "กำลังดำเนินการซ่อมบำรุง. โปรดลองอีกครั้งในภายหลัง";
+"connection.error.message" = "การเชื่อมต่อเครือข่ายล้มเหลว โปรดลองอีกครั้ง";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

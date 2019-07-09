@@ -12,3 +12,4 @@ struct DataResponse<D: Codable>: Codable {
 	var data: D?
 
 }
+

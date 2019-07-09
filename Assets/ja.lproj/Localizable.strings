@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "お問い合わせ";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "サポートコールは未使用です。";
+"listing.placeholder.submit" = "サポートタスクを作成";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "氏名";
+"create.form.email" = "メールアドレス";
+"create.form.message" = "メッセージ";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "タイプ";
+"create.form.submit" = "送信";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "新規チケットを作成";
+
+"ok.button" = "OK";
+"cancel.button" = "キャンセル";
+"update.button" = "更新する";
+"delete.button" = "削除";
+"try.again.button" = "リトライ";
+"continue.button" = "続行";
+
+"maintenace.alert.title" = "メンテナンス中. 後程再試行してください";
+"connection.error.message" = "ネットワーク接続に失敗しました、もう一度やり直してください。";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

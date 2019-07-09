@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "Liên hệ với Chúng tôi";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "Bạn chưa thực hiện cuộc gọi hỗ trợ nào.";
+"listing.placeholder.submit" = "Tạo một nhiệm vụ hỗ trợ";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Tên đầy đủ của bạn";
+"create.form.email" = "Địa chỉ e-mail  của bạn";
+"create.form.message" = "Tin nhắn của bạn";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "Loại";
+"create.form.submit" = "Gửi";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Tạo Thẻ Mới";
+
+"ok.button" = "OK";
+"cancel.button" = "Hủy";
+"update.button" = "Cập nhật";
+"delete.button" = "Xóa";
+"try.again.button" = "Thử lại";
+"continue.button" = "Tiếp tục";
+
+"maintenace.alert.title" = "Đang bảo trì. Vui lòng thử lại sau";
+"connection.error.message" = "Lỗi kết nối mạng, vui lòng thử lại";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

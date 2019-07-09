@@ -47,7 +47,7 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
-		navigationItem.title = Desk360.Strings.Support.listinNavTitle
+		navigationItem.title = Desk360.Strings.Support.listingNavTitle
 		navigationItem.leftBarButtonItem = NavigationItems.close(target: self, action: #selector(didTapCloseButton))
 
 		requests = Stores.ticketsStore.allObjects().sorted()
@@ -131,11 +131,22 @@ private extension ListingViewController {
 			layoutableView.setLoading(true)
 		}
 
+		guard Desk360.isReachable else {
+			networkError()
+			return
+		}
+
 		Desk360.apiProvider.request(.getTickets) { [weak self] result in
 			self?.layoutableView.setLoading(false)
 			guard let self = self else { return }
 			switch result {
 			case .failure(let error):
+				if error.response?.statusCode == 400 {
+					Desk360.register()
+					Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+					return
+				}
+				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
 				print(error.localizedDescription)
 			case .success(let response):
 				guard let tickets = try? response.map(DataResponse<[Ticket]>.self) else { return }
@@ -147,6 +158,11 @@ private extension ListingViewController {
 			}
 		}
 
+	}
+
+	func networkError() {
+		layoutableView.setLoading(false)
+		Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
 	}
 
 }

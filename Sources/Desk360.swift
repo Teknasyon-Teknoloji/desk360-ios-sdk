@@ -7,6 +7,8 @@
 
 import UIKit
 import Moya
+import Alamofire
+import Foundation
 
 private var desk: Desk360?
 
@@ -16,14 +18,38 @@ public final class Desk360 {
 
 	private(set) public static var deviceId: String!
 
+	private(set) public static var timeZone: String!
+
+	private(set) public static var appPlatform: String!
+
+	private(set) public static var appVersion: String!
+
+	private(set) public static var languageCode: String!
+
 	static var token: String? = ""
 
 	static let authPlugin = AccessTokenPlugin { Desk360.token ?? "" }
 	static let apiProvider = MoyaProvider<Service>(plugins: [authPlugin])
 
+	/// Whether internet is reachable or not.
+	static var isReachable: Bool {
+		return NetworkReachabilityManager()?.isReachable ?? false
+	}
+
 	public init(appId: String, deviceId: String) {
 		Desk360.appId = appId
 		Desk360.deviceId = deviceId
+		Desk360.appPlatform = "iOS"
+		Desk360.appVersion = getVersion()
+		Desk360.timeZone = TimeZone.current.identifier
+		Desk360.languageCode = Locale.current.languageCode
+	}
+
+	func getVersion() -> String {
+		guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
+			return "0.0.0"
+		}
+		return version
 	}
 
 	public static var shared: Desk360 {
@@ -58,10 +84,10 @@ public final class Desk360 {
 
 	static func register() {
 
-		guard let date = Stores.registerExpiredAt.object else { return }
-		guard date < Date() else { return }
+//		guard let date = Stores.registerExpiredAt.object else { return }
+//		guard date < Date() else { return }
 
-		Desk360.apiProvider.request(.register(appKey: Desk360.appId, deviceId: Desk360.deviceId)) {  result in
+		Desk360.apiProvider.request(.register(appKey: Desk360.appId, deviceId: Desk360.deviceId, appPlatform: Desk360.appPlatform, appVersion: Desk360.appVersion, timeZone: Desk360.timeZone, languageCode: Desk360.languageCode)) {  result in
 			switch result {
 			case .failure:
 				print("error")

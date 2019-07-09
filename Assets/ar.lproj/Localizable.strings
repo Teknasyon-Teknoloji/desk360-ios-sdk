@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "اتصل بنا";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "لم تتصل بالدعم بعد.";
+"listing.placeholder.submit" = "إنشاء مهمة دعم";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "اسمك الكامل";
+"create.form.email" = "عنوان بريدك الإلكتروني";
+"create.form.message" = "رسالتك";
+"create.from.subject" = "Subject";
+"create.form.request_type" = " نوع";
+"create.form.submit" = "إرسال";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "إنشاء تذكرة جديدة";
+
+"ok.button" = "حسنًا";
+"cancel.button" = "إلغاء";
+"update.button" = "للتحديث";
+"delete.button" = "حذف";
+"try.again.button" = "إعادة المحاولة";
+"continue.button" = "استمرار";
+
+"maintenace.alert.title" = "تحت الصيانة. يرجى إعادة المحاولة لاحقا";
+"connection.error.message" = "فشل اتصال الشبكة ، يرجى المحاولة مرة أخرى.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

@@ -22,6 +22,16 @@
 
 "conversation.input.placeholder" = "Message";
 "conversation.input.submit" = "Send";
-"conversation.expired" = "Create New Request";
+"conversation.expired" = "Yeni Talep Ekle";
 
-"error.message" = "Bir bağlantı hatası oluştu, lütfen tekrar deneyiniz.";
+"ok.button" = "Tamam";
+"cancel.button" = "İptal";
+"update.button" = "Güncelle";
+"delete.button" = "Sil";
+"try.again.button" = "Tekrar Dene";
+"continue.button" = "Devam Et";
+
+"maintenace.alert.title" = "Bakım çalışması yapılıyor. Lütfen daha sonra tekrar deneyiniz";
+"connection.error.message" = "Bir bağlantı hatası oluştu, lütfen tekrar deneyiniz.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

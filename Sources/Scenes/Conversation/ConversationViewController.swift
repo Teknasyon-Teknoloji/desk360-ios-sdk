@@ -144,9 +144,14 @@ extension ConversationViewController {
 
 			guard let self = self else { return }
 			switch result {
-			case .failure(let response):
-				print(response.localizedDescription)
-
+			case .failure(let error):
+				if error.response?.statusCode == 400 {
+					Desk360.register()
+					Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+					return
+				}
+				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: false)
+				print(error.localizedDescription)
 			case .success(let response):
 				guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
 				guard let data = tickets.data else { return }
@@ -165,6 +170,12 @@ extension ConversationViewController {
 			self.layoutableView.conversationInputView.setLoading(false)
 			switch result {
 			case .failure(let error):
+				if error.response?.statusCode == 400 {
+					Desk360.register()
+					Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+					return
+				}
+				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: false)
 				print(error.localizedDescription)
 			case .success(let response):
 				guard let responseObject = try? response.map(DataResponse<Message>.self) else { return }

@@ -69,7 +69,7 @@ public extension Desk360.Strings {
 	struct Support {
 		private init() {}
 
-		static var listinNavTitle: String {
+		static var listingNavTitle: String {
 			return "listing.nav.title".localize()
 		}
 
@@ -122,7 +122,7 @@ public extension Desk360.Strings {
 		}
 
 		static var conversationExpiredButtonTitle: String {
-			return "Create New Request"
+			return "conversation.expired".localize()
 		}
 
 	}

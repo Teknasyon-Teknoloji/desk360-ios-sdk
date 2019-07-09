@@ -35,7 +35,7 @@ final class CreateRequestViewController: UIViewController, Layouting {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
-		navigationItem.title = Desk360.Strings.Support.createTitle
+		navigationItem.title = Desk360.Strings.Support.listingNavTitle
 		fetchTicketType()
 
 		if let icon = Desk360.Config.Requests.Create.backBarButtonIcon {
@@ -112,10 +112,17 @@ extension CreateRequestViewController: KeyboardObserving {
 private extension CreateRequestViewController {
 
 	func fetchTicketType() {
+
 		Desk360.apiProvider.request(.ticketTypeList) { [weak self] result in
 			guard let self = self else { return }
 			switch result {
 			case .failure(let error):
+				if error.response?.statusCode == 400 {
+					Desk360.register()
+					Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+					return
+				}
+				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: false)
 				print(error.localizedDescription)
 			case .success(let response):
 				guard let ticketTypes = try? response.map(DataResponse<[TicketType]>.self) else { return }
@@ -137,6 +144,12 @@ private extension CreateRequestViewController {
 			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let error):
+				if error.response?.statusCode == 400 {
+					Desk360.register()
+					Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+					return
+				}
+				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: false)
 				print(error.localizedServerDescription)
 			case .success:
 				self.navigationController?.popViewController(animated: true)

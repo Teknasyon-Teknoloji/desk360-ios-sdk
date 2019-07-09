@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "Наши контакты";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "Вы пока еще не направляли запрос о поддержке.";
+"listing.placeholder.submit" = "Создать задачу поддержки";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Ваше полное имя";
+"create.form.email" = "Ваш адрес электронной почты";
+"create.form.message" = "Ваше сообщение";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "Вид";
+"create.form.submit" = "Отправить";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Добавить новый запрос";
+
+"ok.button" = "OK";
+"cancel.button" = "Отмена";
+"update.button" = "Обновить";
+"delete.button" = "Удалить";
+"try.again.button" = "снова пробовать";
+"continue.button" = "Продолжить";
+
+"maintenace.alert.title" = "Выполняется техобслуживание. Повторите попытку позже";
+"connection.error.message" = "Произошла ошибка подключения, пожалуйста, попробуйте еще раз.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "פנו אלינו";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "עדיין לא פניתם לתמיכה.";
+"listing.placeholder.submit" = "פתחו פנייה לתמיכה";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "השם המלא שלכם";
+"create.form.email" = "כתובת האימייל שלכם";
+"create.form.message" = "ההודעה שלכם";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "סוג";
+"create.form.submit" = "שליחה";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "צור כרטיסייה חדשה";
+
+"ok.button" = "אישור";
+"cancel.button" = "ביטול";
+"update.button" = "לעדכן";
+"delete.button" = "מחק";
+"try.again.button" = "נסה שוב";
+"continue.button" = "המשך";
+
+"maintenace.alert.title" = "מתבצעות עבודות תחזוקה. נסו שוב מאוחר יותר";
+"connection.error.message" = "חיבור הרשת נכשל, אנא נסה שוב.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

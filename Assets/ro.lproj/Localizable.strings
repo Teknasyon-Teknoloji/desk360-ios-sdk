@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "Contactați-ne";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "Încă nu ați apelat asistența.";
+"listing.placeholder.submit" = "Creați o solicitare de asistență";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Numele dvs. complet";
+"create.form.email" = "Adresa dvs. de e-mail";
+"create.form.message" = "Mesajul dvs.";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "Tip";
+"create.form.submit" = "Trimiteți";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Creați o nouă solicitare";
+
+"ok.button" = "OK";
+"cancel.button" = "Anulare";
+"update.button" = "A updata";
+"delete.button" = "Ștergeți";
+"try.again.button" = "Reîncercați";
+"continue.button" = "Continuare";
+
+"maintenace.alert.title" = "În regim de mentenanță. Vă rugăm să încercați din nou mai târziu";
+"connection.error.message" = "Conexiunea la rețea nu a reușit, vă rugăm să reîncercați.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

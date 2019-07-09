@@ -13,15 +13,29 @@
 "listing.supports.title" = "My Support Requests";
 
 "create.nav.title" = "New Support Task";
-"create.form.name" = "Full Name";
+"create.form.name" = "Name Surname";
 "create.form.email" = "Email Address";
 "create.form.message" = "Message";
 "create.from.subject" = "Subject";
-"create.form.request_type" = "Request Type";
+"create.form.request_type" = "Type";
 "create.form.submit" = "Send";
 
 "conversation.input.placeholder" = "Message";
 "conversation.input.submit" = "Send";
 "conversation.expired" = "Create New Request";
 
-"error.message" = "Network connection failed, please try again.";
+"ok.button" = "Ok";
+"cancel.button" = "Cancel";
+"update.button" = "Update";
+"delete.button" = "Delete";
+"try.again.button" = "Try Again";
+"continue.button" = "Continue";
+
+"maintenace.alert.title" = "Under Maintenance";
+"connection.error.message" = "Network connection failed, please try again.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";
+
+
+
+

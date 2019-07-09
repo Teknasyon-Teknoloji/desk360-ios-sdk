@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "Kontakt";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "Nie zadzwoniłeś jeszcze po pomoc.";
+"listing.placeholder.submit" = "Utwórz zadanie wsparcia";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Pełne imię i nazwisko";
+"create.form.email" = "Adres e-mail";
+"create.form.message" = "Twoja wiadomość";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "Typ";
+"create.form.submit" = "Wyślij";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Utwórz nowy numer";
+
+"ok.button" = "OK";
+"cancel.button" = "Anuluj";
+"update.button" = "Aktualizować";
+"delete.button" = "Usuń";
+"try.again.button" = "Spróbować ponownie";
+"continue.button" = "Kontynuuj";
+
+"maintenace.alert.title" = "Prowadzone są prace konserwacyjne. Spróbuj ponownie później";
+"connection.error.message" = "Brak połączenia z siecią. Spróbuj ponownie.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "Kontakt os";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "Du har ikke ringet til supporten endnu.";
+"listing.placeholder.submit" = "Opret en supportopgave";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Dit fulde navn";
+"create.form.email" = "Din e-mailadresse";
+"create.form.message" = "Din besked";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "Type";
+"create.form.submit" = "Send";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Opret ny billet";
+
+"ok.button" = "OK";
+"cancel.button" = "Afmeld";
+"update.button" = "At opdatere";
+"delete.button" = "Slet";
+"try.again.button" = "Prøve igen";
+"continue.button" = "Fortsæt";
+
+"maintenace.alert.title" = "Under vedligeholdelse. Prøv igen senere";
+"connection.error.message" = "Netværksforbindelse mislykkedes. Prøv igen.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";

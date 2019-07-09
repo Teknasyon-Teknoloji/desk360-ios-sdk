@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Desk360
+
+  Created by samet on 14.06.2019.
+  
+*/
+
+"listing.nav.title" = "Vegye fel velünk a kapcsolatot";
+"listing.nav.create" = "Create";
+"listing.placeholder.title" = "Még nem indított hívást az ügyfélszolgálat irányába.";
+"listing.placeholder.submit" = "Ügyfélszolgálati feladat létrehozása";
+"listing.supports.title" = "My Support Requests";
+
+"create.nav.title" = "New Support Task";
+"create.form.name" = "Az Ön teljes neve";
+"create.form.email" = "Az Ön e-mail-címe";
+"create.form.message" = "Az Ön üzenete";
+"create.from.subject" = "Subject";
+"create.form.request_type" = "Típus";
+"create.form.submit" = "Küldés";
+
+"conversation.input.placeholder" = "Message";
+"conversation.input.submit" = "Send";
+"conversation.expired" = "Új jegy létrehozása";
+
+"ok.button" = "OK";
+"cancel.button" = "Mégse";
+"update.button" = "Aktualizálni";
+"delete.button" = "Törlés";
+"try.again.button" = "Próbálja újra";
+"continue.button" = "Tovább";
+
+"maintenace.alert.title" = "Karbantartás alatt. Kérjük, próbáld meg újra később";
+"connection.error.message" = "Hálózat kapcsolódás sikertelen, kérjük próbálja újra.";
+"server.error" = "Unknow Server Error";
+"subscription.expired" = "Your subscription period expired";
