@@ -23,7 +23,7 @@ extension Service: TargetType, AccessTokenAuthorizable {
 	}
 
 	var baseURL: URL {
-		return URL(string: "http://52.59.142.138:10380/api/v1/")!
+		return URL(string: "http://teknasyon.desk360.com/api/v1")!
 	}
 
 	var validationType: ValidationType {
