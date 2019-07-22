@@ -67,12 +67,10 @@ public final class Desk360 {
 		} else {
 			id = deviceId ?? ""
 		}
-	
 		desk = Desk360(appId: appId, deviceId: id)
 		Stores.setStoresInitialValues()
 		Desk360.register()
 		print("Desk360 SDK was initialized successfully!")
-		
 	}
 
 	public static func show(on viewController: UIViewController, animated: Bool = true) {

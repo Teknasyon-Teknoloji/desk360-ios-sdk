@@ -202,22 +202,14 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	}
 
 	func setupLayout() {
+
 		nameTextField.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight)
 		}
-
-//		nameErrorLabel.snp.makeConstraints { make in
-//			make.leading.equalToSuperview().inset(preferredSpacing * 0.25)
-//		}
-
+		
 		emailTextField.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight)
 		}
-
-
-//		subjectErrorLabel.snp.makeConstraints { make in
-//			make.height.equalTo(preferredSpacing * 2)
-//		}
 
 		subjectTextField.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight)
@@ -309,7 +301,6 @@ extension CreateRequestView: UITextViewDelegate {
 	}
 
 }
-
 
 // MARK: - Actions
 extension CreateRequestView {
