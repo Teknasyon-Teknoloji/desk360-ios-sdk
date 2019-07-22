@@ -99,7 +99,6 @@ private extension ListingViewController {
 	func setLoadingabletConfig() {
 		LoadingableConfig.indicatorBackgroundColor = .clear
 		LoadingableConfig.indicatorType = .circleStrokeSpin
-		Desk360.Config.currentTheme
 		LoadingableConfig.indicatorTintColor = Desk360.Config.currentTheme.listingCellTintColor
 	}
 
@@ -136,6 +135,7 @@ extension ListingViewController {
 private extension ListingViewController {
 
 	func fetchRequests(showLoading: Bool) {
+
 		if showLoading {
 			layoutableView.setLoading(true)
 		}
