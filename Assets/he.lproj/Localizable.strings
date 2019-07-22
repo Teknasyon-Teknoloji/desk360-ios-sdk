@@ -35,3 +35,8 @@
 "connection.error.message" = "חיבור הרשת נכשל, אנא נסה שוב.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "נא להזין ערך.";
+"email_regex" = "נא לרשום כתובת אימייל תקפה.";
+"subject_regex" = "נא למלא את השדות הריקים";
+"message_regex" = "עליך להזין יותר תווים בשדה השם";

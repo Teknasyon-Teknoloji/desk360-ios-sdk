@@ -35,3 +35,8 @@
 "connection.error.message" = "Koneksi jaringan gagal, silakan coba lagi.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "Masukkan Nilai.";
+"email_regex" = "Mohon masukkan alamat e-mail yang valid.";
+"subject_regex" = "Harap mengisi blangko";
+"message_regex" = "Anda harus mengetikkan lebih banyak karakter pada bidang nama";

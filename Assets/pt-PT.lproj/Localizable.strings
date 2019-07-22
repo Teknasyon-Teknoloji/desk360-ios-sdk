@@ -35,3 +35,8 @@
 "connection.error.message" = "A ligação à rede falhou, por favor tente outra vez.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "Por favor, Insira Um Valor.";
+"email_regex" = "Por favor, escreva um endereço de e-mail válido.";
+"subject_regex" = "Preencha todos os espaços em branco";
+"message_regex" = "Deve digitar mais carateres no campo do nome";

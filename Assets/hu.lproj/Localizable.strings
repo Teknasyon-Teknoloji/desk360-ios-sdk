@@ -35,3 +35,8 @@
 "connection.error.message" = "Hálózat kapcsolódás sikertelen, kérjük próbálja újra.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "Kérjük, adj meg egy értéket.";
+"email_regex" = "Kérjük, adj meg egy érvényes e-mail-címet.";
+"subject_regex" = "Kérjük, töltsd ki a mezőket";
+"message_regex" = "Egynél több karaktert kel beírnod a név mezőbe ";

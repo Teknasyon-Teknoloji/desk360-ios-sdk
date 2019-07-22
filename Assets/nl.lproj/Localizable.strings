@@ -35,3 +35,8 @@
 "connection.error.message" = "Verbinding met netwerk mislukt, probeer alsjeblieft opnieuw.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "Voer een waarde in";
+"email_regex" = "Voer een geldig e-mailadres in.";
+"subject_regex" = "Vul de lege plekken in";
+"message_regex" = "Je moet meer tekens typen in het naamveld";

@@ -24,6 +24,10 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	var ticketTypes: [TicketType] = []
 
+	var nameEditCheck = false
+	var emailEditCheck = false
+	var subjectEditCheck = false
+
 	lazy var scrollView: UIScrollView = {
 		let view = UIScrollView()
 		view.showsVerticalScrollIndicator = false
@@ -41,15 +45,26 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		field.setPlaceHolderTextColor(Desk360.Config.currentTheme.requestPlaceholderTextColor)
 		field.textColor = Desk360.Config.currentTheme.requestTextColor
 		field.tintColor = Desk360.Config.currentTheme.requestTintColor
-
+		field.tag = 1
 		return field
+	}()
+
+	lazy var nameErrorLabel: UILabel = {
+		let label = UILabel()
+//		label.textRect(forBounds: CGRect(, limitedToNumberOfLines: <#T##Int#>)
+		label.textColor = UIColor.init(hex: "d93a50")!
+		label.font = UIFont.systemFont(ofSize: 11)
+		label.textAlignment = .left
+		label.text = Desk360.Strings.Support.createNameRegex
+		label.isHidden = true
+		return label
 	}()
 
 	lazy var emailTextField: SupportTextField = {
 		var field = SupportTextField()
 		field.setTextType(.emailAddress)
 		setFieldStyle(field)
-
+		field.tag = 2
 		field.placeholder = Desk360.Strings.Support.createEmailTextFieldPlaceholder
 		field.setPlaceHolderTextColor(Desk360.Config.currentTheme.requestPlaceholderTextColor)
 		field.textColor = Desk360.Config.currentTheme.requestTextColor
@@ -58,17 +73,37 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return field
 	}()
 
+	lazy var emailErrorLabel: UILabel = {
+		let label = UILabel()
+		label.textColor = UIColor.init(hex: "d93a50")!
+		label.font = UIFont.systemFont(ofSize: 11)
+		label.textAlignment = .left
+		label.text = Desk360.Strings.Support.createEmailRegex
+		label.isHidden = true
+		return label
+	}()
+
 	lazy var subjectTextField: SupportTextField = {
 		var field = SupportTextField()
 		field.setTextType(.generic)
 		setFieldStyle(field)
-
+		field.tag = 3
 		field.placeholder = Desk360.Strings.Support.createSubjectTextFieldPlaceholder
 		field.setPlaceHolderTextColor(Desk360.Config.currentTheme.requestPlaceholderTextColor)
 		field.textColor = Desk360.Config.currentTheme.requestTextColor
 		field.tintColor = Desk360.Config.currentTheme.requestTintColor
 
 		return field
+	}()
+
+	lazy var subjectErrorLabel: UILabel = {
+		let label = UILabel()
+		label.textColor = UIColor.init(hex: "d93a50")!
+		label.font = UIFont.systemFont(ofSize: 11)
+		label.textAlignment = .left
+		label.text = Desk360.Strings.Support.createSubjectRegex
+		label.isHidden = true
+		return label
 	}()
 
 	lazy var dropDownListView: HADropDown = {
@@ -104,6 +139,16 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return view
 	}()
 
+	lazy var messageTextViewErrorLabel: UILabel = {
+		let label = UILabel()
+		label.textColor = UIColor.init(hex: "d93a50")!
+		label.font = UIFont.systemFont(ofSize: 11)
+		label.textAlignment = .left
+		label.text = Desk360.Strings.Support.createMessageRegex
+		label.isHidden = true
+		return label
+	}()
+
 	lazy var sendButton: UIButton = {
 		var button = UIButton(type: .system)
 		button.setTitle(Desk360.Strings.Support.createMessageSendButtonTitle, for: .normal)
@@ -125,7 +170,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	}()
 
 	private lazy var stackView: UIStackView = {
-		let view = UIStackView(arrangedSubviews: [nameTextField, emailTextField, subjectTextField, dropDownListView, messageTextView])
+		let view = UIStackView(arrangedSubviews: [nameTextField, nameErrorLabel, emailTextField, emailErrorLabel, subjectTextField, subjectErrorLabel, dropDownListView, messageTextView, messageTextViewErrorLabel])
 		view.axis = .vertical
 		view.alignment = .fill
 		view.distribution = .fill
@@ -143,7 +188,11 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		emailTextField.delegate = self
 		messageTextView.delegate = self
 		subjectTextField.delegate = self
-//		dropDownListView.delegate = self
+
+		nameTextField.addTarget(self, action: #selector(checkTexFields(sender:)), for: .editingChanged)
+		emailTextField.addTarget(self, action: #selector(checkTexFields(sender:)), for: .editingChanged)
+		subjectTextField.addTarget(self, action: #selector(checkTexFields(sender:)), for: .editingChanged)
+		//		dropDownListView.delegate = self
 
 		scrollView.addSubview(stackView)
 		scrollView.addSubview(sendButton)
@@ -157,9 +206,18 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 			make.height.equalTo(UITextField.preferredHeight)
 		}
 
+//		nameErrorLabel.snp.makeConstraints { make in
+//			make.leading.equalToSuperview().inset(preferredSpacing * 0.25)
+//		}
+
 		emailTextField.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight)
 		}
+
+
+//		subjectErrorLabel.snp.makeConstraints { make in
+//			make.height.equalTo(preferredSpacing * 2)
+//		}
 
 		subjectTextField.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight)
@@ -245,7 +303,13 @@ extension CreateRequestView: UITextViewDelegate {
 		scrollView.setContentOffset(offset, animated: true)
 	}
 
+	func textViewDidChange(_ textView: UITextView) {
+		guard let message = messageTextView.trimmedText, message.count > 0 else { return }
+		messageTextViewErrorLabel.isHidden = true
+	}
+
 }
+
 
 // MARK: - Actions
 extension CreateRequestView {
@@ -264,27 +328,32 @@ extension CreateRequestView: UITextFieldDelegate {
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		switch textField {
 		case nameTextField:
-			guard let text = nameTextField.trimmedText, text.count > 2 else {
+			guard let text = nameTextField.trimmedText, text.count > 0 else {
+				nameErrorLabel.isHidden = false
 				nameTextField.shake()
 				return false
 			}
-
+			nameErrorLabel.isHidden = true
 			emailTextField.becomeFirstResponder()
 			return true
 
 		case emailTextField:
 			if emailTextField.emailAddress == nil {
+				emailErrorLabel.isHidden = false
 				emailTextField.shake()
 				return false
 			}
+			emailErrorLabel.isHidden = true
 			subjectTextField.becomeFirstResponder()
 			return true
 
 		case subjectTextField:
-			guard let text = subjectTextField.trimmedText, text.count > 2 else {
+			guard let text = subjectTextField.trimmedText, text.count > 0 else {
 				subjectTextField.shake()
+				subjectErrorLabel.isHidden = false
 				return false
 			}
+			subjectErrorLabel.isHidden = true
 			subjectTextField.endEditing(true)
 			dropDownListView.showList()
 			return true
@@ -301,6 +370,32 @@ extension CreateRequestView: UITextFieldDelegate {
 		default:
 			return true
 		}
+	}
+
+}
+
+// MARK: - Actions
+extension CreateRequestView {
+
+	@objc func checkTexFields(sender: UITextField) {
+
+		switch sender.tag {
+		case 1:
+			if let text = nameTextField.trimmedText, text.count > 0 {
+				nameErrorLabel.isHidden = true
+			}
+		case 2:
+			if emailTextField.emailAddress != nil {
+				emailErrorLabel.isHidden = true
+			}
+		case 3:
+			if let text = subjectTextField.trimmedText, text.count > 0 {
+				subjectErrorLabel.isHidden = true
+			}
+		default:
+			break
+		}
+
 	}
 
 }

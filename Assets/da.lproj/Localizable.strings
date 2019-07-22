@@ -35,3 +35,8 @@
 "connection.error.message" = "Netværksforbindelse mislykkedes. Prøv igen.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "Do pole jména musíte napsat více znaků";
+"email_regex" = "Skriv venligst en gyldig e-mailadresse.";
+"subject_regex" = "Udfyld venligst alle tomme felter";
+"message_regex" = "Du bør skrive flere tegn i navnefeltet";

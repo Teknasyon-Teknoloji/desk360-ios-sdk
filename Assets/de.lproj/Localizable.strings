@@ -35,3 +35,8 @@
 "connection.error.message" = "Netzwerkverbindung fehlgeschlagen, versuchen sie es erneut";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "Bitte einen Wert eingeben.";
+"email_regex" = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
+"subject_regex" = "Bitte füllen Sie die leeren Felder aus";
+"message_regex" = "Sie sollten mehr Zeichen in das Namensfeld eingeben";

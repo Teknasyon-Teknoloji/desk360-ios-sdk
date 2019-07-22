@@ -35,3 +35,8 @@
 "connection.error.message" = "Lỗi kết nối mạng, vui lòng thử lại";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "Vui Lòng Nhập Một Giá Trị.";
+"email_regex" = "Vui lòng điền địa chỉ e-mail hợp lệ.";
+"subject_regex" = "Vui lòng điền vào chỗ trống";
+"message_regex" = "Bạn phải nhập nhiều ký tự hơn vào trường tên";

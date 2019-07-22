@@ -101,6 +101,22 @@ public extension Desk360.Strings {
 			return "create.form.submit".localize()
 		}
 
+		static var createNameRegex: String {
+			return "name_regex".localize()
+		}
+
+		static var createEmailRegex: String {
+			return "email_regex".localize()
+		}
+
+		static var createSubjectRegex: String {
+			return "subject_regex".localize()
+		}
+
+		static var createMessageRegex: String {
+			return "message_regex".localize()
+		}
+
 		static var listingNavButtonTitle: String {
 			return "listing.nav.title".localize()
 		}

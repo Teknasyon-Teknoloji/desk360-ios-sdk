@@ -35,3 +35,8 @@
 "connection.error.message" = "Произошла ошибка подключения, пожалуйста, попробуйте еще раз.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "Вы должны ввести больше символов в поле «Имя».";
+"email_regex" = "Укажите действительный адрес эл. почты.";
+"subject_regex" = "Заполните пустые поля";
+"message_regex" = "Вам нужно ввести больше символов в поле имени";

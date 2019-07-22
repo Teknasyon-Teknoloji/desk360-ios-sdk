@@ -35,3 +35,8 @@
 "connection.error.message" = "การเชื่อมต่อเครือข่ายล้มเหลว โปรดลองอีกครั้ง";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "โปรดป้อนค่า";
+"email_regex" = "โปรดเขียนที่อยู่อีเมลที่ถูกต้อง";
+"subject_regex" = "โปรดกรอกช่องว่าง";
+"message_regex" = "คุณควรพิมพ์ตัวอักษรมากขึ้นในช่องชื่อ";

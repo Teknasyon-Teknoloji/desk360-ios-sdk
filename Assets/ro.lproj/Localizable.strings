@@ -35,3 +35,8 @@
 "connection.error.message" = "Conexiunea la rețea nu a reușit, vă rugăm să reîncercați.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "Vă rugăm să introduceți valoarea A.";
+"email_regex" = "Vă rugăm să scrieți o adresă de e-mail validă.";
+"subject_regex" = "Vă rugăm să completați spațiile goale";
+"message_regex" = "Ar trebui să tastați mai multe caractere în câmpul numelui";

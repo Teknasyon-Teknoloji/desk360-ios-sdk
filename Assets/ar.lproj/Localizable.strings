@@ -35,3 +35,8 @@
 "connection.error.message" = "فشل اتصال الشبكة ، يرجى المحاولة مرة أخرى.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "يرجى إدخال قيمة";
+"email_regex" = "يرجى كتابة عنوان بريد إلكتروني صالح";
+"subject_regex" = "يرجى ملئ الفراغات";
+"message_regex" = "عليك كتابة أكثر من حرف في حقل الاسم";

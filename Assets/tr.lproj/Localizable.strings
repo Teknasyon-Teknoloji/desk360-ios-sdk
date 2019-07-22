@@ -35,3 +35,8 @@
 "connection.error.message" = "Bir bağlantı hatası oluştu, lütfen tekrar deneyiniz.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "İsim alanına fazla karakter girmelisin.";
+"email_regex" = "Geçersiz email adresi girdiniz.";
+"subject_regex" = "Lütfen doldurunuz";
+"message_regex" = "Mesaj alanına birden fazla karakter girmelisiniz";

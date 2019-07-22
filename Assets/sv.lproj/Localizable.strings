@@ -35,3 +35,8 @@
 "connection.error.message" = "Nätverksanslutningen misslyckades, försök igen.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "Vänligen ange ett värde.";
+"email_regex" = "Skriv en giltig e-postadress.";
+"subject_regex" = "Vänligen fyll i de blanka fälten";
+"message_regex" = "Vänligen ange fler tecken i namnfältet";

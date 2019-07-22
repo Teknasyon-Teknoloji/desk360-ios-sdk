@@ -35,3 +35,8 @@
 "connection.error.message" = "नेटवर्क कनेक्शन विफल हो गया, कृपया पुनः प्रयास करें।";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "कृपया मान दर्ज करें।";
+"email_regex" = "कृपया एक वैध ई-मेल पता लिखें।";
+"subject_regex" = "कृपया रिक्त-स्थानों की पूर्ती करें";
+"message_regex" = "आपको नाम लिखने के स्थान पर और अधिक अक्षर लिखने चाहिएं ";

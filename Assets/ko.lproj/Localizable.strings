@@ -35,3 +35,8 @@
 "connection.error.message" = "네트워크 연결에 실패했습니다, 다시 시도해주세요.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "가치를 입력하세요.";
+"email_regex" = "유효한 이메일을 적어주시기 바랍니다.";
+"subject_regex" = "Please Fill All Fields";
+"message_regex" = "빈칸을 채워주십시오";

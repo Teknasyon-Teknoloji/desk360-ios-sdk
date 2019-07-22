@@ -35,3 +35,8 @@
 "connection.error.message" = "نیٹ ورک کنکشن ناکام، براہ مہربانی پھر سے کوشش کریں.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "براہِ کرم نام کوئی قدر اندراج کریں";
+"email_regex" = "براہ کرم ایک درست ای میل ایڈریس لکھیں۔";
+"subject_regex" = "برائے مہربانی خالی جگہیں پر کریں";
+"message_regex" = "آپ کر نام کے فیلڈ میں مزید حروف لکھنے چاہئے";

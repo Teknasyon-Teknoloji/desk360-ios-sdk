@@ -48,34 +48,50 @@ final class CreateRequestViewController: UIViewController, Layouting {
 	@objc private func didTapSendRequestButton() {
 
 		guard let name = layoutableView.nameTextField.trimmedText, name.count > 2 else {
+			layoutableView.nameErrorLabel.isHidden = false
+//			layoutableView.scrollView.scrollsToTop = true
+			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
 			layoutableView.nameTextField.shake()
 			layoutableView.nameTextField.becomeFirstResponder()
 			return
 		}
 
+		layoutableView.nameErrorLabel.isHidden = true
+
 		guard let email = layoutableView.emailTextField.emailAddress else {
+			layoutableView.emailErrorLabel.isHidden = false
+			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: UITextField.preferredHeight), animated: true)
 			layoutableView.emailTextField.shake()
 			layoutableView.emailTextField.becomeFirstResponder()
 			return
 		}
 
-		guard let subject = layoutableView.subjectTextField.trimmedText, subject.count > 2 else {
+		layoutableView.nameErrorLabel.isHidden = true
+
+		guard let subject = layoutableView.subjectTextField.trimmedText, subject.count > 0 else {
+			layoutableView.subjectErrorLabel.isHidden = false
+			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: UITextField.preferredHeight * 2), animated: true)
 			layoutableView.subjectTextField.shake()
 			layoutableView.subjectTextField.becomeFirstResponder()
 			return
 		}
 
+		layoutableView.subjectErrorLabel.isHidden = true
+
 		guard layoutableView.dropDownListView.getSelectedIndex != -1 else {
+//			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: UITextField.preferredHeight * 3), animated: true)
 			layoutableView.dropDownListView.shake()
 			layoutableView.dropDownListView.showList()
 			return
 		}
 
-		guard let message = layoutableView.messageTextView.trimmedText, message.count > 3 else {
+		guard let message = layoutableView.messageTextView.trimmedText, message.count > 0 else {
+			layoutableView.messageTextViewErrorLabel.isHidden = false
 			layoutableView.messageTextView.shake()
 			layoutableView.messageTextView.becomeFirstResponder()
 			return
 		}
+		layoutableView.messageTextViewErrorLabel.isHidden = true
 
 		let ticketTypes = layoutableView.ticketTypes
 		guard ticketTypes.count > 0 else { return }
@@ -144,13 +160,13 @@ private extension CreateRequestViewController {
 			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let error):
+				print(error.localizedServerDescription)
 				if error.response?.statusCode == 400 {
 					Desk360.register()
 					Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
 					return
 				}
 				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: false)
-				print(error.localizedServerDescription)
 			case .success:
 				self.navigationController?.popViewController(animated: true)
 			}

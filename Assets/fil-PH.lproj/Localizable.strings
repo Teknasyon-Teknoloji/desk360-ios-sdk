@@ -36,6 +36,7 @@
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 
-
-
-
+"name_regex" = "Maglagay ng Value";
+"email_regex" = "Mangyaring maglagay ng valid na e-mail addres.";
+"subject_regex" = "Punan ang mga blangko";
+"message_regex" = "Dapat kang mag-type ng higit pang karakter sa patlang ng pangalan";

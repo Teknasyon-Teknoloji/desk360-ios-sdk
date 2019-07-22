@@ -35,3 +35,8 @@
 "connection.error.message" = "网络链接失败，请重试";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "請輸入一個值。";
+"email_regex" = "請寫下有效電子郵件地址。";
+"subject_regex" = "請填寫空白處";
+"message_regex" = "您應該在姓名欄位輸入更多字元";

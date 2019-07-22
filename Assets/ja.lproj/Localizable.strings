@@ -35,3 +35,8 @@
 "connection.error.message" = "ネットワーク接続に失敗しました、もう一度やり直してください。";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
+"name_regex" = "値を入力してください。";
+"email_regex" = "有効なeメールアドレスを記入して下さい。";
+"subject_regex" = "空白に入力してください";
+"message_regex" = "名前欄にもっと文字を入力してください";
