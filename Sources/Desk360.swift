@@ -29,6 +29,7 @@ public final class Desk360 {
 	static var token: String? = ""
 
 	static let authPlugin = AccessTokenPlugin { Desk360.token ?? "" }
+
 	static let apiProvider = MoyaProvider<Service>(plugins: [authPlugin])
 
 	/// Whether internet is reachable or not.
@@ -66,10 +67,12 @@ public final class Desk360 {
 		} else {
 			id = deviceId ?? ""
 		}
+	
 		desk = Desk360(appId: appId, deviceId: id)
 		Stores.setStoresInitialValues()
 		Desk360.register()
 		print("Desk360 SDK was initialized successfully!")
+		
 	}
 
 	public static func show(on viewController: UIViewController, animated: Bool = true) {

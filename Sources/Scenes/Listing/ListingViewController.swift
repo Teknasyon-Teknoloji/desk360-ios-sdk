@@ -42,6 +42,8 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 
 		layoutableView.placeholderView.createRequestButton.addTarget(self, action: #selector(didTapCreateRequestButton), for: .touchUpInside)
 
+		setLoadingabletConfig()
+
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -93,6 +95,13 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 
 // MARK: - Helpers
 private extension ListingViewController {
+
+	func setLoadingabletConfig() {
+		LoadingableConfig.indicatorBackgroundColor = .clear
+		LoadingableConfig.indicatorType = .circleStrokeSpin
+		Desk360.Config.currentTheme
+		LoadingableConfig.indicatorTintColor = Desk360.Config.currentTheme.listingCellTintColor
+	}
 
 	func setCreateNavButtonItem(show: Bool) {
 		guard show else {

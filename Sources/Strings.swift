@@ -102,7 +102,7 @@ public extension Desk360.Strings {
 		}
 
 		static var createNameRegex: String {
-			return "name_regex".localize()
+			return "subject_regex".localize()
 		}
 
 		static var createEmailRegex: String {
@@ -114,7 +114,7 @@ public extension Desk360.Strings {
 		}
 
 		static var createMessageRegex: String {
-			return "message_regex".localize()
+			return "subject_regex".localize()
 		}
 
 		static var listingNavButtonTitle: String {
