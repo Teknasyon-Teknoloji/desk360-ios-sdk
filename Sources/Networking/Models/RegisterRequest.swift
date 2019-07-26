@@ -37,7 +37,7 @@ extension RegisterRequest: Codable {
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
-		expiredDate = formatter.date(from: expiredAt ?? "")!
+		expiredDate = formatter.date(from: expiredAt ?? "1970-01-01 00:00:00")
 
 	}
 

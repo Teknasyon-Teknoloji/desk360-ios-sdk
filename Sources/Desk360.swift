@@ -26,6 +26,8 @@ public final class Desk360 {
 
 	private(set) public static var languageCode: String!
 
+	private(set) public static var isDebug: Bool!
+
 	static var token: String? = ""
 
 	static let authPlugin = AccessTokenPlugin { Desk360.token ?? "" }
@@ -37,13 +39,14 @@ public final class Desk360 {
 		return NetworkReachabilityManager()?.isReachable ?? false
 	}
 
-	public init(appId: String, deviceId: String) {
+	public init(appId: String, deviceId: String, isDebug: Bool) {
 		Desk360.appId = appId
 		Desk360.deviceId = deviceId
 		Desk360.appPlatform = "iOS"
 		Desk360.appVersion = getVersion()
 		Desk360.timeZone = TimeZone.current.identifier
 		Desk360.languageCode = Locale.current.languageCode
+		Desk360.isDebug = isDebug
 	}
 
 	func getVersion() -> String {
@@ -60,16 +63,15 @@ public final class Desk360 {
 		return aDesk
 	}
 
-	public static func start(appId: String, _ deviceId: String? = nil) {
+	public static func start(appId: String, deviceId: String? = nil, isDebug: Bool? = false) {
 		var id: String = ""
 		if deviceId == nil {
 			id = UIDevice.current.uniqueIdentifier
 		} else {
 			id = deviceId ?? ""
 		}
-		desk = Desk360(appId: appId, deviceId: id)
+		desk = Desk360(appId: appId, deviceId: id, isDebug: isDebug ?? false)
 		Stores.setStoresInitialValues()
-		Desk360.register()
 		print("Desk360 SDK was initialized successfully!")
 	}
 
@@ -88,17 +90,7 @@ public final class Desk360 {
 //		guard let date = Stores.registerExpiredAt.object else { return }
 //		guard date < Date() else { return }
 
-		Desk360.apiProvider.request(.register(appKey: Desk360.appId, deviceId: Desk360.deviceId, appPlatform: Desk360.appPlatform, appVersion: Desk360.appVersion, timeZone: Desk360.timeZone, languageCode: Desk360.languageCode)) {  result in
-			switch result {
-			case .failure:
-				print("error")
-			case .success(let response):
-				guard let register = try? response.map(DataResponse<RegisterRequest>.self) else { return }
-				Desk360.token = register.data?.accessToken
-
-				try? Stores.registerExpiredAt.save(register.data?.expiredDate)
-			}
-		}
+		
 	}
 
 }

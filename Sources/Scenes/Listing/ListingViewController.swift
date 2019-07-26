@@ -53,8 +53,12 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 		navigationItem.leftBarButtonItem = NavigationItems.close(target: self, action: #selector(didTapCloseButton))
 
 		requests = Stores.ticketsStore.allObjects().sorted()
-		fetchRequests(showLoading: requests.isEmpty)
-		layoutableView.tableView.reloadData()
+
+		guard Desk360.token == "" else {
+			self.fetchRequests(showLoading: self.requests.isEmpty)
+			return
+		}
+		register()
 	}
 
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -133,6 +137,24 @@ extension ListingViewController {
 
 // MARK: - Networking
 private extension ListingViewController {
+
+	func register() {
+
+		Desk360.apiProvider.request(.register(appKey: Desk360.appId, deviceId: Desk360.deviceId, appPlatform: Desk360.appPlatform, appVersion: Desk360.appVersion, timeZone: Desk360.timeZone, languageCode: Desk360.languageCode)) { [weak self]  result in
+			guard let self = self else { return }
+			switch result {
+			case .failure:
+				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+			case .success(let response):
+				guard let register = try? response.map(DataResponse<RegisterRequest>.self) else { return }
+				Desk360.token = register.data?.accessToken
+				try? Stores.registerExpiredAt.save(register.data?.expiredDate)
+
+				self.fetchRequests(showLoading: self.requests.isEmpty)
+			}
+		}
+
+	}
 
 	func fetchRequests(showLoading: Bool) {
 
