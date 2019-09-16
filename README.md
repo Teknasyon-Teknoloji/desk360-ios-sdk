@@ -39,13 +39,13 @@ pod 'Desk360'
 
 ### Start Desk360 with appId -and an optinal deviceId-
 
-> Note: If no deviceId is provided, Desk360 will use device's [UUID](https://developer.apple.com/documentation/foundation/uuid), which might cause your app to lose tickets when the application is deleted.
+> Note: If no deviceId is provided, Desk360 will use device's [UUID](https://developer.apple.com/documentation/foundation/uuid), which might cause your app to lose tickets when the application is deleted. If no isDebug is provided, Desk360 will use false and Sdk looks at prod url.
 
 ```swift
 import Desk360
 
 Desk360.start(appId: "12345")
-Desk360.start(appId: "12345", deviceId: "34567")
+Desk360.start(appId: "12345", deviceId: "34567", isDebug: false)
 ```
 
 ### Using Desk360
