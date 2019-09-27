@@ -69,6 +69,10 @@ public extension Desk360.Strings {
 	struct Support {
 		private init() {}
 
+		static var mySupportRequest: String {
+			return "listing.supports.title".localize()
+		}
+
 		static var listingNavTitle: String {
 			return "listing.nav.title".localize()
 		}
