@@ -68,16 +68,6 @@ final class CreateRequestViewController: UIViewController, Layouting {
 
 		layoutableView.nameErrorLabel.isHidden = true
 
-		guard let subject = layoutableView.subjectTextField.trimmedText, subject.count > 0 else {
-			layoutableView.subjectErrorLabel.isHidden = false
-			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: UITextField.preferredHeight * 2), animated: true)
-			layoutableView.subjectTextField.shake()
-			layoutableView.subjectTextField.becomeFirstResponder()
-			return
-		}
-
-		layoutableView.subjectErrorLabel.isHidden = true
-
 		guard layoutableView.dropDownListView.getSelectedIndex != -1 else {
 //			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: UITextField.preferredHeight * 3), animated: true)
 			layoutableView.dropDownListView.shake()
@@ -96,7 +86,7 @@ final class CreateRequestViewController: UIViewController, Layouting {
 		let ticketTypes = layoutableView.ticketTypes
 		guard ticketTypes.count > 0 else { return }
 		let ticketTypeId = ticketTypes[layoutableView.dropDownListView.getSelectedIndex].id
-		sendRequest(name: name, email: email, subject: subject, ticketType: String(ticketTypeId), message: message)
+		sendRequest(name: name, email: email, ticketType: String(ticketTypeId), message: message)
 	}
 
 	@objc
@@ -113,13 +103,15 @@ extension CreateRequestViewController: KeyboardObserving {
 		layoutableView.keyboardWillShow(notification)
 	}
 
-	func keyboardDidHide(_ notification: KeyboardNotification?) {
-		layoutableView.keyboardDidHide(notification)
+	func keyboardWillHide(_ notification: KeyboardNotification?) {
+		layoutableView.keyboardWillHide(notification)
 	}
 
+	func keyboardDidHide(_ notification: KeyboardNotification?) {}
 	func keyboardDidShow(_ notification: KeyboardNotification?) {}
-	func keyboardWillHide(_ notification: KeyboardNotification?) {}
-	func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {}
+	func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {
+		layoutableView.keyboardWillChangeFrame(notification)
+	}
 	func keyboardDidChangeFrame(_ notification: KeyboardNotification?) {}
 
 }
@@ -150,8 +142,8 @@ private extension CreateRequestViewController {
 		}
 	}
 
-	func sendRequest(name: String, email: String, subject: String, ticketType: String, message: String) {
-		let request = TicketRequest(name: name, email: email, subject: subject, message: message, type_id: ticketType, source: "App", platform: "iOS", country_code: Locale.current.countryCode)
+	func sendRequest(name: String, email: String, ticketType: String, message: String) {
+		let request = TicketRequest(name: name, email: email, message: message, type_id: ticketType, source: "App", platform: "iOS", country_code: Locale.current.countryCode)
 
 		layoutableView.endEditing(true)
 		layoutableView.setLoading(true)

@@ -51,7 +51,6 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	lazy var nameErrorLabel: UILabel = {
 		let label = UILabel()
-//		label.textRect(forBounds: CGRect(, limitedToNumberOfLines: <#T##Int#>)
 		label.textColor = UIColor.init(hex: "d93a50")!
 		label.font = UIFont.systemFont(ofSize: 11)
 		label.textAlignment = .left
@@ -81,19 +80,6 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		label.text = Desk360.Strings.Support.createEmailRegex
 		label.isHidden = true
 		return label
-	}()
-
-	lazy var subjectTextField: SupportTextField = {
-		var field = SupportTextField()
-		field.setTextType(.generic)
-		setFieldStyle(field)
-		field.tag = 3
-		field.placeholder = Desk360.Strings.Support.createSubjectTextFieldPlaceholder
-		field.setPlaceHolderTextColor(Desk360.Config.currentTheme.requestPlaceholderTextColor)
-		field.textColor = Desk360.Config.currentTheme.requestTextColor
-		field.tintColor = Desk360.Config.currentTheme.requestTintColor
-
-		return field
 	}()
 
 	lazy var subjectErrorLabel: UILabel = {
@@ -160,17 +146,34 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return button
 	}()
 
+	private lazy var desk360BottomView: UIView = {
+		let view = UIView()
+		view.backgroundColor =  Desk360.Config.currentTheme.desk360ViewBackgroundColor
+		view.addSubview(self.desk360Label)
+		view.addSubview(self.poweredByLabel)
+		return view
+	}()
+
 	private lazy var desk360Label: UILabel = {
 		let label = UILabel()
 		label.textColor = Desk360.Config.currentTheme.desk360LabelTextColor
-		label.text = "Desk360"
+		label.text = " DESK360 "
+		label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+		label.textAlignment = .right
+		return label
+	}()
+
+	private lazy var poweredByLabel: UILabel = {
+		let label = UILabel()
+		label.textColor = Desk360.Config.currentTheme.desk360LabelTextColor
+		label.text = "powered by"
 		label.font = UIFont.systemFont(ofSize: 12)
-		label.textAlignment = .center
+		label.textAlignment = .right
 		return label
 	}()
 
 	private lazy var stackView: UIStackView = {
-		let view = UIStackView(arrangedSubviews: [nameTextField, nameErrorLabel, emailTextField, emailErrorLabel, subjectTextField, subjectErrorLabel, dropDownListView, messageTextView, messageTextViewErrorLabel])
+		let view = UIStackView(arrangedSubviews: [nameTextField, nameErrorLabel, emailTextField, emailErrorLabel, subjectErrorLabel, dropDownListView, messageTextView, messageTextViewErrorLabel])
 		view.axis = .vertical
 		view.alignment = .fill
 		view.distribution = .fill
@@ -187,16 +190,14 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		nameTextField.delegate = self
 		emailTextField.delegate = self
 		messageTextView.delegate = self
-		subjectTextField.delegate = self
 
 		nameTextField.addTarget(self, action: #selector(checkTexFields(sender:)), for: .editingChanged)
 		emailTextField.addTarget(self, action: #selector(checkTexFields(sender:)), for: .editingChanged)
-		subjectTextField.addTarget(self, action: #selector(checkTexFields(sender:)), for: .editingChanged)
 		//		dropDownListView.delegate = self
 
 		scrollView.addSubview(stackView)
 		scrollView.addSubview(sendButton)
-		scrollView.addSubview(desk360Label)
+		addSubview(desk360BottomView)
 		addSubview(scrollView)
 
 	}
@@ -211,10 +212,6 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 			make.height.equalTo(UITextField.preferredHeight)
 		}
 
-		subjectTextField.snp.makeConstraints { make in
-			make.height.equalTo(UITextField.preferredHeight)
-		}
-
 		dropDownListView.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight)
 			make.width.equalTo(UIScreen.main.bounds.width - preferredSpacing * 6)
@@ -226,7 +223,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		}
 
 		messageTextView.snp.makeConstraints { make in
-			make.height.equalTo(scrollView.snp.height).multipliedBy(0.3)
+			make.height.equalTo(scrollView.snp.height).multipliedBy(0.4)
 		}
 
 		sendButton.snp.makeConstraints { make in
@@ -234,18 +231,28 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 			make.height.equalTo(UIButton.preferredHeight)
 			make.centerX.equalToSuperview()
 			make.width.equalTo(stackView)
-			make.bottom.equalTo(desk360Label.snp.top).inset(-preferredSpacing)
+			make.bottom.equalToSuperview().inset(preferredSpacing)
+		}
+
+		desk360BottomView.snp.makeConstraints { make in
+			make.leading.trailing.equalToSuperview()
+			make.bottom.equalTo(self.scrollView.snp.bottom)
 		}
 
 		desk360Label.snp.makeConstraints { make in
-			make.centerX.equalToSuperview()
-			make.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
+			make.bottom.top.equalToSuperview()
+			make.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
+		}
+
+		poweredByLabel.snp.makeConstraints { make in
+			make.bottom.top.equalToSuperview()
+			make.trailing.equalTo(desk360Label.snp.leading)
 		}
 
 		stackView.snp.makeConstraints { make in
 			make.top.equalToSuperview().inset(preferredSpacing)
-			make.width.equalTo(scrollView.snp.width).inset(preferredSpacing)
 			make.centerX.equalToSuperview()
+			make.width.equalTo(scrollView.snp.width).inset(preferredSpacing)
 		}
 
 		scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
@@ -308,7 +315,9 @@ extension CreateRequestView {
 	@objc func didTap() {
 		self.endEditing(true)
 		guard !dropDownListView.isCollapsed else { return }
-		dropDownListView.hideList()
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+			self.dropDownListView.hideList()
+		}
 	}
 
 }
@@ -335,17 +344,6 @@ extension CreateRequestView: UITextFieldDelegate {
 				return false
 			}
 			emailErrorLabel.isHidden = true
-			subjectTextField.becomeFirstResponder()
-			return true
-
-		case subjectTextField:
-			guard let text = subjectTextField.trimmedText, text.count > 0 else {
-				subjectTextField.shake()
-				subjectErrorLabel.isHidden = false
-				return false
-			}
-			subjectErrorLabel.isHidden = true
-			subjectTextField.endEditing(true)
 			dropDownListView.showList()
 			return true
 
@@ -378,10 +376,6 @@ extension CreateRequestView {
 		case 2:
 			if emailTextField.emailAddress != nil {
 				emailErrorLabel.isHidden = true
-			}
-		case 3:
-			if let text = subjectTextField.trimmedText, text.count > 0 {
-				subjectErrorLabel.isHidden = true
 			}
 		default:
 			break
@@ -429,9 +423,7 @@ extension CreateRequestView: KeyboardHandling {
 	/// Called right after the keyboard is hidden.
 	///
 	/// - Parameter notification: `KeyboardNotification`
-	public func keyboardDidHide(_ notification: KeyboardNotification?) {
-		scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
-	}
+	public func keyboardDidHide(_ notification: KeyboardNotification?) {}
 
 	/// Called right after the keyboard is presented.
 	///
@@ -441,7 +433,9 @@ extension CreateRequestView: KeyboardHandling {
 	/// Called right before the keyboard is hidden.
 	///
 	/// - Parameter notification: `KeyboardNotification`
-	public func keyboardWillHide(_ notification: KeyboardNotification?) {}
+	public func keyboardWillHide(_ notification: KeyboardNotification?) {
+		scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+	}
 
 	/// Called right before the keyboard is about to change its frame.
 	///

@@ -25,12 +25,29 @@ class ListingView: UIView, Layoutable, Loadingable {
 		return view
 	}()
 
+	private lazy var desk360BottomView: UIView = {
+		let view = UIView()
+		view.backgroundColor =  Desk360.Config.currentTheme.desk360ViewBackgroundColor
+		view.addSubview(self.desk360Label)
+		view.addSubview(self.poweredByLabel)
+		return view
+	}()
+
 	private lazy var desk360Label: UILabel = {
 		let label = UILabel()
 		label.textColor = Desk360.Config.currentTheme.desk360LabelTextColor
-		label.text = "Desk360"
+		label.text = " DESK360 "
+		label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+		label.textAlignment = .right
+		return label
+	}()
+
+	private lazy var poweredByLabel: UILabel = {
+		let label = UILabel()
+		label.textColor = Desk360.Config.currentTheme.desk360LabelTextColor
+		label.text = "powered by"
 		label.font = UIFont.systemFont(ofSize: 12)
-		label.textAlignment = .center
+		label.textAlignment = .right
 		return label
 	}()
 
@@ -43,24 +60,35 @@ class ListingView: UIView, Layoutable, Loadingable {
 	func setupViews() {
 		backgroundColor = Desk360.Config.currentTheme.backgroundColor
 		addSubview(tableView)
-		addSubview(desk360Label)
+		addSubview(desk360BottomView)
 		addSubview(placeholderView)
 	}
 
 	func setupLayout() {
 		tableView.snp.makeConstraints { make in
 			make.leading.trailing.top.equalToSuperview()
-			make.bottom.equalTo(desk360Label.snp.top).offset(-preferredSpacing * 0.5)
+			make.bottom.equalTo(desk360BottomView.snp.top).offset(-preferredSpacing * 0.5)
+		}
+
+		desk360BottomView.snp.makeConstraints { make in
+			make.leading.trailing.equalToSuperview()
+			make.height.equalTo(preferredSpacing)
+			make.bottom.equalTo(safeArea.bottom)
 		}
 
 		desk360Label.snp.makeConstraints { make in
-			make.leading.trailing.equalToSuperview().inset(preferredSpacing)
-			make.bottom.equalTo(safeArea.bottom).offset(-preferredSpacing * 0.5)
+			make.bottom.top.equalToSuperview()
+			make.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
+		}
+
+		poweredByLabel.snp.makeConstraints { make in
+			make.bottom.top.equalToSuperview()
+			make.trailing.equalTo(desk360Label.snp.leading)
 		}
 
 		placeholderView.snp.makeConstraints { make in
 			make.leading.trailing.top.equalToSuperview()
-			make.bottom.equalTo(desk360Label.snp.top).offset(-preferredSpacing * 0.5)
+			make.bottom.equalTo(desk360BottomView.snp.top).offset(-preferredSpacing * 0.5)
 		}
 	}
 

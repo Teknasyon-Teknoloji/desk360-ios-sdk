@@ -121,15 +121,6 @@ public extension Desk360.Config.Requests.Create {
 
 	}
 
-	/// Use `SupportConfig.Create.NameTextField` to set up the name text field in create request page in your application.
-	struct SubjectTextField {
-		private init() {}
-
-		/// Text field icon.
-		static var icon: UIImage?
-
-	}
-
 	/// Use `SupportConfig.Create.EmailTextField` to set up the email text field in create request page in your application.
 	struct EmailTextField {
 		private init() {}

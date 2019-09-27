@@ -18,7 +18,7 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 
 	private lazy var messageLabel: UILabel = {
 		let label = UILabel()
-		label.numberOfLines = 3
+		label.numberOfLines = 1
 		label.adjustsFontSizeToFitWidth = false
 		return label
 	}()
@@ -95,7 +95,7 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 internal extension ListingTableViewCell {
 
 	func configure(for request: Ticket) {
-		messageLabel.text = request.subject
+		messageLabel.text = request.message
 		dateLabel.text = DateFormat.raadable.dateFormatter.string(from: request.createdAt)
 
 		let Config = Desk360.Config.Requests.Listing.Cell.self

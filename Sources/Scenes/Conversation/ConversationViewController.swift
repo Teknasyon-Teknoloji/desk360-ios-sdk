@@ -69,7 +69,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		super.viewWillAppear(animated)
 
 		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
-		navigationItem.title = request.subject
+		navigationItem.title = request.message
 	}
 
 	override func viewDidAppear(_ animated: Bool) {

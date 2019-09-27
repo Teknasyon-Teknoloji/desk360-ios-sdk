@@ -11,7 +11,6 @@ struct TicketRequest: Codable {
 
 	var name: String
 	var email: String
-	var subject: String
 	var message: String
 	var type_id: String
 	var source: String
@@ -21,7 +20,6 @@ struct TicketRequest: Codable {
 	init(
 		name: String,
 		email: String,
-		subject: String,
 		message: String,
 		type_id: String,
 		source: String,
@@ -30,7 +28,6 @@ struct TicketRequest: Codable {
 
 		self.name = name
 		self.email = email
-		self.subject = subject
 		self.message = message
 		self.type_id = type_id
 		self.source = source

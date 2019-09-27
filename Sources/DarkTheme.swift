@@ -71,5 +71,7 @@ struct DarkTheme: DeskTheme {
 
 	var desk360LabelTextColor: UIColor = UIColor.init(hex: "626262")!
 
+	var desk360ViewBackgroundColor: UIColor = UIColor.init(hex: "2d3543")!
+
 	var navItemTintColor: UIColor = .white
 }
