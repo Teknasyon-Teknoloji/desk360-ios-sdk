@@ -7,7 +7,7 @@ target 'Desk360' do
   # Pods for Desk360
   pod 'SnapKit'
   pod 'Moya'
-  pod 'SwiftMessages', '7.0.0'
+  pod 'SwiftMessages'
   pod 'PersistenceKit'
   pod 'DeviceKit'
   pod 'NVActivityIndicatorView'
