@@ -236,6 +236,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 		desk360BottomView.snp.makeConstraints { make in
 			make.leading.trailing.equalToSuperview()
+			make.height.equalTo(preferredSpacing * 1.5)
 			make.bottom.equalTo(self.scrollView.snp.bottom)
 		}
 
@@ -255,7 +256,10 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 			make.width.equalTo(scrollView.snp.width).inset(preferredSpacing)
 		}
 
-		scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
+		scrollView.snp.makeConstraints { make in
+			make.leading.trailing.top.equalToSuperview()
+			make.bottom.equalTo(safeArea.bottom)
+		}
 
 	}
 

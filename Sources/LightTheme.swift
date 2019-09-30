@@ -69,7 +69,7 @@ struct LightTheme: DeskTheme {
 
 	var senderCellDateTextColor: UIColor = UIColor.init(hex: "525a7e")!
 
-	var desk360LabelTextColor: UIColor = UIColor.init(hex: "dcdcdc")!
+	var desk360LabelTextColor: UIColor = .white
 
 	var desk360ViewBackgroundColor: UIColor = UIColor.init(hex: "71717b")!
 

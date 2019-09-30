@@ -72,7 +72,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 
 		desk360BottomView.snp.makeConstraints { make in
 			make.leading.trailing.equalToSuperview()
-			make.height.equalTo(preferredSpacing)
+			make.height.equalTo(preferredSpacing * 1.5)
 			make.bottom.equalTo(safeArea.bottom)
 		}
 
