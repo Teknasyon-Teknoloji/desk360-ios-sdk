@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CreateRequestViewController: UIViewController, Layouting {
+final class CreateRequestViewController: UIViewController, Layouting, UIGestureRecognizerDelegate {
 
 	typealias ViewType = CreateRequestView
 	override func loadView() {
@@ -30,26 +30,30 @@ final class CreateRequestViewController: UIViewController, Layouting {
 		guard let check = checkLastClass, check else { return }
 		let count = navigationController?.viewControllers.count ?? 0
 		navigationController?.viewControllers.removeSubrange(count-2..<count-1)
+
+//		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
+
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
 		navigationItem.title = Desk360.Strings.Support.listingNavTitle
+
 		fetchTicketType()
 
-		if let icon = Desk360.Config.Requests.Create.backBarButtonIcon {
-			navigationController?.navigationBar.backIndicatorImage = icon
-			navigationController?.navigationBar.backIndicatorTransitionMaskImage = icon
-			navigationItem.backBarButtonItem = .init(title: "", style: .plain, target: nil, action: nil)
-		}
+		navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+		navigationController?.interactivePopGestureRecognizer?.delegate  = self
+		navigationItem.rightBarButtonItem = nil
+
+		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
+//		}
 	}
 
 	@objc private func didTapSendRequestButton() {
 
 		guard let name = layoutableView.nameTextField.trimmedText, name.count > 2 else {
 			layoutableView.nameErrorLabel.isHidden = false
-//			layoutableView.scrollView.scrollsToTop = true
 			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
 			layoutableView.nameTextField.shake()
 			layoutableView.nameTextField.becomeFirstResponder()

@@ -8,7 +8,7 @@
 import UIKit
 import Result
 
-final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate {
+final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
 	var request: Ticket!
 	convenience init(request: Ticket) {
@@ -70,6 +70,10 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
 		navigationItem.title = Desk360.Strings.Support.mySupportRequest
+		navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+		navigationController?.interactivePopGestureRecognizer?.delegate  = self
+
+		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -246,6 +250,10 @@ extension ConversationViewController {
 
 	@objc func didTapNewRequestButton() {
 		navigationController?.pushViewController(CreateRequestViewController(checkLastClass: true), animated: true)
+	}
+
+	@objc func didTapBackButton() {
+		navigationController?.popViewController(animated: true)
 	}
 
 }

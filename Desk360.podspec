@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = "Desk360"
-    s.version = "0.9.1"
+    s.version = "0.9.2"
     s.summary = "Desk360 iOS SDK"
     s.description = <<-DESC
     Desk360 iOS SDK [WIP]

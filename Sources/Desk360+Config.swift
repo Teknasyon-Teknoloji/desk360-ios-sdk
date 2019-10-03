@@ -242,6 +242,20 @@ public extension Desk360.Config.Requests.Listing {
 			}
 		}()
 
+		/// Back button icon.
+		static var backIcon: UIImage = {
+			switch Desk360.Config.theme {
+			case .light:
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/backButtonLight", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
+			case .dark:
+				guard let path = Desk360.Config.bundle?.path(forResource: "Images/backButtonDark", ofType: "png") else { return UIImage() }
+				let image = UIImage(contentsOfFile: path)!
+				return image
+			}
+		}()
+
 	}
 
 	/// Use `SupportConfig.Listing.Cell` to set up request cells in request listing page in your application.
