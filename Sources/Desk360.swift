@@ -82,6 +82,7 @@ public final class Desk360 {
 		let listingViewController = ListingViewController()
 		listingViewController.hidesBottomBarWhenPushed = true
 		let desk360Navcontroller = Desk360NavigationController(rootViewController: listingViewController)
+		desk360Navcontroller.modalPresentationStyle = .fullScreen
 		navController.present(desk360Navcontroller, animated: true, completion: nil)
 	}
 

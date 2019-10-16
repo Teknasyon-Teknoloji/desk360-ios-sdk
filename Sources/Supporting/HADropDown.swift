@@ -20,8 +20,6 @@ extension HADropDownDelegate {
 	func didShow(dropDown: HADropDown) {}
 	func didHide(dropDown: HADropDown) {}
 	func willShow(dropDown: HADropDown) {}
-	func willHide(dropDown: HADropDown) {}
-
 }
 
 @IBDesignable
@@ -30,12 +28,19 @@ class HADropDown: UIView {
 	weak var delegate: HADropDownDelegate!
 	fileprivate var label = UILabel()
 
+	static var frameChange: CGFloat = 0
+
 	@IBInspectable
 	var title: String {
 		set {
-			label.frame = CGRect(x: 10, y: 0, width: self.frame.width, height: self.frame.height)
+			label.frame = CGRect(x: (UIScreen.main.bounds.size.minDimension * 0.054) * 0.5, y: 0, width: self.frame.width - (UIScreen.main.bounds.size.minDimension * 0.054), height: self.frame.height)
 			label.text = newValue
-			label.textAlignment = .left
+			if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+				label.textAlignment = .right
+			} else {
+				label.textAlignment = .left
+			}
+
 		}
 		get {
 			return label.text!
@@ -46,7 +51,11 @@ class HADropDown: UIView {
 	@IBInspectable
 	var textAllignment: NSTextAlignment {
 		set {
-			label.textAlignment = newValue
+			if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+				label.textAlignment = .right
+			} else {
+				label.textAlignment = .left
+			}
 		}
 		get {
 			return label.textAlignment
@@ -99,7 +108,12 @@ class HADropDown: UIView {
 	var itemTextColor: UIColor {
 		set {
 			itemFontColor = newValue
-			label.textAlignment = .left
+			if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+				label.textAlignment = .right
+			} else {
+				label.textAlignment = .left
+			}
+
 		}
 		get {
 			return itemFontColor
@@ -149,7 +163,7 @@ class HADropDown: UIView {
 	private var tapGestureBackground: UITapGestureRecognizer!
 
 	override func prepareForInterfaceBuilder() {
-		label.frame = CGRect(x: 10, y: 0, width: self.frame.width, height: self.frame.height)
+		label.frame = CGRect(x: (UIScreen.main.bounds.size.minDimension * 0.054) * 0.5, y: 0, width: self.frame.width - (UIScreen.main.bounds.size.minDimension * 0.054) , height: self.frame.height)
 		font = UIFont(descriptor: font.fontDescriptor, size: titleFontSize)
 		label.font = font
 		self.addSubview(label)
@@ -163,7 +177,7 @@ class HADropDown: UIView {
 		self.layer.borderColor = Desk360.Config.currentTheme.requestBorderColor.cgColor
 		self.layer.borderWidth = 1
 
-		label.frame = CGRect(x: 10, y: 0, width: self.frame.width, height: self.frame.height)
+		label.frame = CGRect(x: (UIScreen.main.bounds.size.minDimension * 0.054) * 0.5, y: 0, width: self.frame.width - (UIScreen.main.bounds.size.minDimension * 0.054), height: self.frame.height)
 		self.addSubview(label)
 		textAllignment = .left
 
@@ -180,7 +194,7 @@ class HADropDown: UIView {
 
 		let newFrame: CGRect = self.superview!.convert(self.frame, to: rootView)
 		self.tableFrame = newFrame
-		self.table.frame = CGRect(x: newFrame.origin.x, y: (newFrame.origin.y) + (newFrame.height)+5, width: (newFrame.width), height: 0)
+		self.table.frame = CGRect(x: newFrame.origin.x, y: HADropDown.frameChange + (newFrame.origin.y) + (newFrame.height)+5, width: (newFrame.width), height: 0)
 
 		table.backgroundColor = itemBackgroundColor
 	}
@@ -194,6 +208,17 @@ class HADropDown: UIView {
 	func hideList() {
 		isCollapsed = true
 		collapseTableView()
+	}
+
+	func willChangeFrame() {
+//		var rootView = self.superview
+//		while rootView?.superview != nil {
+//			rootView = rootView?.superview
+//		}
+//		let newFrame: CGRect = self.superview!.convert(self.frame, to: rootView)
+//		print("newFrame y:")
+//		print(newFrame.origin.y)
+//		self.tableFrame = newFrame
 	}
 
 	func showList() {
@@ -218,7 +243,7 @@ class HADropDown: UIView {
 
 			self.table.reloadData()
 			UIView.animate(withDuration: 0.25, animations: {
-				self.table.frame = CGRect(x: self.tableFrame.origin.x, y: self.tableFrame.origin.y + self.frame.height+5, width: self.frame.width, height: height)
+				self.table.frame = CGRect(x: self.tableFrame.origin.x, y: HADropDown.frameChange + self.tableFrame.origin.y + self.frame.height+5, width: self.frame.width, height: height)
 			})
 
 			if delegate != nil {
@@ -238,6 +263,7 @@ class HADropDown: UIView {
 	@objc private func didTap(gesture: UIGestureRecognizer) {
 		showList()
 	}
+	
 	func collapseTableView() {
 		if delegate != nil {
 			delegate.willHide(dropDown: self)
@@ -246,7 +272,7 @@ class HADropDown: UIView {
 		if isCollapsed {
 			// removing tableview from rootview
 			UIView.animate(withDuration: 0.25, animations: {
-				self.table.frame = CGRect(x: self.tableFrame.origin.x, y: self.tableFrame.origin.y+self.frame.height, width: self.frame.width, height: 0)
+				self.table.frame = CGRect(x: self.tableFrame.origin.x, y: HADropDown.frameChange + self.tableFrame.origin.y+self.frame.height, width: self.frame.width, height: 0)
 			})
 			var rootView = self.superview
 

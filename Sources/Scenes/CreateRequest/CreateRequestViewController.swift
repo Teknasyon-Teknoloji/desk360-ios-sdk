@@ -52,11 +52,13 @@ final class CreateRequestViewController: UIViewController, Layouting, UIGestureR
 
 	@objc private func didTapSendRequestButton() {
 
+		checkChangeFrame()
 		guard let name = layoutableView.nameTextField.trimmedText, name.count > 2 else {
 			layoutableView.nameErrorLabel.isHidden = false
 			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
 			layoutableView.nameTextField.shake()
 			layoutableView.nameTextField.becomeFirstResponder()
+			checkChangeFrame()
 			return
 		}
 
@@ -67,13 +69,14 @@ final class CreateRequestViewController: UIViewController, Layouting, UIGestureR
 			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: UITextField.preferredHeight), animated: true)
 			layoutableView.emailTextField.shake()
 			layoutableView.emailTextField.becomeFirstResponder()
+			checkChangeFrame()
 			return
 		}
 
+		checkChangeFrame()
 		layoutableView.nameErrorLabel.isHidden = true
 
 		guard layoutableView.dropDownListView.getSelectedIndex != -1 else {
-//			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: UITextField.preferredHeight * 3), animated: true)
 			layoutableView.dropDownListView.shake()
 			layoutableView.dropDownListView.showList()
 			return
@@ -91,6 +94,17 @@ final class CreateRequestViewController: UIViewController, Layouting, UIGestureR
 		guard ticketTypes.count > 0 else { return }
 		let ticketTypeId = ticketTypes[layoutableView.dropDownListView.getSelectedIndex].id
 		sendRequest(name: name, email: email, ticketType: String(ticketTypeId), message: message)
+	}
+
+	func checkChangeFrame() {
+		HADropDown.frameChange = 0
+		if layoutableView.nameErrorLabel.isHidden == false && layoutableView.emailErrorLabel.isHidden == false {
+			HADropDown.frameChange = UITextField.preferredHeight
+		} else if layoutableView.nameErrorLabel.isHidden && layoutableView.emailErrorLabel.isHidden {
+			HADropDown.frameChange = 0
+		} else {
+			HADropDown.frameChange = UITextField.preferredHeight * 0.5
+		}
 	}
 
 	@objc

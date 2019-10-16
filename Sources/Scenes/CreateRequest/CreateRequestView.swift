@@ -242,12 +242,12 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 		desk360Label.snp.makeConstraints { make in
 			make.bottom.top.equalToSuperview()
-			make.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
+			make.right.equalToSuperview().inset(preferredSpacing * 0.5)
 		}
 
 		poweredByLabel.snp.makeConstraints { make in
 			make.bottom.top.equalToSuperview()
-			make.trailing.equalTo(desk360Label.snp.leading)
+			make.right.equalTo(desk360Label.snp.left)
 		}
 
 		stackView.snp.makeConstraints { make in
@@ -335,24 +335,29 @@ extension CreateRequestView: UITextFieldDelegate {
 			guard let text = nameTextField.trimmedText, text.count > 0 else {
 				nameErrorLabel.isHidden = false
 				nameTextField.shake()
+				checkChangeFrame()
 				return false
 			}
 			nameErrorLabel.isHidden = true
 			emailTextField.becomeFirstResponder()
+			checkChangeFrame()
 			return true
 
 		case emailTextField:
 			if emailTextField.emailAddress == nil {
 				emailErrorLabel.isHidden = false
 				emailTextField.shake()
+				checkChangeFrame()
 				return false
 			}
 			emailErrorLabel.isHidden = true
 			dropDownListView.showList()
+			checkChangeFrame()
 			return true
 
 		case dropDownListView:
 			if dropDownListView.getSelectedIndex == -1 {
+				self.dropDownListView.willChangeFrame()
 				dropDownListView.shake()
 				dropDownListView.showList()
 				return false
@@ -362,6 +367,17 @@ extension CreateRequestView: UITextFieldDelegate {
 
 		default:
 			return true
+		}
+	}
+
+	func checkChangeFrame() {
+		HADropDown.frameChange = 0
+		if nameErrorLabel.isHidden == false && emailErrorLabel.isHidden == false {
+			HADropDown.frameChange = UITextField.preferredHeight
+		} else if nameErrorLabel.isHidden && emailErrorLabel.isHidden {
+			HADropDown.frameChange = 0
+		} else {
+			HADropDown.frameChange = UITextField.preferredHeight * 0.5
 		}
 	}
 
@@ -376,10 +392,12 @@ extension CreateRequestView {
 		case 1:
 			if let text = nameTextField.trimmedText, text.count > 0 {
 				nameErrorLabel.isHidden = true
+				checkChangeFrame()
 			}
 		case 2:
 			if emailTextField.emailAddress != nil {
 				emailErrorLabel.isHidden = true
+				checkChangeFrame()
 			}
 		default:
 			break

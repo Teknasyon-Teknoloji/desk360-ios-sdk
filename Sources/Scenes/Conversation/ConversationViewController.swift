@@ -54,6 +54,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
+		registerForKeyboardEvents()
 		if request.status == .expired {
 			view.backgroundColor = Desk360.Config.currentTheme.requestSendButtonBackgroundColor
 		}
@@ -68,12 +69,18 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
+		layoutableView.conversationInputView.layoutIfNeeded()
+		layoutableView.conversationInputView.layoutSubviews()
+
+		NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidChangeState(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+
 		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
 		navigationItem.title = Desk360.Strings.Support.mySupportRequest
 		navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 		navigationController?.interactivePopGestureRecognizer?.delegate  = self
 
 		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
+
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -86,6 +93,14 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		super.viewDidLayoutSubviews()
 
 		tableViewBottomInset = requiredInitialScrollViewBottomInset()
+	}
+
+
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		layoutableView.conversationInputView.textView.resignFirstResponder()
+		layoutableView.conversationInputView.layoutIfNeeded()
+		layoutableView.conversationInputView.layoutSubviews()
 	}
 
 	@objc
@@ -255,5 +270,28 @@ extension ConversationViewController {
 	@objc func didTapBackButton() {
 		navigationController?.popViewController(animated: true)
 	}
+
+}
+
+// MARK: - KeyboardObserving
+extension ConversationViewController: KeyboardObserving {
+
+	func keyboardWillShow(_ notification: KeyboardNotification?) {
+		let height = notification?.endFrame.size.height ?? 300
+		layoutableView.conversationInputView.layoutIfNeeded()
+		layoutableView.conversationInputView.layoutSubviews()
+		additionalBottomInset = height - layoutableView.conversationInputView.frame.size.height
+	}
+
+	func keyboardWillHide(_ notification: KeyboardNotification?) {
+		additionalBottomInset = 0
+		layoutableView.conversationInputView.layoutIfNeeded()
+		layoutableView.conversationInputView.layoutSubviews()
+	}
+
+	func keyboardDidHide(_ notification: KeyboardNotification?) {}
+	func keyboardDidShow(_ notification: KeyboardNotification?) {}
+	func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {}
+	func keyboardDidChangeFrame(_ notification: KeyboardNotification?) {}
 
 }

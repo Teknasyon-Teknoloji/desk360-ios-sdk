@@ -78,12 +78,12 @@ class ListingView: UIView, Layoutable, Loadingable {
 
 		desk360Label.snp.makeConstraints { make in
 			make.bottom.top.equalToSuperview()
-			make.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
+			make.right.equalToSuperview().inset(preferredSpacing * 0.5)
 		}
 
 		poweredByLabel.snp.makeConstraints { make in
 			make.bottom.top.equalToSuperview()
-			make.trailing.equalTo(desk360Label.snp.leading)
+			make.right.equalTo(desk360Label.snp.left)
 		}
 
 		placeholderView.snp.makeConstraints { make in
