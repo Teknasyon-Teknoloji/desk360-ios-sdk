@@ -47,6 +47,8 @@ public struct Ticket {
 	/// Array of conversation `SupportMessage`s.
 	public var messages: [Message]
 
+	public var attachmentUrl: URL?
+
 }
 
 extension Ticket: Codable {
@@ -59,6 +61,7 @@ extension Ticket: Codable {
 		case created
 		case message
 		case messages
+		case attachment_url
 	}
 
 	/// Creates a new instance by decoding from the given decoder.
@@ -73,7 +76,9 @@ extension Ticket: Codable {
 		email = try container.decode(String.self, forKey: .email)
 		status = try container.decode(Status.self, forKey: .status)
 		message = try container.decode(String.self, forKey: .message)
-
+		attachmentUrl = try (container.decodeIfPresent(URL.self, forKey: .attachment_url))
+		print("attachmentUrl_Test")
+		print(attachmentUrl)
 		let dateString = try container.decode(String.self, forKey: .created)
 
 		let formatter = DateFormatter()
@@ -81,6 +86,7 @@ extension Ticket: Codable {
 		createdAt = formatter.date(from: dateString) ?? Date()
 
 		messages = (try? container.decodeIfPresent([Message].self, forKey: .messages) ?? []) ?? []
+
 	}
 
 	/// Encodes this value into the given encoder.
@@ -97,6 +103,7 @@ extension Ticket: Codable {
 		try container.encode(message, forKey: .message)
 		try container.encode(createdAt, forKey: .created)
 		try container.encode(messages, forKey: .messages)
+		try container.encode(attachmentUrl, forKey: .attachment_url)
 	}
 
 }
