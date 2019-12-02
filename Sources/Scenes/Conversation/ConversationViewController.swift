@@ -46,6 +46,8 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		return true
 	}
 
+	var attachment: URL?
+
 	func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
 		scrollToBottom(animated: true)
 		return false
@@ -69,17 +71,19 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
+
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidChangeState(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
 		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
-		navigationItem.title = Desk360.Strings.Support.mySupportRequest
 		navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 		navigationController?.interactivePopGestureRecognizer?.delegate  = self
 
 		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
+
+		configure()
 
 	}
 
@@ -135,7 +139,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		}
 
 		let cell = tableView.dequeueReusableCell(ReceiverMessageTableViewCell.self)
-		cell.configure(for: request.messages[indexPath.row])
+		cell.configure(for: request.messages[indexPath.row], indexPath, attachment)
 		return cell
 	}
 
@@ -165,7 +169,7 @@ extension ConversationViewController {
 			switch result {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
-					Desk360.register()
+					Desk360.isRegister = false
 					Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
 					return
 				}
@@ -175,6 +179,12 @@ extension ConversationViewController {
 				guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
 				guard let data = tickets.data else { return }
 				self.request = data
+
+				if let url = data.attachmentUrl {
+					self.attachment = url
+				}
+
+
 				self.layoutableView.tableView.reloadData()
 				self.scrollToBottom(animated: false)
 			}
@@ -190,7 +200,7 @@ extension ConversationViewController {
 			switch result {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
-					Desk360.register()
+					Desk360.isRegister = false
 					Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
 					return
 				}
@@ -269,6 +279,29 @@ extension ConversationViewController {
 
 	@objc func didTapBackButton() {
 		navigationController?.popViewController(animated: true)
+	}
+
+}
+
+extension ConversationViewController {
+
+	func configure() {
+		let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
+		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.navigationTitleFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
+		let navigationTitle = NSAttributedString(string: Config.shared.model.ticketDetail?.title ?? "", attributes: selectedattributes as [NSAttributedString.Key: Any])
+		var titleLabel = UILabel()
+		titleLabel.attributedText = navigationTitle
+		titleLabel.sizeToFit()
+		titleLabel.textAlignment = .center
+		titleLabel.textColor = Colors.navigationTextColor
+		navigationItem.titleView = titleLabel
+
+		navigationItem.title = Config.shared.model.ticketDetail?.title
+		self.navigationController?.navigationBar.setColors(background: Colors.navigationBackgroundColor, text: Colors.navigationTextColor ?? .black)
+		navigationController?.navigationBar.tintColor = Colors.navigationImageViewTintColor
+		self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+		self.navigationController?.navigationBar.shadowImage = UIImage()
+		layoutableView.configure()
 	}
 
 }

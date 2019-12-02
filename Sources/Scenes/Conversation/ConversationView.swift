@@ -53,3 +53,12 @@ private extension ConversationView {
 	}
 
 }
+
+extension ConversationView {
+
+	func configure() {
+		self.backgroundColor = Colors.backgroundColor
+		self.tableView.backgroundColor = Colors.ticketDetailChatBackgroundColor
+	}
+
+}

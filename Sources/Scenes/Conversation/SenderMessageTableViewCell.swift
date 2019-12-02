@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PDFKit
 
 final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 
@@ -21,6 +22,7 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 		label.numberOfLines = 0
 		label.textColor = Desk360.Config.currentTheme.senderCellMessageTextColor
 		label.font = Desk360.Config.Conversation.MessageCell.Sender.messageFont
+		label.addSubview(test)
 		return label
 	}()
 
@@ -32,8 +34,13 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 		return label
 	}()
 
+	private lazy var test: UITextView = {
+		let test = UITextView()
+		return test
+	}()
+
 	private lazy var stackView: UIStackView = {
-		let view = UIStackView(arrangedSubviews: [messageLabel, dateLabel])
+		let view = UIStackView(arrangedSubviews: [messageLabel])
 		view.axis = .vertical
 		view.alignment = .fill
 		view.distribution = .fill
@@ -55,20 +62,29 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 
 		containerView.addSubview(stackView)
 		addSubview(containerView)
+		addSubview(dateLabel)
 	}
 
 	func setupLayout() {
 		containerView.snp.makeConstraints { make in
-			make.top.leading.bottom.equalToSuperview().inset(preferredSpacing / 2)
+			make.top.leading.equalToSuperview().inset(preferredSpacing / 2)
 			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
 		}
 		stackView.snp.makeConstraints { $0.edges.equalToSuperview().inset(preferredSpacing / 2) }
+
+		dateLabel.snp.makeConstraints { make in
+			make.leading.equalTo(containerView.snp.leading).offset(preferredSpacing * 0.5)
+			make.top.equalTo(containerView.snp.bottom).offset(preferredSpacing * 0.25)
+			make.bottom.equalToSuperview().inset(preferredSpacing * 0.25)
+			make.height.equalTo(preferredSpacing)
+		}
 	}
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
 
-		containerView.roundCorners([.bottomRight, .topLeft, .topRight], radius: Desk360.Config.Conversation.MessageCell.Sender.cornerRadius)
+		roundCorner()
+
 	}
 
 }
@@ -77,11 +93,89 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 internal extension SenderMessageTableViewCell {
 
 	func configure(for request: Message) {
+		containerView.backgroundColor = Colors.ticketDetailChatSenderBackgroundColor
 		messageLabel.text = request.message
+		messageLabel.textColor = Colors.ticketDetailChatSenderTextColor
+		messageLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.chatSenderFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.chatSenderFontWeight ?? 400))
+		dateLabel.textColor = Colors.ticketDetailChatSenderDateColor
+
+
+		roundCorner()
 
 		if let dateString = request.createdAt {
 			dateLabel.text = dateString
 		}
+	}
+
+	func roundCorner() {
+		let type = Config.shared.model.ticketDetail?.chatBoxStyle
+
+		let containerShadowIsHidden = Config.shared.model.ticketDetail?.chatSenderShadowIsHidden ?? true
+
+		let test = Config.shared.model.ticketDetail?.chatSenderShadowIsHidden
+		switch type {
+		case 1:
+			containerView.roundCorners([.topLeft, .bottomRight, .topRight], radius: 10, isShadow: !containerShadowIsHidden)
+		case 2:
+			containerView.roundCorners([.topLeft, .bottomRight, .topRight], radius: 30, isShadow: !containerShadowIsHidden)
+		case 3:
+			containerView.roundCorners([.topLeft, .bottomRight, .topRight], radius: 19, isShadow: !containerShadowIsHidden)
+		case 4:
+			containerView.layer.cornerRadius = 0
+			addSubLayerChatBubble()
+			containerBackgroundColor = .clear
+		default:
+			containerView.roundCorners([.topLeft, .bottomRight, .topRight], radius: 10, isShadow: !containerShadowIsHidden)
+		}
+
+		if containerShadowIsHidden {
+			containerView.layer.shadowColor = UIColor.black.cgColor
+			containerView.layer.shadowOffset = CGSize.zero
+			containerView.layer.shadowRadius = 10
+			containerView.layer.shadowOpacity = 0.3
+			containerView.layer.masksToBounds = false
+		}
+
+	}
+
+	func addSubLayerChatBubble() {
+
+		stackView.snp.remakeConstraints { remake in
+			remake.leading.equalToSuperview().inset(preferredSpacing)
+			remake.top.trailing.bottom.equalToSuperview().inset(preferredSpacing / 2)
+		}
+		let width = containerView.frame.width
+		let height = containerView.frame.height
+
+		let bezierPath = UIBezierPath()
+		bezierPath.move(to: CGPoint(x: 0, y: height))
+		bezierPath.addLine(to: CGPoint(x: width - 4, y: height))
+		bezierPath.addCurve(to: CGPoint(x: width, y: height - 4), controlPoint1: CGPoint(x: width - 2, y: height), controlPoint2: CGPoint(x: width, y: height - 2))
+		bezierPath.addLine(to: CGPoint(x: width, y: 4))
+		bezierPath.addCurve(to: CGPoint(x: width - 4, y: 0), controlPoint1: CGPoint(x: width, y: 2), controlPoint2: CGPoint(x: width - 2, y: 0))
+		bezierPath.addLine(to: CGPoint(x: 16 , y: 0))
+		bezierPath.addCurve(to: CGPoint(x: 12, y: 4), controlPoint1: CGPoint(x: 14 , y: 0), controlPoint2: CGPoint(x: 12 , y: 2))
+		bezierPath.addLine(to: CGPoint(x: 12, y: height - 8))
+		bezierPath.addLine(to: CGPoint(x: 4, y: height))
+
+		let incomingMessageLayer = CAShapeLayer()
+		incomingMessageLayer.path = bezierPath.cgPath
+		incomingMessageLayer.frame = CGRect(x: 0,
+											y: 0,
+											width: width,
+											height: height)
+		incomingMessageLayer.fillColor = Colors.ticketDetailChatSenderBackgroundColor.cgColor
+
+		if let layers = containerView.layer.sublayers {
+			for layer in layers {
+				if let currentLayer = layer as? CAShapeLayer {
+					layer.removeFromSuperlayer()
+				}
+			}
+		}
+
+		containerView.layer.insertSublayer(incomingMessageLayer, below: stackView.layer)
+		containerView.clipsToBounds = false
 	}
 
 }
