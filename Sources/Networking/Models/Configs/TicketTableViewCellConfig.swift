@@ -126,6 +126,8 @@ extension TicketTableViewCellConfigModel: Codable {
 	///
 	/// - Parameter decoder: The decoder to read data from.
 	/// - Throws: Decoding error.
+	// swiftlint:disable function_body_length
+	// swiftlint:disable cyclomatic_complexity
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -262,4 +264,3 @@ extension TicketTableViewCellConfigModel: Codable {
 	}
 
 }
-

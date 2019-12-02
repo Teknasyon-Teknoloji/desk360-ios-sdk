@@ -8,8 +8,6 @@
 import Foundation
 import UIKit
 
-// swiftlint:disable file_length
-
 /// Use `Desk360.Config` to set up the contact us page in your application.
 public extension Desk360 {
 
@@ -237,7 +235,6 @@ public extension Desk360.Config.Conversation {
 	}
 
 }
-
 
 public extension Desk360.Config.Conversation.MessageCell {
 

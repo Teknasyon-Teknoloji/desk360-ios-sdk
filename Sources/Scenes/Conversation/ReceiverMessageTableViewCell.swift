@@ -40,7 +40,7 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 		return view
 	}()
 
-	lazy var testImageView: UIImageView = {
+	lazy var previewImageView: UIImageView = {
 		let imageView = UIImageView()
 		return imageView
 	}()
@@ -127,21 +127,24 @@ internal extension ReceiverMessageTableViewCell {
 
 		imageFromUrl(url: url)
 
-		stackView.addArrangedSubview(testImageView)
-		testImageView.snp.remakeConstraints { remake in
+		stackView.addArrangedSubview(previewImageView)
+		previewImageView.snp.remakeConstraints { remake in
 			remake.leading.trailing.equalToSuperview()
-			remake.height.equalTo(testImageView.snp.width)
+			remake.height.equalTo(previewImageView.snp.width)
 		}
-		testImageView.contentMode = .scaleAspectFit
+		previewImageView.contentMode = .scaleAspectFit
 	}
 
 	func imageFromUrl(url: URL) {
-	 let request = URLRequest(url: url)
-	  NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: .main, completionHandler: { (response, data, error) in
-		  if let imageData = data as NSData? {
-			self.testImageView.image = UIImage(data: imageData as Data)
-		  }
-	  })
+		let request = URLRequest(url: url as URL)
+		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+			if let imageData = data {
+				DispatchQueue.main.async {
+					self.previewImageView.image = UIImage(data: imageData)
+				}
+			}
+		}
+		task.resume()
 	}
 
 	func addPdf(_ url: URL) {
@@ -200,8 +203,8 @@ internal extension ReceiverMessageTableViewCell {
 		bezierPath.addCurve(to: CGPoint(x: 0, y: height - 4), controlPoint1: CGPoint(x: 2, y: height), controlPoint2: CGPoint(x: 0, y: height - 2))
 		bezierPath.addLine(to: CGPoint(x: 0, y: 4))
 		bezierPath.addCurve(to: CGPoint(x: 4, y: 0), controlPoint1: CGPoint(x: 0, y: 2), controlPoint2: CGPoint(x: 2, y: 0))
-		bezierPath.addLine(to: CGPoint(x: width - 16 , y: 0))
-		bezierPath.addCurve(to: CGPoint(x: width - 12, y: 4), controlPoint1: CGPoint(x: width - 14 , y: 0), controlPoint2: CGPoint(x: width - 12 , y: 2))
+		bezierPath.addLine(to: CGPoint(x: width - 16, y: 0))
+		bezierPath.addCurve(to: CGPoint(x: width - 12, y: 4), controlPoint1: CGPoint(x: width - 14, y: 0), controlPoint2: CGPoint(x: width - 12, y: 2))
 		bezierPath.addLine(to: CGPoint(x: width - 12, y: height - 8))
 		bezierPath.addLine(to: CGPoint(x: width, y: height))
 		bezierPath.addLine(to: CGPoint(x: width - 4, y: height))
@@ -215,17 +218,13 @@ internal extension ReceiverMessageTableViewCell {
 		outgoingMessageLayer.fillColor = Colors.ticketDetailChatReceiverBackgroundColor.cgColor
 
 		if let layers = containerView.layer.sublayers {
-			for layer in layers {
-				if let currentLayer = layer as? CAShapeLayer {
-					layer.removeFromSuperlayer()
-				}
+			for layer in layers where layer is CAShapeLayer {
+				layer.removeFromSuperlayer()
 			}
 		}
 
 		containerView.layer.insertSublayer(outgoingMessageLayer, below: stackView.layer)
 		containerView.clipsToBounds = false
 	}
-
-
 
 }

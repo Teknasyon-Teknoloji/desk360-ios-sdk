@@ -23,6 +23,8 @@ extension HADropDownDelegate {
 }
 
 @IBDesignable
+// swiftlint:disable file_length
+// swiftlint:disable type_body_length
 class HADropDown: UIView {
 
 	weak var delegate: HADropDownDelegate!
@@ -61,6 +63,7 @@ class HADropDown: UIView {
 	}
 
 	// swiftlint:disable valid_ibinspectable
+	// swiftlint:disable unused_setter_value
 	@IBInspectable
 	var textAllignment: NSTextAlignment {
 		set {
@@ -176,7 +179,7 @@ class HADropDown: UIView {
 	private var tapGestureBackground: UITapGestureRecognizer!
 
 	override func prepareForInterfaceBuilder() {
-		label.frame = CGRect(x: (UIScreen.main.bounds.size.minDimension * 0.054) * 0.5, y: 0, width: self.frame.width - (UIScreen.main.bounds.size.minDimension * 0.054) , height: self.frame.height)
+		label.frame = CGRect(x: (UIScreen.main.bounds.size.minDimension * 0.054) * 0.5, y: 0, width: self.frame.width - (UIScreen.main.bounds.size.minDimension * 0.054), height: self.frame.height)
 		font = UIFont(descriptor: font.fontDescriptor, size: titleFontSize)
 		label.font = font
 		self.addSubview(label)
@@ -242,6 +245,7 @@ class HADropDown: UIView {
 		self.addSubview(label)
 	}
 
+	// swiftlint:disable function_body_length
 	func addTopLabel2(text: String, textColor: UIColor, font: UIFont) {
 		let label = UILabel()
 		label.tag = 1
@@ -269,10 +273,10 @@ class HADropDown: UIView {
 		bezierPath.addCurve(to: CGPoint(x: 0, y: height - 4), controlPoint1: CGPoint(x: 2, y: height), controlPoint2: CGPoint(x: 0, y: height - 2))
 		bezierPath.addLine(to: CGPoint(x: 0, y: 4))
 		bezierPath.addCurve(to: CGPoint(x: 4, y: 0), controlPoint1: CGPoint(x: 0, y: 2), controlPoint2: CGPoint(x: 2, y: 0))
-		bezierPath.addLine(to: CGPoint(x: ((UIScreen.main.bounds.size.minDimension * 0.054) * 0.4) , y: 0))
-		bezierPath.move(to: CGPoint(x: ((UIScreen.main.bounds.size.minDimension * 0.054) * 0.2) + label.frame.size.width , y: 0))
-		bezierPath.addLine(to: CGPoint(x: width - 4 , y: 0))
-		bezierPath.addCurve(to: CGPoint(x: width, y: 4), controlPoint1: CGPoint(x: width - 2 , y: 0), controlPoint2: CGPoint(x: width , y: 2))
+		bezierPath.addLine(to: CGPoint(x: ((UIScreen.main.bounds.size.minDimension * 0.054) * 0.4), y: 0))
+		bezierPath.move(to: CGPoint(x: ((UIScreen.main.bounds.size.minDimension * 0.054) * 0.2) + label.frame.size.width, y: 0))
+		bezierPath.addLine(to: CGPoint(x: width - 4, y: 0))
+		bezierPath.addCurve(to: CGPoint(x: width, y: 4), controlPoint1: CGPoint(x: width - 2, y: 0), controlPoint2: CGPoint(x: width, y: 2))
 		bezierPath.addLine(to: CGPoint(x: width, y: height - 4))
 		bezierPath.addCurve(to: CGPoint(x: width - 4, y: height), controlPoint1: CGPoint(x: width, y: height - 2), controlPoint2: CGPoint(x: width - 2, y: height))
 
@@ -286,20 +290,19 @@ class HADropDown: UIView {
 		specialFrameLayer.fillColor = UIColor.clear.cgColor
 		specialFrameLayer.name = "specialLayer"
 
-
 		let bezierPathBorder = UIBezierPath()
-		bezierPath.move(to: CGPoint(x: width - 4, y: height))
-		bezierPath.addLine(to: CGPoint(x: 4, y: height))
-		bezierPath.addCurve(to: CGPoint(x: 0, y: height - 4), controlPoint1: CGPoint(x: 2, y: height), controlPoint2: CGPoint(x: 0, y: height - 2))
-		bezierPath.addLine(to: CGPoint(x: 0, y: 4))
-		bezierPath.addCurve(to: CGPoint(x: 4, y: 0), controlPoint1: CGPoint(x: 0, y: 2), controlPoint2: CGPoint(x: 2, y: 0))
-		bezierPath.addLine(to: CGPoint(x: width - 4 , y: 0))
-		bezierPath.addCurve(to: CGPoint(x: width, y: 4), controlPoint1: CGPoint(x: width - 2 , y: 0), controlPoint2: CGPoint(x: width , y: 2))
-		bezierPath.addLine(to: CGPoint(x: width, y: height - 4))
-		bezierPath.addCurve(to: CGPoint(x: width - 4, y: height), controlPoint1: CGPoint(x: width, y: height - 2), controlPoint2: CGPoint(x: width - 2, y: height))
+		bezierPathBorder.move(to: CGPoint(x: width - 4, y: height))
+		bezierPathBorder.addLine(to: CGPoint(x: 4, y: height))
+		bezierPathBorder.addCurve(to: CGPoint(x: 0, y: height - 4), controlPoint1: CGPoint(x: 2, y: height), controlPoint2: CGPoint(x: 0, y: height - 2))
+		bezierPathBorder.addLine(to: CGPoint(x: 0, y: 4))
+		bezierPathBorder.addCurve(to: CGPoint(x: 4, y: 0), controlPoint1: CGPoint(x: 0, y: 2), controlPoint2: CGPoint(x: 2, y: 0))
+		bezierPathBorder.addLine(to: CGPoint(x: width - 4, y: 0))
+		bezierPathBorder.addCurve(to: CGPoint(x: width, y: 4), controlPoint1: CGPoint(x: width - 2, y: 0), controlPoint2: CGPoint(x: width, y: 2))
+		bezierPathBorder.addLine(to: CGPoint(x: width, y: height - 4))
+		bezierPathBorder.addCurve(to: CGPoint(x: width - 4, y: height), controlPoint1: CGPoint(x: width, y: height - 2), controlPoint2: CGPoint(x: width - 2, y: height))
 
 		let borderLayer = CAShapeLayer()
-		borderLayer.path = bezierPath.cgPath
+		borderLayer.path = bezierPathBorder.cgPath
 		borderLayer.frame = CGRect(x: 0,
 								   y: 0,
 								   width: width,
@@ -309,10 +312,8 @@ class HADropDown: UIView {
 		borderLayer.name = "borderLayer"
 
 		if let layers = self.superview?.layer.sublayers {
-			for layer in layers {
-				if let currentLayer = layer as? CAShapeLayer {
-					layer.removeFromSuperlayer()
-				}
+			for layer in layers where layer is CAShapeLayer {
+				layer.removeFromSuperlayer()
 			}
 		}
 
@@ -329,7 +330,6 @@ class HADropDown: UIView {
 		label.frame.size.height = UIScreen.main.bounds.size.minDimension * 0.054 * 0.8
 		label.frame.origin.x = 0
 		label.frame.origin.y = 0
-//		label.frame.origin.y = (UIScreen.main.bounds.size.minDimension * 0.054) * 0.1
 		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
 			label.textAlignment = .right
 		} else {
@@ -361,17 +361,6 @@ class HADropDown: UIView {
 		}
 	}
 
-	func willChangeFrame() {
-//		var rootView = self.superview
-//		while rootView?.superview != nil {
-//			rootView = rootView?.superview
-//		}
-//		let newFrame: CGRect = self.superview!.convert(self.frame, to: rootView)
-//		print("newFrame y:")
-//		print(newFrame.origin.y)
-//		self.tableFrame = newFrame
-	}
-
 	func showList() {
 		isCollapsed = !isCollapsed
 		if !isCollapsed {
@@ -395,7 +384,6 @@ class HADropDown: UIView {
 
 			self.table.reloadData()
 
-
 			self.table.snp.remakeConstraints { make in
 				make.top.equalTo(self.snp.bottom)
 				make.leading.equalTo(self.snp.leading)
@@ -408,7 +396,6 @@ class HADropDown: UIView {
 
 				}
 				self.table.superview?.layoutIfNeeded()
-//				self.table.frame = CGRect(x: self.frame.origin.x, y: self.frame.origin.y + self.frame.height+5, width: self.frame.width, height: height)
 			})
 
 			if delegate != nil {
@@ -428,7 +415,7 @@ class HADropDown: UIView {
 	@objc private func didTap(gesture: UIGestureRecognizer) {
 		showList()
 	}
-	
+
 	func collapseTableView() {
 		if delegate != nil {
 			delegate.willHide(dropDown: self)
@@ -473,7 +460,7 @@ extension HADropDown: UITableViewDelegate, UITableViewDataSource {
 		}
 		cell?.textLabel?.textAlignment = textAllignment
 		cell?.textLabel?.text = items[indexPath.row]
-		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 
 		cell?.textLabel?.font = font
 

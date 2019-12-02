@@ -53,7 +53,7 @@ extension UIView {
 
 	func addViewUnderLine() {
 		let bottomLine = UIView()
-		bottomLine.frame = CGRect(origin: CGPoint(x: 0, y: UITextField.preferredHeight * 1.15 - 1), size: CGSize(width: UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2) , height: 1))
+		bottomLine.frame = CGRect(origin: CGPoint(x: 0, y: UITextField.preferredHeight * 1.15 - 1), size: CGSize(width: UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2), height: 1))
 		bottomLine.backgroundColor = Colors.createScreenFormInputBorderColor
 		bottomLine.tag = 10
 		self.addSubview(bottomLine)

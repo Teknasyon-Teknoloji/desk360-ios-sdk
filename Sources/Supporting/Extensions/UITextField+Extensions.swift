@@ -185,13 +185,12 @@ extension UITextField {
 	}
 
 	func removeTopLabel() {
-		for view in self.subviews {
-			if view.tag == 1 {
-				view.removeFromSuperview()
-			}
+		for view in self.subviews where view.tag == 1 {
+			view.removeFromSuperview()
 		}
 	}
 
+	// swiftlint:disable function_body_length
 	func addType2TopLabel(text: String, textColor: UIColor, font: UIFont, backgroundColor: UIColor) {
 		let label = UILabel()
 		label.tag = 1
@@ -212,7 +211,6 @@ extension UITextField {
 		self.addSubview(label)
 		label.sizeToFit()
 
-
 		let width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2)
 		let height = UITextField.preferredHeight * 1.2
 
@@ -222,10 +220,10 @@ extension UITextField {
 		bezierPath.addCurve(to: CGPoint(x: 0, y: height - 4), controlPoint1: CGPoint(x: 2, y: height), controlPoint2: CGPoint(x: 0, y: height - 2))
 		bezierPath.addLine(to: CGPoint(x: 0, y: 4))
 		bezierPath.addCurve(to: CGPoint(x: 4, y: 0), controlPoint1: CGPoint(x: 0, y: 2), controlPoint2: CGPoint(x: 2, y: 0))
-		bezierPath.addLine(to: CGPoint(x: ((UIScreen.main.bounds.size.minDimension * 0.054) * 0.4) , y: 0))
-		bezierPath.move(to: CGPoint(x: ((UIScreen.main.bounds.size.minDimension * 0.054) * 0.2) + label.frame.size.width , y: 0))
-		bezierPath.addLine(to: CGPoint(x: width - 4 , y: 0))
-		bezierPath.addCurve(to: CGPoint(x: width, y: 4), controlPoint1: CGPoint(x: width - 2 , y: 0), controlPoint2: CGPoint(x: width , y: 2))
+		bezierPath.addLine(to: CGPoint(x: ((UIScreen.main.bounds.size.minDimension * 0.054) * 0.4), y: 0))
+		bezierPath.move(to: CGPoint(x: ((UIScreen.main.bounds.size.minDimension * 0.054) * 0.2) + label.frame.size.width, y: 0))
+		bezierPath.addLine(to: CGPoint(x: width - 4, y: 0))
+		bezierPath.addCurve(to: CGPoint(x: width, y: 4), controlPoint1: CGPoint(x: width - 2, y: 0), controlPoint2: CGPoint(x: width, y: 2))
 		bezierPath.addLine(to: CGPoint(x: width, y: height - 4))
 		bezierPath.addCurve(to: CGPoint(x: width - 4, y: height), controlPoint1: CGPoint(x: width, y: height - 2), controlPoint2: CGPoint(x: width - 2, y: height))
 
@@ -239,20 +237,19 @@ extension UITextField {
 		specialFrameLayer.fillColor = UIColor.clear.cgColor
 		specialFrameLayer.name = "specialLayer"
 
-
 		let bezierPathBorder = UIBezierPath()
-		bezierPath.move(to: CGPoint(x: width - 4, y: height))
-		bezierPath.addLine(to: CGPoint(x: 4, y: height))
-		bezierPath.addCurve(to: CGPoint(x: 0, y: height - 4), controlPoint1: CGPoint(x: 2, y: height), controlPoint2: CGPoint(x: 0, y: height - 2))
-		bezierPath.addLine(to: CGPoint(x: 0, y: 4))
-		bezierPath.addCurve(to: CGPoint(x: 4, y: 0), controlPoint1: CGPoint(x: 0, y: 2), controlPoint2: CGPoint(x: 2, y: 0))
-		bezierPath.addLine(to: CGPoint(x: width - 4 , y: 0))
-		bezierPath.addCurve(to: CGPoint(x: width, y: 4), controlPoint1: CGPoint(x: width - 2 , y: 0), controlPoint2: CGPoint(x: width , y: 2))
-		bezierPath.addLine(to: CGPoint(x: width, y: height - 4))
-		bezierPath.addCurve(to: CGPoint(x: width - 4, y: height), controlPoint1: CGPoint(x: width, y: height - 2), controlPoint2: CGPoint(x: width - 2, y: height))
+		bezierPathBorder.move(to: CGPoint(x: width - 4, y: height))
+		bezierPathBorder.addLine(to: CGPoint(x: 4, y: height))
+		bezierPathBorder.addCurve(to: CGPoint(x: 0, y: height - 4), controlPoint1: CGPoint(x: 2, y: height), controlPoint2: CGPoint(x: 0, y: height - 2))
+		bezierPathBorder.addLine(to: CGPoint(x: 0, y: 4))
+		bezierPathBorder.addCurve(to: CGPoint(x: 4, y: 0), controlPoint1: CGPoint(x: 0, y: 2), controlPoint2: CGPoint(x: 2, y: 0))
+		bezierPathBorder.addLine(to: CGPoint(x: width - 4, y: 0))
+		bezierPathBorder.addCurve(to: CGPoint(x: width, y: 4), controlPoint1: CGPoint(x: width - 2, y: 0), controlPoint2: CGPoint(x: width, y: 2))
+		bezierPathBorder.addLine(to: CGPoint(x: width, y: height - 4))
+		bezierPathBorder.addCurve(to: CGPoint(x: width - 4, y: height), controlPoint1: CGPoint(x: width, y: height - 2), controlPoint2: CGPoint(x: width - 2, y: height))
 
 		let borderLayer = CAShapeLayer()
-		borderLayer.path = bezierPath.cgPath
+		borderLayer.path = bezierPathBorder.cgPath
 		borderLayer.frame = CGRect(x: 0,
 								   y: 0,
 								   width: width,
@@ -262,10 +259,8 @@ extension UITextField {
 		borderLayer.name = "borderLayer"
 
 		if let layers = self.superview?.layer.sublayers {
-			for layer in layers {
-				if let currentLayer = layer as? CAShapeLayer {
-					layer.removeFromSuperlayer()
-				}
+			for layer in layers where layer is CAShapeLayer {
+				layer.removeFromSuperlayer()
 			}
 		}
 
@@ -331,14 +326,14 @@ extension UITextField {
 
 	func addUnderLine() {
 		let bottomLine = UIView()
-		bottomLine.frame = CGRect(origin: CGPoint(x: 0, y: UITextField.preferredHeight * 1.15 - 1), size: CGSize(width: UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2) , height: 1))
+		bottomLine.frame = CGRect(origin: CGPoint(x: 0, y: UITextField.preferredHeight * 1.15 - 1), size: CGSize(width: UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2), height: 1))
 		bottomLine.backgroundColor = Colors.createScreenFormInputBorderColor
 		bottomLine.tag = 10
 		self.borderStyle = UITextField.BorderStyle.none
 		self.addSubview(bottomLine)
 	}
 
-	func designTextField(placeholder: String,content: String?){
+	func designTextField(placeholder: String, content: String?) {
 		let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: self.frame.height))
 
 		self.isEnabled = true
@@ -348,8 +343,8 @@ extension UITextField {
 //        self.backgroundColor = EA_DesignHelper.textFieldBackgroundColor
         self.layer.borderColor = UIColor.lightGray.cgColor
         self.layer.borderWidth = 1
-        self.attributedPlaceholder = NSAttributedString(string:NSLocalizedString(placeholder,comment:""),
-														attributes:[NSAttributedString.Key.foregroundColor: UIColor.lightGray.cgColor ])
+        self.attributedPlaceholder = NSAttributedString(string: NSLocalizedString(placeholder, comment: ""),
+														attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray.cgColor ])
 		self.textColor = .white
     }
 

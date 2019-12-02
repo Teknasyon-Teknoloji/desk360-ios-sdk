@@ -117,7 +117,7 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 
 }
 
-//MARK: - Desk360 Start
+// MARK: - Desk360 Start
 extension ListingViewController {
 
 	func initialView() {
@@ -128,15 +128,9 @@ extension ListingViewController {
 		} else {
 			filterTickets = requests.filter({ $0.status == .expired })
 		}
-//		guard Desk360.token == "" else {
-//			getConfig()
-//			//			self.fetchRequests(showLoading: self.requests.isEmpty)
-//			return
-//		}
 
 		if Desk360.isRegister {
 			getConfig()
-			//			fetchRequests(showLoading: self.requests.isEmpty)
 		} else {
 			register()
 		}

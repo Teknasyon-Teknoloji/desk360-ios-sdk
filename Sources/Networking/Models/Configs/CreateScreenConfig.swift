@@ -104,6 +104,8 @@ extension CreateScreenConfigModel: Codable {
 	///
 	/// - Parameter decoder: The decoder to read data from.
 	/// - Throws: Decoding error.
+	// swiftlint:disable cyclomatic_complexity
+	// swiftlint:disable function_body_length
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -208,4 +210,3 @@ extension CreateScreenConfigModel: Codable {
 	}
 
 }
-

@@ -45,11 +45,9 @@ public struct ConfigModel {
 
 	var customFields: [Field]?
 
-
 }
 
 extension ConfigModel: Codable {
-
 
 	private enum CodingKeys: String, CodingKey {
 		case first_screen

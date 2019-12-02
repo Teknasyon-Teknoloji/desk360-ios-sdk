@@ -12,6 +12,7 @@ import Moya
 import Photos
 import FileProvider
 
+// swiftlint:disable file_length
 final class CreateRequestViewController: UIViewController, UIDocumentBrowserViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, Layouting, UIGestureRecognizerDelegate, UIDocumentPickerDelegate {
 
 	typealias ViewType = CreateRequestView
@@ -64,7 +65,6 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 			self.layoutableView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.bottomScrollView.frame.size.width, height: self.layoutableView.bottomDescriptionLabel.frame.size.height + self.layoutableView.preferredSpacing * 0.5)
 		}
 
-
 	}
 
 	override func viewDidDisappear(_ animated: Bool) {
@@ -83,16 +83,15 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	@objc func addFile() {
 		let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-
-		let showImagePicker = UIAlertAction(title: NSLocalizedString("Images", comment: ""), style: .default) { action in
+		let showImagePicker = UIAlertAction(title: NSLocalizedString("Images", comment: ""), style: .default) { _ in
 			self.attachmentButtonConfigure()
 			self.didTapImagePicker()
 		}
-		let showFilePicker = UIAlertAction(title: "Browse", style: .default)   { action in
+		let showFilePicker = UIAlertAction(title: "Browse", style: .default) { _ in
 			self.attachmentButtonConfigure()
 			self.didTapDocumentBrowse()
 		}
-		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { action in
+		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
 			self.attachmentButtonConfigure()
 		}
 
@@ -181,12 +180,11 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 	}
 
-
-	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
 		guard let imgUrl = info[UIImagePickerController.InfoKey.referenceURL] as? URL else { return }
 		guard var name = imgUrl.pathComponents.last else { return }
 		guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
-		guard let data = image.jpegData(compressionQuality: 0.3) as? NSData else { return }
+		guard let data = image.jpegData(compressionQuality: 0.3) as NSData? else { return }
 
 		if #available(iOS 11.0, *) {
 			if let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset {
@@ -202,7 +200,6 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		picker.dismiss(animated: true)
 	}
 
-
 	@objc private func didTapSendRequestButton() {
 
 		checkChangeFrame()
@@ -217,7 +214,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 		layoutableView.nameErrorLabel.isHidden = true
 
-		guard let email = layoutableView.emailTextField.emailAddress else {
+		guard layoutableView.emailTextField.emailAddress != nil else {
 			layoutableView.emailErrorLabel.isHidden = false
 			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: layoutableView.emailTextField.frame.origin.y + layoutableView.preferredSpacing * 0.25), animated: true)
 			layoutableView.emailTextField.shake()
@@ -247,8 +244,8 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 		let ticketTypes = layoutableView.ticketTypes
 		guard ticketTypes.count > 0 else { return }
-		let ticketTypeId = ticketTypes[layoutableView.dropDownListView.getSelectedIndex].id
-		sendRequest(name: name, email: email, ticketType: String(ticketTypeId), message: message)
+		_ = ticketTypes[layoutableView.dropDownListView.getSelectedIndex].id
+		sendRequest()
 	}
 
 	func checkChangeFrame() {
@@ -273,9 +270,9 @@ extension CreateRequestViewController {
 	func configLayoutableView() {
 
 		let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
-		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.navigationTitleFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
+		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
 		let navigationTitle = NSAttributedString(string: Config.shared.model.createScreen?.navigationTitle ?? "", attributes: selectedattributes as [NSAttributedString.Key: Any])
-		var titleLabel = UILabel()
+		let titleLabel = UILabel()
 		titleLabel.attributedText = navigationTitle
 		titleLabel.sizeToFit()
 		titleLabel.textAlignment = .center
@@ -283,7 +280,7 @@ extension CreateRequestViewController {
 		navigationItem.titleView = titleLabel
 
 		navigationItem.title = Config.shared.model.createScreen?.navigationTitle
-		self.navigationController?.navigationBar.setColors(background: Colors.navigationBackgroundColor, text: Colors.navigationTextColor ?? .black)
+		self.navigationController?.navigationBar.setColors(background: Colors.navigationBackgroundColor, text: Colors.navigationTextColor)
 		navigationController?.navigationBar.tintColor = Colors.navigationImageViewTintColor
 		self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
 		self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -343,7 +340,7 @@ private extension CreateRequestViewController {
 		guard let text = field.trimmedText, text.count > 0  else { return }
 		let name = field.accessibilityIdentifier ?? ""
 		let fieldData = text.data(using: String.Encoding.utf8) ?? Data()
-		ticket.append(Moya.MultipartFormData(provider: .data(fieldData) , name: name))
+		ticket.append(Moya.MultipartFormData(provider: .data(fieldData), name: name))
 	}
 
 	func addDropDownList(view: HADropDown) {
@@ -352,14 +349,13 @@ private extension CreateRequestViewController {
 			let ticketTypeId = layoutableView.ticketTypes[layoutableView.dropDownListView.getSelectedIndex].id
 			let name = view.accessibilityIdentifier ?? ""
 			let fieldData = String(ticketTypeId).data(using: String.Encoding.utf8) ?? Data()
-			ticket.append(Moya.MultipartFormData(provider: .data(fieldData) , name: name))
+			ticket.append(Moya.MultipartFormData(provider: .data(fieldData), name: name))
 		} else {
 			let text = view.title
 			let name = view.accessibilityIdentifier ?? ""
 			let fieldData = text.data(using: String.Encoding.utf8) ?? Data()
-			ticket.append(Moya.MultipartFormData(provider: .data(fieldData) , name: name))
+			ticket.append(Moya.MultipartFormData(provider: .data(fieldData), name: name))
 		}
-
 
 	}
 
@@ -367,12 +363,10 @@ private extension CreateRequestViewController {
 		guard let text = view.trimmedText, text.count > 0  else { return }
 		let name = view.accessibilityIdentifier ?? ""
 		let fieldData = text.data(using: String.Encoding.utf8) ?? Data()
-		ticket.append(Moya.MultipartFormData(provider: .data(fieldData) , name: name))
+		ticket.append(Moya.MultipartFormData(provider: .data(fieldData), name: name))
 	}
 
-	func sendRequest(name: String, email: String, ticketType: String, message: String) {
-		let request = TicketRequest(name: name, email: email, message: message, type_id: ticketType, source: "App", platform: "iOS", country_code: Locale.current.countryCode)
-
+	func sendRequest() {
 
 		let fields = layoutableView.fields
 
@@ -393,18 +387,16 @@ private extension CreateRequestViewController {
 		}
 
 		let sourceData = "App".data(using: String.Encoding.utf8) ?? Data()
-		ticket.append(Moya.MultipartFormData(provider: .data(sourceData) , name: "source"))
+		ticket.append(Moya.MultipartFormData(provider: .data(sourceData), name: "source"))
 
 		let platformData = "iOS".data(using: String.Encoding.utf8) ?? Data()
-		ticket.append(Moya.MultipartFormData(provider: .data(platformData) , name: "platform"))
+		ticket.append(Moya.MultipartFormData(provider: .data(platformData), name: "platform"))
 
 		let countryCodeData = Locale.current.countryCode.data(using: String.Encoding.utf8) ?? Data()
-		ticket.append(Moya.MultipartFormData(provider: .data(countryCodeData) , name: "country_code"))
-
+		ticket.append(Moya.MultipartFormData(provider: .data(countryCodeData), name: "country_code"))
 
 		layoutableView.endEditing(true)
 		layoutableView.setLoading(true)
-
 
 		Desk360.apiProvider.request(.create(ticket: ticket)) { [weak self] result in
 			guard let self = self else { return }

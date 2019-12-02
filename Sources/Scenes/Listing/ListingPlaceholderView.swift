@@ -137,12 +137,6 @@ extension ListingPlaceholderView {
 
 		createRequestButton.layer.cornerRadius = 0
 
-		var offset = preferredSpacing * 0.5
-
-		if !(Config.shared.model.firstScreen?.bottomNoteIsHidden ?? false) {
-			offset = 0
-		}
-
 		createRequestButton.snp.remakeConstraints { make in
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) + 2)
 			if !(Config.shared.model.firstScreen?.bottomNoteIsHidden ?? false) {
@@ -163,7 +157,6 @@ extension ListingPlaceholderView {
 			make.centerX.equalToSuperview()
 		}
 	}
-
 
 	func configureButton() {
 		let type = Config.shared.model.firstScreen?.buttonStyleId
@@ -239,13 +232,13 @@ extension ListingPlaceholderView {
 		createRequestButton.imageView?.tintColor = Colors.firstScreenButtonTextColor
 		createRequestButton.tintColor = Colors.firstScreenButtonTextColor
 		createRequestButton.setTitle(Config.shared.model.firstScreen?.buttonText, for: .normal)
-		createRequestButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.firstScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type:Config.shared.model.firstScreen?.buttonTextFontWeight ?? 400))
+		createRequestButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.firstScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type: Config.shared.model.firstScreen?.buttonTextFontWeight ?? 400))
 
 		bottomDescriptionLabel.text = Config.shared.model.firstScreen?.bottomNoteText
 		bottomDescriptionLabel.sizeToFit()
 		bottomScrollView.isHidden = !(Config.shared.model.firstScreen?.bottomNoteIsHidden ?? false)
 		bottomDescriptionLabel.textColor = Colors.bottomNoteColor
-		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type:Config.shared.model.generalSettings?.bottomNoteFontWeight ?? 400))
+		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model.generalSettings?.bottomNoteFontWeight ?? 400))
 		bottomScrollView.isUserInteractionEnabled = Config.shared.model.firstScreen?.bottomNoteIsHidden ?? false
 
 		configureButton()

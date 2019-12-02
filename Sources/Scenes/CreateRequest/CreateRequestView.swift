@@ -20,6 +20,8 @@ final class SupportTextField: UITextField {
 }
 
 /// Create request view.
+// swiftlint:disable type_body_length
+//swiftlint:disable file_length
 final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	var ticketTypes: [TicketType] = []
@@ -235,6 +237,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	}
 
+	// swiftlint:disable function_body_length
 	func setupLayout() {
 
 		nameTextField.snp.makeConstraints { make in
@@ -324,17 +327,12 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	}
 
-	override func layoutSubviews() {
-		super.layoutSubviews()
-
-
-	}
-
 }
 
 // MARK: - Add Fields
 extension CreateRequestView {
 
+	// swiftlint:disable cyclomatic_complexity
 	func addFields() {
 
 		fields.removeAll()
@@ -424,7 +422,7 @@ extension CreateRequestView {
 		view.itemTextColor = Colors.createScreenFormInputFocusColor
 		view.titleColor = Colors.createScreenFormInputColor
 		view.itemBackground = Colors.backgroundColor
-		view.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		view.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 		view.accessibilityIdentifier = fieldModel.name
 		view.placeHolderText = fieldModel.placeholder ?? ""
 		view.isCollapsed = true
@@ -432,7 +430,7 @@ extension CreateRequestView {
 		view.tag = index
 		let options: [FieldOption] = fieldModel.options ?? []
 
-		view.items = options.map{ ($0.value ?? "") }
+		view.items = options.map { ($0.value ?? "") }
 
 		checkDropDownType(dropDown: view)
 		hideTopLabel(view)
@@ -444,19 +442,18 @@ extension CreateRequestView {
 		}
 		view.addArrowIcon(tintColor: Colors.createScreenFormInputColor)
 
-
 		fields.append(view)
 	}
 
 	func addTextView(fieldModel: Field, count: Int) {
-		var view = UITextView()
+		let view = UITextView()
 		setTextViewStyle(view)
 		view.backgroundColor = .clear
 		view.textColor =  Colors.createScreenFormInputFocusColor
 		view.tintColor = Colors.createScreenFormInputFocusColor
 		view.accessibilityIdentifier = fieldModel.name
 		view.delegate = self
-		view.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		view.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 		addMessageTextViewLabel(text: fieldModel.placeholder ?? "")
 		fields.append(view)
 		setFieldStyle(view)
@@ -471,7 +468,7 @@ extension CreateRequestView {
 	func addMessageTextViewLabel (text: String) {
 		let label = UILabel()
 		label.tag = 30
-		label.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		label.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 		label.textColor = Colors.createScreenFormInputColor
 		let paragraphStyle = NSMutableParagraphStyle()
 		paragraphStyle.firstLineHeadIndent = preferredSpacing * 0.5
@@ -534,20 +531,16 @@ extension CreateRequestView: HADropDownDelegate {
 
 	func configureDropDownListViewUnderLine(dropDown: HADropDown) {
 		let subViews = dropDown.subviews
-		for view in subViews {
-			if view.tag == 10 {
-				view.backgroundColor = Colors.createScreenFormInputFocusBorderColor
-			}
+		for view in subViews where view.tag == 10 {
+			view.backgroundColor = Colors.createScreenFormInputFocusBorderColor
 		}
 	}
 
 	func setIconImageTintColor(dropDownListView: HADropDown) {
 		let views = dropDownListView.subviews
 
-		for view in views {
-			if view.tag == 2 {
-				view.tintColor = Colors.createScreenFormInputFocusColor
-			}
+		for view in views where view.tag == 2 {
+			view.tintColor = Colors.createScreenFormInputFocusColor
 		}
 	}
 
@@ -601,10 +594,10 @@ extension CreateRequestView: UITextViewDelegate {
 
 	func configureTextViewTopLabels(_ textView: UITextView, _ placeholder: String) {
 		if fieldType == 3 {
-			textView.addPlaceholderLabel(text: placeholder , textColor: Colors.createScreenFormInputColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400)))
+			textView.addPlaceholderLabel(text: placeholder, textColor: Colors.createScreenFormInputColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400)))
 		} else if fieldType == 2 {
-			textView.addPlaceholderLabel2(text: placeholder , textColor: Colors.createScreenFormInputColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400)))
-			textView.addTopLabel(text: placeholder , textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
+			textView.addPlaceholderLabel2(text: placeholder, textColor: Colors.createScreenFormInputColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400)))
+			textView.addTopLabel(text: placeholder, textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
 		}
 	}
 
@@ -648,9 +641,7 @@ extension CreateRequestView: UITextViewDelegate {
 		(fields[currentIndex - 1] as? UILabel)?.textColor = color
 	}
 
-
 }
-
 
 // MARK: - UITextFieldDelegate
 extension CreateRequestView: UITextFieldDelegate {
@@ -679,7 +670,6 @@ extension CreateRequestView: UITextFieldDelegate {
 
 		case dropDownListView:
 			if dropDownListView.getSelectedIndex == -1 {
-				self.dropDownListView.willChangeFrame()
 				dropDownListView.shake()
 				dropDownListView.showList()
 				return false
@@ -714,6 +704,7 @@ extension CreateRequestView {
 		}
 	}
 
+	// swiftlint:disable cyclomatic_complexity
 	@objc func checkTexFields(sender: UITextField) {
 
 		configureUnderLine(field: sender)
@@ -828,7 +819,7 @@ private extension CreateRequestView {
 		view.backgroundColor = .clear
 		view.tintColor = Colors.createScreenFormInputFocusColor
 
-		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 
 		if let textField = view as? UITextField {
 			textField.font = font
@@ -849,7 +840,7 @@ private extension CreateRequestView {
 	func setFieldStyle2(_ field: UIView) {
 		field.tintColor = Colors.createScreenFormInputFocusColor
 
-		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 
 		if let textField = field as? UITextField {
 			textField.font = font
@@ -876,7 +867,7 @@ private extension CreateRequestView {
 			currentView.layer.borderWidth = 1
 		}
 
-		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 
 		if let textField = view as? UITextField {
 			textField.font = font
@@ -884,14 +875,14 @@ private extension CreateRequestView {
 
 		if let textView = view as? UITextView {
 			textView.font = font
-			textView.textContainerInset = UIEdgeInsets.init(top: preferredSpacing , left: preferredSpacing / 2, bottom: preferredSpacing / 2, right: preferredSpacing / 2)
+			textView.textContainerInset = UIEdgeInsets.init(top: preferredSpacing, left: preferredSpacing / 2, bottom: preferredSpacing / 2, right: preferredSpacing / 2)
 		}
 
 	}
 
 	func setTextViewStyle(_ textView: UITextView) {
 
-		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 		textView.font = font
 		textView.textContainerInset = UIEdgeInsets.init(top: preferredSpacing, left: preferredSpacing / 2, bottom: preferredSpacing / 2, right: preferredSpacing / 2)
 
@@ -907,6 +898,7 @@ private extension CreateRequestView {
 // MARK: - Configure
 extension CreateRequestView {
 
+	// swiftlint:disable function_body_length
 	func configure() {
 		fieldType = Config.shared.model.createScreen?.formStyleId ?? 1
 
@@ -921,7 +913,7 @@ extension CreateRequestView {
 		dropDownListView.addArrowIcon(tintColor: Colors.createScreenFormInputColor)
 		dropDownListView.placeHolderText = Config.shared.model.generalSettings?.subjectFieldText ?? ""
 		dropDownListView.title = Config.shared.model.generalSettings?.subjectFieldText ?? ""
-		dropDownListView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		dropDownListView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 		checkDropDownType(dropDown: dropDownListView)
 		hideTopLabel(dropDownListView)
 		attachmentButton.imageView?.tintColor = Colors.createScreenFormInputColor
@@ -936,11 +928,9 @@ extension CreateRequestView {
 			attachmentButton.titleLabel?.frame.origin.x = (attachmentButton.imageView?.frame.size.width ?? 0) + preferredSpacing
 		}
 
-
-
 		attachmentCancelButton.imageView?.tintColor = Colors.createScreenFormInputColor
 		attachmentLabel.textColor = Colors.createScreenLabelTextColor
-		attachmentLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400))
+		attachmentLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400))
 		attachmentContainerView.isHidden = !(Config.shared.model.createScreen?.addedFileIsHidden ?? false)
 		configureField(field: nameTextField)
 		configureField(field: emailTextField)
@@ -950,13 +940,13 @@ extension CreateRequestView {
 		messageTextView.textColor =  Colors.createScreenFormInputFocusColor
 		messageTextView.tintColor =  Colors.createScreenFormInputFocusColor
 		messageTextViewLabel.textColor = Colors.createScreenFormInputColor
-		messageTextViewLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		messageTextViewLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 		configureUnderLine(field: nameTextField)
 		configureUnderLine(field: emailTextField)
 		bottomDescriptionLabel.text = Config.shared.model.createScreen?.bottomNoteText
 		bottomScrollView.isHidden = !(Config.shared.model.createScreen?.bottomNoteIsHidden ?? false)
 		bottomDescriptionLabel.textColor = Colors.bottomNoteColor
-		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.bottomNoteFontSize ?? 8) , weight: Font.weight(type: Config.shared.model.generalSettings?.bottomNoteFontWeight ?? 400))
+		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model.generalSettings?.bottomNoteFontWeight ?? 400))
 		sendButton.layer.borderColor = Colors.createScreenButttonBorderColor.cgColor
 		configureFields()
 		setFieldStyle(messageTextView)
@@ -1019,20 +1009,16 @@ extension CreateRequestView {
 
 	func showTopLabel(_ currentView: UIView) {
 
-		for view in currentView.subviews {
-			if view.tag == 1 {
-				view.isHidden = false
-			}
+		for view in currentView.subviews where view.tag == 1 {
+			view.isHidden = false
 		}
 
 		showSpecialLayer(currentView)
 	}
 
 	func hideTopLabel(_ currentView: UIView) {
-		for view in currentView.subviews {
-			if view.tag == 1 {
-				view.isHidden = true
-			}
+		for view in currentView.subviews where view.tag == 1 {
+			view.isHidden = true
 		}
 		hideSpecialLabel(currentView)
 	}
@@ -1043,7 +1029,7 @@ extension CreateRequestView {
 		for layer in layers {
 			if layer.name == "specialLayer" {
 				layer.isHidden = false
-			}  else if layer.name == "borderLayer" {
+			} else if layer.name == "borderLayer" {
 				layer.isHidden = true
 			}
 		}
@@ -1061,30 +1047,25 @@ extension CreateRequestView {
 		}
 	}
 
-
-
 	func configureUnderLine(field: UITextField) {
 		let subViews = field.subviews
-		for view in subViews {
-			if view.tag == 10 {
-				if let text = field.trimmedText, text.count > 0 {
-					view.backgroundColor = Colors.createScreenFormInputFocusBorderColor
-				} else {
-					view.backgroundColor = Colors.createScreenFormInputBorderColor
-				}
+		for view in subViews where view.tag == 10 {
+			if let text = field.trimmedText, text.count > 0 {
+				view.backgroundColor = Colors.createScreenFormInputFocusBorderColor
+			} else {
+				view.backgroundColor = Colors.createScreenFormInputBorderColor
 			}
 		}
 	}
 
-
 	func checkTopLabels(field: UITextField, text: String) {
 		switch fieldType {
 		case 1:
-			field.addTopLabel(text: text, textColor: Colors.createScreenLabelTextColor ?? UIColor.init(hex: "58b0fa")!, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
+			field.addTopLabel(text: text, textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
 		case 2:
-			field.addType2TopLabel(text: text, textColor: Colors.createScreenLabelTextColor ?? UIColor.init(hex: "58b0fa")!, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)), backgroundColor: Colors.backgroundColor ?? .gray)
+			field.addType2TopLabel(text: text, textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)), backgroundColor: Colors.backgroundColor )
 		case 3:
-			field.addType3TopLabel(text: text, textColor: Colors.createScreenLabelTextColor ?? UIColor.init(hex: "58b0fa")!, font: UIFont.systemFont(ofSize: CGFloat(12), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 300)))
+			field.addType3TopLabel(text: text, textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(12), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 300)))
 		default:
 			break
 		}
@@ -1099,7 +1080,7 @@ extension CreateRequestView {
 
 }
 
-//MARK: - Configure Send Button
+// MARK: - Configure Send Button
 extension CreateRequestView {
 
 	func configureButton() {

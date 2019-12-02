@@ -174,9 +174,11 @@ extension CreatRequestPreView {
 
 		createRequestButton.layer.cornerRadius = 0
 
-		if !(Config.shared.model.createPreScreen?.bottomNoteIsHidden ?? false) {
-			offset = 0
-		}
+//		let offset = preferredSpacing * 0.5
+//
+//		if !(Config.shared.model.createPreScreen?.bottomNoteIsHidden ?? false) {
+//			offset = 0
+//		}
 
 		createRequestButton.snp.remakeConstraints { make in
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) + 2)

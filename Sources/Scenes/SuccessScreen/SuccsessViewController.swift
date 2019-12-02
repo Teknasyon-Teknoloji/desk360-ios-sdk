@@ -30,7 +30,6 @@ final class SuccsessViewController: UIViewController, Layouting, UIGestureRecogn
 		let count = navigationController?.viewControllers.count ?? 0
 		navigationController?.viewControllers.removeSubrange(0..<count-1)
 
-
 	}
 
 	override func viewWillAppear(_ animated: Bool) {

@@ -205,7 +205,6 @@ struct Colors {
 		return Config.shared.model.successScreen?.butttonBorderColor ?? UIColor.init(hex: "FFFFFF")!
 	}
 
-
 //	static let grape = UIColor.ars.create(hex: "6a305d")!
 //	static let purplyPink = UIColor.ars.create(hex: "ed77d2")!
 //	static let skyBlue = UIColor.ars.create(hex: "7cb9fe")!

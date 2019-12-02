@@ -5,8 +5,6 @@
 //  Created by samet on 18.11.2019.
 //
 
-
-
 /// Use `SupportRequest` to map JSON objects returned from methods in `SupportService`
 public struct Field {
 
@@ -71,7 +69,6 @@ extension Field: Codable {
 		options = try container.decodeIfPresent([FieldOption].self, forKey: .options)
 		placeholder = try container.decodeIfPresent(String.self, forKey: .place_holder)
 
-
 	}
 
 	/// Encodes this value into the given encoder.
@@ -98,4 +95,3 @@ public struct FieldOption: Codable {
 	var value: String?
 
 }
-

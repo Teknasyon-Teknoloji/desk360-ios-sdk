@@ -67,7 +67,6 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
-
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
 
@@ -94,7 +93,6 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 		tableViewBottomInset = requiredInitialScrollViewBottomInset()
 	}
-
 
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
@@ -179,7 +177,6 @@ extension ConversationViewController {
 				if let url = data.attachmentUrl {
 					self.attachment = url
 				}
-
 
 				self.layoutableView.tableView.reloadData()
 				self.scrollToBottom(animated: false)
@@ -283,9 +280,9 @@ extension ConversationViewController {
 
 	func configure() {
 		let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
-		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.navigationTitleFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
+		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
 		let navigationTitle = NSAttributedString(string: Config.shared.model.ticketDetail?.title ?? "", attributes: selectedattributes as [NSAttributedString.Key: Any])
-		var titleLabel = UILabel()
+		let titleLabel = UILabel()
 		titleLabel.attributedText = navigationTitle
 		titleLabel.sizeToFit()
 		titleLabel.textAlignment = .center
@@ -293,7 +290,7 @@ extension ConversationViewController {
 		navigationItem.titleView = titleLabel
 
 		navigationItem.title = Config.shared.model.ticketDetail?.title
-		self.navigationController?.navigationBar.setColors(background: Colors.navigationBackgroundColor, text: Colors.navigationTextColor ?? .black)
+		self.navigationController?.navigationBar.setColors(background: Colors.navigationBackgroundColor, text: Colors.navigationTextColor)
 		navigationController?.navigationBar.tintColor = Colors.navigationImageViewTintColor
 		self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
 		self.navigationController?.navigationBar.shadowImage = UIImage()

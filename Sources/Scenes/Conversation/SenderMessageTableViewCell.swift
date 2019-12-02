@@ -96,7 +96,6 @@ internal extension SenderMessageTableViewCell {
 		messageLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.chatSenderFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.chatSenderFontWeight ?? 400))
 		dateLabel.textColor = Colors.ticketDetailChatSenderDateColor
 
-
 		roundCorner()
 
 		if let dateString = request.createdAt {
@@ -109,7 +108,6 @@ internal extension SenderMessageTableViewCell {
 
 		let containerShadowIsHidden = Config.shared.model.ticketDetail?.chatSenderShadowIsHidden ?? true
 
-		let test = Config.shared.model.ticketDetail?.chatSenderShadowIsHidden
 		switch type {
 		case 1:
 			containerView.roundCorners([.topLeft, .bottomRight, .topRight], radius: 10, isShadow: !containerShadowIsHidden)
@@ -150,8 +148,8 @@ internal extension SenderMessageTableViewCell {
 		bezierPath.addCurve(to: CGPoint(x: width, y: height - 4), controlPoint1: CGPoint(x: width - 2, y: height), controlPoint2: CGPoint(x: width, y: height - 2))
 		bezierPath.addLine(to: CGPoint(x: width, y: 4))
 		bezierPath.addCurve(to: CGPoint(x: width - 4, y: 0), controlPoint1: CGPoint(x: width, y: 2), controlPoint2: CGPoint(x: width - 2, y: 0))
-		bezierPath.addLine(to: CGPoint(x: 16 , y: 0))
-		bezierPath.addCurve(to: CGPoint(x: 12, y: 4), controlPoint1: CGPoint(x: 14 , y: 0), controlPoint2: CGPoint(x: 12 , y: 2))
+		bezierPath.addLine(to: CGPoint(x: 16, y: 0))
+		bezierPath.addCurve(to: CGPoint(x: 12, y: 4), controlPoint1: CGPoint(x: 14, y: 0), controlPoint2: CGPoint(x: 12, y: 2))
 		bezierPath.addLine(to: CGPoint(x: 12, y: height - 8))
 		bezierPath.addLine(to: CGPoint(x: 4, y: height))
 
@@ -164,10 +162,8 @@ internal extension SenderMessageTableViewCell {
 		incomingMessageLayer.fillColor = Colors.ticketDetailChatSenderBackgroundColor.cgColor
 
 		if let layers = containerView.layer.sublayers {
-			for layer in layers {
-				if let currentLayer = layer as? CAShapeLayer {
-					layer.removeFromSuperlayer()
-				}
+			for layer in layers where layer is CAShapeLayer {
+				layer.removeFromSuperlayer()
 			}
 		}
 
