@@ -24,4 +24,13 @@ final class Alert {
 		viewController.present(alert, animated: true, completion: nil)
 
 	}
+
+	static func showAlertForRegister(viewController: UIViewController, title: String, message: String, dissmis: Bool ) {
+
+		let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+		alert.addAction(UIAlertAction(title: "ok.button".localize(), style: UIAlertAction.Style.default, handler: { _ in }))
+
+		viewController.present(alert, animated: true, completion: nil)
+
+	}
 }

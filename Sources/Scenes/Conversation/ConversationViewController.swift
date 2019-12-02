@@ -57,10 +57,6 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		super.viewDidLoad()
 
 		registerForKeyboardEvents()
-		if request.status == .expired {
-			view.backgroundColor = Desk360.Config.currentTheme.requestSendButtonBackgroundColor
-		}
-
 		layoutableView.tableView.dataSource = self
 		layoutableView.tableView.delegate = self
 		layoutableView.conversationInputView.delegate = self

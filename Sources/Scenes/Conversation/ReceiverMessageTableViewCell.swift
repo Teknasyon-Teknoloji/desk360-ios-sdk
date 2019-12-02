@@ -13,7 +13,6 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 
 	private lazy var containerView: UIView = {
 		var view = UIView()
-		view.backgroundColor = Desk360.Config.currentTheme.recieverCellBackgroundColor
 		view.clipsToBounds = true
 		return view
 	}()
@@ -21,14 +20,12 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 	private lazy var messageLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 0
-		label.textColor = Desk360.Config.currentTheme.recieverCellMessageTextColor
 		label.font = Desk360.Config.Conversation.MessageCell.Receiver.messageFont
 		return label
 	}()
 
 	private lazy var dateLabel: UILabel = {
 		let label = UILabel()
-		label.textColor = Desk360.Config.currentTheme.recieverCellDateTextColor
 		label.font = Desk360.Config.Conversation.MessageCell.Receiver.dateFont
 		label.textAlignment = .right
 		return label

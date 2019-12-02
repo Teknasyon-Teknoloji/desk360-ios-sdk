@@ -11,7 +11,7 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 
 	private lazy var containerView: UIView = {
 		var view = UIView()
-		view.backgroundColor = Desk360.Config.currentTheme.listingCellBackgroundColor
+		view.layer.cornerRadius = 10
 		view.clipsToBounds = true
 		return view
 	}()
@@ -26,7 +26,6 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 	private lazy var iconImageView: UIImageView = {
 		let view = UIImageView()
 		view.contentMode = .scaleAspectFit
-		view.tintColor = Desk360.Config.currentTheme.listingCellTintColor
 		return view
 	}()
 
@@ -39,13 +38,6 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 		view.axis = .vertical
 		view.alignment = .fill
 		view.distribution = .fill
-		view.spacing = preferredSpacing * 0.25
-		return view
-	}()
-
-	private lazy var lineView: UIView = {
-		let view = UIView()
-		view.backgroundColor = Desk360.Config.currentTheme.listingCellLineColor
 		return view
 	}()
 
@@ -59,27 +51,24 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 	}
 
 	func setupViews() {
-		backgroundColor = Desk360.Config.currentTheme.backgroundColor
 		selectionStyle = .none
 
 		containerView.addSubview(stackView)
 		containerView.addSubview(iconImageView)
-		containerView.addSubview(lineView)
 		addSubview(containerView)
 	}
 
 	func setupLayout() {
 		containerView.snp.makeConstraints { make in
-			make.top.bottom.equalToSuperview()
-			make.leading.trailing.equalToSuperview()
+			make.leading.trailing.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
+			make.height.equalTo(UIButton.preferredHeight * 2)
+			make.top.equalToSuperview()
 		}
 
-		lineView.snp.makeConstraints { make in
-			make.bottom.leading.trailing.equalToSuperview()
-			make.height.equalTo(2)
+		stackView.snp.makeConstraints { make in
+			make.leading.equalToSuperview().inset(preferredSpacing / 2)
+			make.top.bottom.equalToSuperview().inset(preferredSpacing)
 		}
-
-		stackView.snp.makeConstraints { $0.leading.top.bottom.equalToSuperview().inset(preferredSpacing / 2) }
 
 		iconImageView.snp.makeConstraints { make in
 			make.centerY.equalToSuperview()
@@ -94,48 +83,144 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 // MARK: - Configure
 internal extension ListingTableViewCell {
 
+	func createContainerType1() {
+
+		containerView.layer.cornerRadius = 10
+		remakeContainerLayout()
+
+	}
+
+	func createContainerType2() {
+
+		containerView.layer.cornerRadius = 4
+
+		remakeContainerLayout()
+	}
+
+	func createContainerType3() {
+
+		containerView.layer.cornerRadius = 2
+		remakeContainerLayout()
+	}
+
+	func createContainerType4() {
+
+		containerView.layer.cornerRadius = 0
+
+		containerView.snp.remakeConstraints { make in
+			make.leading.trailing.top.equalToSuperview()
+			make.height.equalTo(UIButton.preferredHeight * 2)
+			make.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
+		}
+
+	}
+
+	func remakeContainerLayout() {
+		containerView.snp.remakeConstraints { make in
+			make.leading.trailing.top.equalToSuperview().inset(preferredSpacing * 0.5)
+			make.height.equalTo(UIButton.preferredHeight * 2)
+			make.bottom.equalToSuperview().inset(preferredSpacing * 0.25)
+		}
+	}
+
+	func setupContainerDefaultLayout() {
+		containerView.snp.remakeConstraints { make in
+			make.leading.trailing.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
+			make.height.equalTo(UIButton.preferredHeight * 2)
+			make.top.equalToSuperview()
+		}
+	}
+
+	func configureContainer() {
+		let type = Config.shared.model.ticketListingScreen?.ticketListType
+		let shadowIsHidden = !(Config.shared.model.ticketListingScreen?.ticketItemShadowIsHidden ?? false)
+
+		switch type {
+		case 1:
+			createContainerType1()
+		case 2:
+			createContainerType2()
+		case 3:
+			createContainerType3()
+		case 4:
+			createContainerType4()
+		default:
+			createContainerType1()
+		}
+
+		containerView.layer.shadowColor = UIColor.clear.cgColor
+
+		guard !shadowIsHidden else { return }
+		containerView.layer.shadowColor = UIColor.black.cgColor
+		containerView.layer.shadowOffset = CGSize.zero
+		containerView.layer.shadowRadius = 10
+		containerView.layer.shadowOpacity = 0.3
+		containerView.clipsToBounds = false
+	}
+
 	func configure(for request: Ticket) {
+
+		self.backgroundColor = Colors.ticketListingScreenBackgroudColor
+		configureContainer()
 		messageLabel.text = request.message
 		dateLabel.text = DateFormat.raadable.dateFormatter.string(from: request.createdAt)
 
-		let Config = Desk360.Config.Requests.Listing.Cell.self
-
+		let messageFontSize = CGFloat(Config.shared.model.ticketListingScreen?.ticketSubjectFontSize ?? 16)
+		let dateFontSize = CGFloat(Config.shared.model.ticketListingScreen?.ticketDateFontSize ?? 11)
+		let iconColor = Colors.ticketListingScreenTicketItemIconColor
 		switch request.status {
 		case .expired:
-			containerBackgroundColor = Desk360.Config.currentTheme.listingCellBackgroundColor
-			messageLabel.textColor = Desk360.Config.currentTheme.listingCellTitleColor
-			messageLabel.font = Config.Expired.titleFont
-			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
-			dateLabel.font = Config.Expired.dateFont
+			containerBackgroundColor = Colors.ticketListingScreenItemBackgroudColor
+			messageLabel.textColor = Colors.ticketListingScreenTicketSubjectColor
+			messageLabel.font = UIFont.systemFont(ofSize: messageFontSize, weight: .regular)
+			dateLabel.textColor = Colors.ticketListingScreenTicketDateColor
+			dateLabel.font =  UIFont.systemFont(ofSize: dateFontSize, weight: .regular)
 			iconImageView.image = nil
-			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
+			iconImageView.tintColor = iconColor
+			if #available(iOS 13.0, *) {
+				iconImageView.image?.withTintColor(iconColor)
+			}
 
 		case .open:
-			containerBackgroundColor = Desk360.Config.currentTheme.listingCellBackgroundColor
-			messageLabel.textColor = Desk360.Config.currentTheme.listingCellTitleColor
-			messageLabel.font = Config.Open.titleFont
-			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
-			dateLabel.font = Config.Open.dateFont
+			containerBackgroundColor = Colors.ticketListingScreenItemBackgroudColor
+			messageLabel.textColor = Colors.ticketListingScreenTicketSubjectColor
+			messageLabel.font = UIFont.systemFont(ofSize: messageFontSize, weight: .regular)
+			dateLabel.textColor = Colors.ticketListingScreenTicketDateColor
+			dateLabel.font = UIFont.systemFont(ofSize: dateFontSize, weight: .regular)
 			iconImageView.image = nil
-			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
+			iconImageView.tintColor = iconColor
+			if #available(iOS 13.0, *) {
+				iconImageView.image?.withTintColor(iconColor)
+			}
 
 		case .read:
-			containerBackgroundColor = Desk360.Config.currentTheme.listingCellBackgroundColor
-			messageLabel.textColor = Desk360.Config.currentTheme.listingCellTitleColor
-			messageLabel.font = Config.Read.titleFont
-			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
-			dateLabel.font = Config.Read.dateFont
-			iconImageView.image = Config.Read.icon
-			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
+			containerBackgroundColor = Colors.ticketListingScreenItemBackgroudColor
+			messageLabel.textColor = Colors.ticketListingScreenTicketSubjectColor
+			messageLabel.font = UIFont.systemFont(ofSize: messageFontSize, weight: .regular)
+			dateLabel.textColor = Colors.ticketListingScreenTicketDateColor
+			dateLabel.font = UIFont.systemFont(ofSize: dateFontSize, weight: .regular)
+			iconImageView.image = Desk360.Config.Images.readIcon
+			iconImageView.tintColor = iconColor
+			iconImageView.tintAdjustmentMode = .automatic
+			if #available(iOS 13.0, *) {
+				iconImageView.image?.withTintColor(iconColor)
+			}
+			iconImageView.setNeedsLayout()
 
 		case .unread:
-			containerBackgroundColor = Desk360.Config.currentTheme.listingCellBackgroundColor
-			messageLabel.textColor = Desk360.Config.currentTheme.listingCellTitleColor
-			messageLabel.font = Config.Unread.titleFont
-			dateLabel.textColor = Desk360.Config.currentTheme.listingCellDateTextColor
-			dateLabel.font = Config.Unread.dateFont
-			iconImageView.image = Config.Unread.icon
-			iconImageView.tintColor = Desk360.Config.currentTheme.listingCellImageViewTintColor
+			containerBackgroundColor = Colors.ticketListingScreenItemBackgroudColor
+			messageLabel.textColor = Colors.ticketListingScreenTicketSubjectColor
+			messageLabel.font = UIFont.systemFont(ofSize: messageFontSize, weight: .bold)
+			dateLabel.textColor = Colors.ticketListingScreenTicketDateColor
+			dateLabel.font = UIFont.systemFont(ofSize: dateFontSize, weight: .bold)
+			iconImageView.image = Desk360.Config.Images.unreadIcon
+			iconImageView.tintAdjustmentMode = .automatic
+
+			iconImageView.tintColor = iconColor
+			if #available(iOS 13.0, *) {
+				iconImageView.image?.withTintColor(iconColor)
+			}
+			iconImageView.setNeedsLayout()
 		}
 
 	}

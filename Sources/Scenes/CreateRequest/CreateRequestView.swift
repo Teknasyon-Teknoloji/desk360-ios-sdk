@@ -10,11 +10,11 @@ import UIKit
 final class SupportTextField: UITextField {
 
 	override func textRect(forBounds bounds: CGRect) -> CGRect {
-		return bounds.insetBy(dx: 10, dy: 10)
+		return bounds.insetBy(dx: 10, dy: 5)
 	}
 
 	override func editingRect(forBounds bounds: CGRect) -> CGRect {
-		return bounds.insetBy(dx: 10, dy: 10)
+		return bounds.inset(by: UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10))
 	}
 
 }
@@ -23,12 +23,10 @@ final class SupportTextField: UITextField {
 final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	var ticketTypes: [TicketType] = []
+	var fields: [AnyObject] = []
+	var fieldType: Int = 1
 
-	var nameEditCheck = false
-	var emailEditCheck = false
-	var subjectEditCheck = false
-
-	lazy var scrollView: UIScrollView = {
+	internal lazy var scrollView: UIScrollView = {
 		let view = UIScrollView()
 		view.showsVerticalScrollIndicator = false
 		view.showsHorizontalScrollIndicator = false
@@ -36,119 +34,117 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return view
 	}()
 
-	lazy var nameTextField: SupportTextField = {
+	internal lazy var nameTextField: UITextField = {
 		var field = SupportTextField()
 		field.setTextType(.generic)
-		setFieldStyle(field)
-
-		field.placeholder = Desk360.Strings.Support.createNameTextFieldPlaceholder
-		field.setPlaceHolderTextColor(Desk360.Config.currentTheme.requestPlaceholderTextColor)
-		field.textColor = Desk360.Config.currentTheme.requestTextColor
-		field.tintColor = Desk360.Config.currentTheme.requestTintColor
+		field.accessibilityIdentifier = "name"
 		field.tag = 1
 		return field
 	}()
 
-	lazy var nameErrorLabel: UILabel = {
+	internal lazy var nameErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
-		label.font = UIFont.systemFont(ofSize: 11)
-		label.textAlignment = .left
 		label.text = Desk360.Strings.Support.createNameRegex
-		label.isHidden = true
+		configureErrorLabels(label)
 		return label
 	}()
 
-	lazy var emailTextField: SupportTextField = {
+	internal lazy var emailTextField: UITextField = {
 		var field = SupportTextField()
 		field.setTextType(.emailAddress)
-		setFieldStyle(field)
 		field.tag = 2
-		field.placeholder = Desk360.Strings.Support.createEmailTextFieldPlaceholder
-		field.setPlaceHolderTextColor(Desk360.Config.currentTheme.requestPlaceholderTextColor)
-		field.textColor = Desk360.Config.currentTheme.requestTextColor
-		field.tintColor = Desk360.Config.currentTheme.requestTintColor
-
+		field.accessibilityIdentifier = "email"
 		return field
 	}()
 
-	lazy var emailErrorLabel: UILabel = {
+	internal lazy var emailErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
-		label.font = UIFont.systemFont(ofSize: 11)
-		label.textAlignment = .left
 		label.text = Desk360.Strings.Support.createEmailRegex
-		label.isHidden = true
+		configureErrorLabels(label)
 		return label
 	}()
 
-	lazy var subjectErrorLabel: UILabel = {
-		let label = UILabel()
-		label.textColor = UIColor.init(hex: "d93a50")!
-		label.font = UIFont.systemFont(ofSize: 11)
-		label.textAlignment = .left
-		label.text = Desk360.Strings.Support.createSubjectRegex
-		label.isHidden = true
-		return label
-	}()
-
-	lazy var dropDownListView: HADropDown = {
+	internal lazy var dropDownListView: HADropDown = {
 		let view = HADropDown()
-		view.title = Desk360.Strings.Support.subjectTypeListPlaceHolder
+		view.accessibilityIdentifier = "type_id"
 		view.textAllignment = NSTextAlignment.left
-		view.itemTextColor = Desk360.Config.currentTheme.dropDownListTextColor
-		view.titleColor = Desk360.Config.currentTheme.requestPlaceholderTextColor
-		view.itemBackground = Desk360.Config.currentTheme.dropDownListBackgroundColor
 		view.isCollapsed = true
 		view.delegate = self
-
-		view.addSubview(arrowIcon)
+		view.tag = 1
 		return view
 	}()
 
-	private lazy var arrowIcon: UIImageView = {
-		let imageView = UIImageView()
-		imageView.contentMode = .scaleAspectFit
-		imageView.tintColor = Desk360.Config.currentTheme.arrowIconTintColor
-		imageView.image = Desk360.Config.Requests.Create.DropDownListView.arrowIcon
-		return imageView
+	internal lazy var messageTextViewLabel: UILabel = {
+		let label = UILabel()
+		label.tag = 30
+		let paragraphStyle = NSMutableParagraphStyle()
+		paragraphStyle.firstLineHeadIndent = preferredSpacing * 0.5
+		label.attributedText = NSAttributedString(string: Config.shared.model.generalSettings?.messageFieldText ?? "", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+		label.baselineAdjustment = .alignBaselines
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			label.textAlignment = .right
+		} else {
+			label.textAlignment = .left
+		}
+		label.isHidden = true
+		return label
 	}()
 
-	lazy var messageTextView: UITextView = {
+	internal lazy var messageTextView: UITextView = {
 		var view = UITextView()
-		setFieldStyle(view)
+		setTextViewStyle(view)
 		view.backgroundColor = .clear
-		view.textColor = Desk360.Config.currentTheme.requestTextColor
-		view.tintColor = Desk360.Config.currentTheme.requestTintColor
-		view.layer.borderColor = Desk360.Config.currentTheme.requestPlaceholderTextColor.cgColor
-		view.layer.borderWidth = Desk360.Config.Requests.Create.MessageTextView.borderWidth
+		view.accessibilityIdentifier = "message"
 		return view
 	}()
 
 	lazy var messageTextViewErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
-		label.font = UIFont.systemFont(ofSize: 11)
-		label.textAlignment = .left
 		label.text = Desk360.Strings.Support.createMessageRegex
-		label.isHidden = true
+		configureErrorLabels(label)
 		return label
+	}()
+
+	private lazy var attachmentContainerView: UIView = {
+		let view = UIView()
+		view.backgroundColor = .clear
+		view.addSubview(attachmentButton)
+		view.addSubview(attachmentLabel)
+		view.addSubview(attachmentCancelButton)
+		return view
+	}()
+
+	lazy var attachmentButton: UIButton = {
+		let button = UIButton()
+		button.setImage(Desk360.Config.Images.attachmentIcon, for: .normal)
+		button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: preferredSpacing * 0.5)
+		button.titleLabel?.textAlignment = .left
+		button.imageView?.contentMode = .scaleAspectFit
+		return button
+	}()
+
+	lazy var attachmentCancelButton: UIButton = {
+		let button = UIButton()
+		button.setImage(Desk360.Config.Images.closeIcon, for: .normal)
+		button.isHidden = true
+		button.isEnabled = false
+		button.imageView?.contentMode = .scaleAspectFit
+		return button
 	}()
 
 	lazy var sendButton: UIButton = {
 		var button = UIButton(type: .system)
-		button.setTitle(Desk360.Strings.Support.createMessageSendButtonTitle, for: .normal)
-		button.backgroundColor = Desk360.Config.currentTheme.requestSendButtonBackgroundColor
-		button.layer.cornerRadius = Desk360.Config.Requests.Create.SendButton.cornerRadius
+		button.layer.borderWidth = 1
 		button.clipsToBounds = true
-		button.tintColor = Desk360.Config.currentTheme.requestSendButtonTintColor
-		button.titleLabel?.font = Desk360.Config.Requests.Create.SendButton.font
 		return button
 	}()
 
 	private lazy var desk360BottomView: UIView = {
 		let view = UIView()
-		view.backgroundColor =  Desk360.Config.currentTheme.desk360ViewBackgroundColor
+		view.backgroundColor = UIColor.init(hex: "71717b")!
 		view.addSubview(self.desk360Label)
 		view.addSubview(self.poweredByLabel)
 		return view
@@ -156,7 +152,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	private lazy var desk360Label: UILabel = {
 		let label = UILabel()
-		label.textColor = Desk360.Config.currentTheme.desk360LabelTextColor
+		label.textColor = .white
 		label.text = " DESK360 "
 		label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
 		label.textAlignment = .right
@@ -165,25 +161,49 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	private lazy var poweredByLabel: UILabel = {
 		let label = UILabel()
-		label.textColor = Desk360.Config.currentTheme.desk360LabelTextColor
+		label.textColor = .white
 		label.text = "powered by"
 		label.font = UIFont.systemFont(ofSize: 12)
 		label.textAlignment = .right
 		return label
 	}()
 
+	internal lazy var bottomScrollView: UIScrollView = {
+		let scrollView = UIScrollView()
+		scrollView.showsVerticalScrollIndicator = false
+		scrollView.showsHorizontalScrollIndicator = false
+		scrollView.alwaysBounceVertical = true
+
+		return scrollView
+	}()
+
+	internal lazy var bottomDescriptionLabel: UILabel = {
+		let label = UILabel()
+		label.numberOfLines = 0
+		label.textAlignment = .center
+		label.setContentCompressionResistancePriority(.required, for: .vertical)
+		return label
+	}()
+
 	private lazy var stackView: UIStackView = {
-		let view = UIStackView(arrangedSubviews: [nameTextField, nameErrorLabel, emailTextField, emailErrorLabel, subjectErrorLabel, dropDownListView, messageTextView, messageTextViewErrorLabel])
+		let view = UIStackView(arrangedSubviews: fields as! [UIView])
 		view.axis = .vertical
 		view.alignment = .fill
 		view.distribution = .fill
-		view.spacing = preferredSpacing / 2
+		view.spacing = preferredSpacing * 0.5
 		return view
 	}()
 
-	func setupViews() {
-		backgroundColor = Desk360.Config.currentTheme.requestBackgroundColor
+	lazy var attachmentLabel: UILabel = {
+		let label = UILabel()
+		label.lineBreakMode = .byTruncatingMiddle
+		label.text = ""
+		label.font = UIFont.systemFont(ofSize: 12)
+		label.textAlignment = .right
+		return label
+	}()
 
+	func setupViews() {
 		let gesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
 		self.addGestureRecognizer(gesture)
 
@@ -191,39 +211,51 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		emailTextField.delegate = self
 		messageTextView.delegate = self
 
+		fields.append(nameTextField)
+		fields.append(nameErrorLabel)
+		fields.append(emailTextField)
+		fields.append(emailErrorLabel)
+		fields.append(dropDownListView)
+		fields.append(messageTextViewLabel)
+		fields.append(messageTextView)
+		fields.append(messageTextViewErrorLabel)
+		fields.append(attachmentContainerView)
+
 		nameTextField.addTarget(self, action: #selector(checkTexFields(sender:)), for: .editingChanged)
 		emailTextField.addTarget(self, action: #selector(checkTexFields(sender:)), for: .editingChanged)
-		//		dropDownListView.delegate = self
 
 		scrollView.addSubview(stackView)
 		scrollView.addSubview(sendButton)
 		addSubview(desk360BottomView)
 		addSubview(scrollView)
 
+		addSubview(bottomScrollView)
+
+		bottomScrollView.addSubview(bottomDescriptionLabel)
+
 	}
 
 	func setupLayout() {
 
 		nameTextField.snp.makeConstraints { make in
-			make.height.equalTo(UITextField.preferredHeight)
+			make.height.equalTo(UITextField.preferredHeight * 1.2)
 		}
 
 		emailTextField.snp.makeConstraints { make in
-			make.height.equalTo(UITextField.preferredHeight)
+			make.height.equalTo(UITextField.preferredHeight * 1.2)
 		}
 
 		dropDownListView.snp.makeConstraints { make in
-			make.height.equalTo(UITextField.preferredHeight)
+			make.height.equalTo(UITextField.preferredHeight * 1.2)
 			make.width.equalTo(UIScreen.main.bounds.width - preferredSpacing * 6)
 		}
 
-		arrowIcon.snp.makeConstraints { make in
-			make.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
-			make.centerY.equalToSuperview()
+		messageTextViewLabel.snp.makeConstraints { make in
+			make.height.equalTo(UITextField.preferredHeight * 1.2)
 		}
 
 		messageTextView.snp.makeConstraints { make in
-			make.height.equalTo(scrollView.snp.height).multipliedBy(0.4)
+			make.height.equalTo(UIButton.preferredHeight * 4)
 		}
 
 		sendButton.snp.makeConstraints { make in
@@ -237,7 +269,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		desk360BottomView.snp.makeConstraints { make in
 			make.leading.trailing.equalToSuperview()
 			make.height.equalTo(preferredSpacing * 1.5)
-			make.bottom.equalTo(self.scrollView.snp.bottom)
+			make.bottom.equalTo(safeArea.bottom)
 		}
 
 		desk360Label.snp.makeConstraints { make in
@@ -258,14 +290,205 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 		scrollView.snp.makeConstraints { make in
 			make.leading.trailing.top.equalToSuperview()
-			make.bottom.equalTo(safeArea.bottom)
+			make.bottom.equalTo(bottomScrollView.snp.top)
 		}
+
+		bottomScrollView.snp.makeConstraints { make in
+			make.bottom.equalTo(desk360BottomView.snp.top)
+			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size))
+			make.centerX.equalToSuperview()
+			make.height.equalTo(preferredSpacing * 2.5)
+		}
+
+		bottomDescriptionLabel.snp.makeConstraints { make in
+			make.top.equalToSuperview().inset(preferredSpacing * 0.25)
+			make.centerX.equalToSuperview()
+			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) - (preferredSpacing * 3))
+		}
+
+		attachmentButton.snp.makeConstraints { make in
+			make.leading.top.bottom.equalToSuperview()
+			make.trailing.equalTo(attachmentContainerView.snp.centerX)
+		}
+
+		attachmentCancelButton.snp.makeConstraints { make in
+			make.top.bottom.trailing.equalToSuperview()
+			make.width.equalTo(attachmentCancelButton.snp.height)
+		}
+
+		attachmentLabel.snp.makeConstraints { make in
+			make.top.bottom.equalToSuperview()
+			make.trailing.equalTo(attachmentCancelButton.snp.leading).offset(-preferredSpacing * 0.1)
+			make.leading.equalTo(attachmentButton.snp.trailing).offset(preferredSpacing * 0.1)
+		}
+
+	}
+
+	override func layoutSubviews() {
+		super.layoutSubviews()
+
 
 	}
 
 }
 
-// MARK: - Configure
+// MARK: - Add Fields
+extension CreateRequestView {
+
+	func addFields() {
+
+		fields.removeAll()
+
+		var fieldModels: [Field] = []
+		fieldModels = Config.shared.model.customFields ?? []
+
+		fields.append(nameTextField)
+		fields.append(nameErrorLabel)
+		fields.append(emailTextField)
+		fields.append(emailErrorLabel)
+
+		var typeCount: Int = 0
+		for index in 0..<fieldModels.count {
+			switch fieldModels[index].type {
+			case .input:
+				addTextField(fieldModel: fieldModels[index], count: typeCount)
+				typeCount += 1
+			default:
+				break
+			}
+		}
+
+		fields.append(dropDownListView)
+
+		for index in 0..<fieldModels.count {
+			switch fieldModels[index].type {
+			case .selectbox:
+				addDropDownListView(fieldModel: fieldModels[index], index: index, count: typeCount)
+				typeCount += 1
+			default:
+				break
+			}
+		}
+
+		fields.append(messageTextViewLabel)
+		fields.append(messageTextView)
+		fields.append(messageTextViewErrorLabel)
+
+		for index in 0..<fieldModels.count {
+			switch fieldModels[index].type {
+			case .textarea:
+				addTextView(fieldModel: fieldModels[index], count: typeCount)
+				typeCount += 1
+			default:
+				break
+			}
+		}
+
+		fields.append(attachmentContainerView)
+
+		for view in stackView.arrangedSubviews {
+			stackView.removeArrangedSubview(view)
+		}
+		for view in fields {
+			stackView.addArrangedSubview(view as! UIView)
+		}
+	}
+
+	func addTextField(fieldModel: Field, count: Int) {
+		let textField = SupportTextField()
+
+		textField.setTextType(.generic)
+		textField.placeholder = fieldModel.placeholder
+		textField.tintColor = Colors.createScreenFormInputFocusColor
+		setFieldStyle(textField)
+		textField.tag = 3
+		textField.accessibilityIdentifier = fieldModel.name
+		textField.delegate = self
+		textField.addTarget(self, action: #selector(checkTexFields(sender:)), for: .editingChanged)
+		fields.append(textField)
+		configureField(field: textField)
+
+		textField.snp.makeConstraints { make in
+			make.height.equalTo(UITextField.preferredHeight * 1.2)
+		}
+
+		checkTopLabels(field: textField, text: fieldModel.placeholder ?? "")
+		hideTopLabel(textField)
+	}
+
+	func addDropDownListView(fieldModel: Field, index: Int, count: Int) {
+		let view = HADropDown()
+		view.title = fieldModel.placeholder ?? ""
+		view.textAllignment = NSTextAlignment.left
+		view.placeHolderText = fieldModel.placeholder ?? ""
+		view.itemTextColor = Colors.createScreenFormInputFocusColor
+		view.titleColor = Colors.createScreenFormInputColor
+		view.itemBackground = Colors.backgroundColor
+		view.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		view.accessibilityIdentifier = fieldModel.name
+		view.placeHolderText = fieldModel.placeholder ?? ""
+		view.isCollapsed = true
+		view.delegate = self
+		view.tag = index
+		let options: [FieldOption] = fieldModel.options ?? []
+
+		view.items = options.map{ ($0.value ?? "") }
+
+		checkDropDownType(dropDown: view)
+		hideTopLabel(view)
+		setFieldStyle(view)
+
+		view.snp.makeConstraints { make in
+			make.height.equalTo(UITextField.preferredHeight * 1.2)
+			make.width.equalTo(UIScreen.main.bounds.width - preferredSpacing * 6)
+		}
+		view.addArrowIcon(tintColor: Colors.createScreenFormInputColor)
+
+
+		fields.append(view)
+	}
+
+	func addTextView(fieldModel: Field, count: Int) {
+		var view = UITextView()
+		setTextViewStyle(view)
+		view.backgroundColor = .clear
+		view.textColor =  Colors.createScreenFormInputFocusColor
+		view.tintColor = Colors.createScreenFormInputFocusColor
+		view.accessibilityIdentifier = fieldModel.name
+		view.delegate = self
+		view.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		addMessageTextViewLabel(text: fieldModel.placeholder ?? "")
+		fields.append(view)
+		setFieldStyle(view)
+
+		view.snp.makeConstraints { make in
+			make.height.equalTo(UIButton.preferredHeight * 4)
+		}
+
+		configureTextViewTopLabels(view, fieldModel.placeholder ?? "")
+	}
+
+	func addMessageTextViewLabel (text: String) {
+		let label = UILabel()
+		label.tag = 30
+		label.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		label.textColor = Colors.createScreenFormInputColor
+		let paragraphStyle = NSMutableParagraphStyle()
+		paragraphStyle.firstLineHeadIndent = preferredSpacing * 0.5
+		label.attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+		label.baselineAdjustment = .alignBaselines
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			label.textAlignment = .right
+		} else {
+			label.textAlignment = .left
+		}
+		label.isHidden = true
+		fields.append(label)
+	}
+
+}
+
+// MARK: - HADropDownDelegate Configure
 extension CreateRequestView: HADropDownDelegate {
 	func willHide(dropDown: HADropDown) { }
 
@@ -274,16 +497,58 @@ extension CreateRequestView: HADropDownDelegate {
 	}
 
 	func didHide(dropDown: HADropDown) {
+		guard dropDown.getSelectedIndex != -1 else { return }
+		showTopLabel(dropDown)
+
 		guard dropDownListView.getSelectedIndex != -1 else {
-			dropDownListView.shake()
+			if dropDown.tag == 1 {
+				dropDownListView.shake()
+			}
 			return
 		}
-		messageTextView.becomeFirstResponder()
+	}
+
+	func checkDropDownType(dropDown: HADropDown) {
+		switch fieldType {
+		case 1:
+			dropDown.addViewUnderLine()
+			dropDown.addTopLabel(text: dropDown.placeHolderText, textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
+		case 2:
+			dropDown.addTopLabel2(text: dropDown.placeHolderText, textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
+		case 3:
+			dropDown.addTopLabel3(text: dropDown.placeHolderText, textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
+		default:
+			break
+		}
 	}
 
 	func didSelectItem(dropDown: HADropDown, at index: Int) {
 		guard index != -1 else { return }
-		dropDownListView.titleColor = Desk360.Config.currentTheme.requestTextColor
+		configureDropDownListViewUnderLine(dropDown: dropDown)
+		dropDown.titleColor = Colors.createScreenFormInputFocusColor
+		setIconImageTintColor(dropDownListView: dropDown)
+		guard fieldType == 3 else { return }
+		dropDown.layer.borderColor = Colors.createScreenFormInputFocusBorderColor.cgColor
+		dropDown.backgroundColor = Colors.createScreenFormInputFocusBackgroundColor
+	}
+
+	func configureDropDownListViewUnderLine(dropDown: HADropDown) {
+		let subViews = dropDown.subviews
+		for view in subViews {
+			if view.tag == 10 {
+				view.backgroundColor = Colors.createScreenFormInputFocusBorderColor
+			}
+		}
+	}
+
+	func setIconImageTintColor(dropDownListView: HADropDown) {
+		let views = dropDownListView.subviews
+
+		for view in views {
+			if view.tag == 2 {
+				view.tintColor = Colors.createScreenFormInputFocusColor
+			}
+		}
 	}
 
 	func setTicketType(ticketTypes: [TicketType]?) {
@@ -307,8 +572,133 @@ extension CreateRequestView: UITextViewDelegate {
 	}
 
 	func textViewDidChange(_ textView: UITextView) {
-		guard let message = messageTextView.trimmedText, message.count > 0 else { return }
+		guard let message = textView.trimmedText, message.count > 0 else {
+			if fieldType == 3 {
+				textView.layer.borderColor = Colors.createScreenFormInputBorderColor.cgColor
+				textView.backgroundColor = Colors.createScreenFormInputBackgroundColor
+			}
+			textView.downPlaceholder(color: Colors.createScreenFormInputColor)
+			configureMessageLabelText(textView: textView, color: Colors.createScreenFormInputColor)
+			hideTopPlaceHolders(textView)
+			configureBorderColor(textView: textView, color: Colors.createScreenFormInputBorderColor)
+			hideSpecialLabel(textView)
+			return
+		}
+		showTopPlaceHolders(textView)
+		showSpecialLayer(textView)
+		textView.upPlaceholder(color: Colors.createScreenLabelTextColor)
+		configureMessageLabelText(textView: textView, color: Colors.createScreenLabelTextColor)
+		configureBorderColor(textView: textView, color: Colors.createScreenFormInputFocusBorderColor)
+		if fieldType == 3 {
+			textView.layer.borderColor = Colors.createScreenFormInputFocusBorderColor.cgColor
+			textView.backgroundColor = Colors.createScreenFormInputFocusBackgroundColor
+		}
+
+		messageTextViewLabel.text = Config.shared.model.generalSettings?.messageFieldText
+		guard textView == messageTextView else { return }
 		messageTextViewErrorLabel.isHidden = true
+	}
+
+	func configureTextViewTopLabels(_ textView: UITextView, _ placeholder: String) {
+		if fieldType == 3 {
+			textView.addPlaceholderLabel(text: placeholder , textColor: Colors.createScreenFormInputColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400)))
+		} else if fieldType == 2 {
+			textView.addPlaceholderLabel2(text: placeholder , textColor: Colors.createScreenFormInputColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400)))
+			textView.addTopLabel(text: placeholder , textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
+		}
+	}
+
+	func showTopPlaceHolders(_ textView: UITextView) {
+		guard fieldType == 2 else { return }
+		let views = textView.subviews
+		for view in views {
+			if view.tag == 1 {
+				view.isHidden = false
+			} else if view.tag == 3 {
+				view.isHidden = true
+			}
+		}
+	}
+
+	func hideTopPlaceHolders(_ textView: UITextView) {
+		guard fieldType == 2 else { return }
+		let views = textView.subviews
+		for view in views {
+			if view.tag == 1 {
+				view.isHidden = true
+			} else if view.tag == 3 {
+				view.isHidden = false
+			}
+		}
+	}
+
+	func configureBorderColor(textView: UITextView, color: UIColor) {
+		guard fieldType == 1 else { return }
+		textView.layer.borderColor = color.cgColor
+	}
+
+	func configureMessageLabelText(textView: UITextView, color: UIColor) {
+		var currentIndex = 0
+		fields.enumerated().forEach { index, value in
+			if textView == value as? UITextView {
+				currentIndex = index
+			}
+		}
+		guard currentIndex > 1 else { return }
+		(fields[currentIndex - 1] as? UILabel)?.textColor = color
+	}
+
+
+}
+
+
+// MARK: - UITextFieldDelegate
+extension CreateRequestView: UITextFieldDelegate {
+
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+
+		switch textField {
+		case nameTextField:
+			guard let text = nameTextField.trimmedText, text.count > 0 else {
+				nameErrorLabel.isHidden = false
+				nameTextField.shake()
+				return false
+			}
+			nameErrorLabel.isHidden = true
+			emailTextField.becomeFirstResponder()
+			return true
+
+		case emailTextField:
+			if emailTextField.emailAddress == nil {
+				emailErrorLabel.isHidden = false
+				emailTextField.shake()
+				return false
+			}
+			emailErrorLabel.isHidden = true
+			return true
+
+		case dropDownListView:
+			if dropDownListView.getSelectedIndex == -1 {
+				self.dropDownListView.willChangeFrame()
+				dropDownListView.shake()
+				dropDownListView.showList()
+				return false
+			}
+			return true
+
+		default:
+			return true
+		}
+	}
+
+	func configureErrorLabels(_ label: UILabel) {
+		label.isHidden = true
+		label.font = UIFont.systemFont(ofSize: 11)
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			label.textAlignment = .right
+		} else {
+			label.textAlignment = .left
+		}
 	}
 
 }
@@ -324,111 +714,480 @@ extension CreateRequestView {
 		}
 	}
 
-}
-
-// MARK: - UITextFieldDelegate
-extension CreateRequestView: UITextFieldDelegate {
-
-	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		switch textField {
-		case nameTextField:
-			guard let text = nameTextField.trimmedText, text.count > 0 else {
-				nameErrorLabel.isHidden = false
-				nameTextField.shake()
-				checkChangeFrame()
-				return false
-			}
-			nameErrorLabel.isHidden = true
-			emailTextField.becomeFirstResponder()
-			checkChangeFrame()
-			return true
-
-		case emailTextField:
-			if emailTextField.emailAddress == nil {
-				emailErrorLabel.isHidden = false
-				emailTextField.shake()
-				checkChangeFrame()
-				return false
-			}
-			emailErrorLabel.isHidden = true
-			dropDownListView.showList()
-			checkChangeFrame()
-			return true
-
-		case dropDownListView:
-			if dropDownListView.getSelectedIndex == -1 {
-				self.dropDownListView.willChangeFrame()
-				dropDownListView.shake()
-				dropDownListView.showList()
-				return false
-			}
-			messageTextView.becomeFirstResponder()
-			return true
-
-		default:
-			return true
-		}
-	}
-
-	func checkChangeFrame() {
-		HADropDown.frameChange = 0
-		if nameErrorLabel.isHidden == false && emailErrorLabel.isHidden == false {
-			HADropDown.frameChange = UITextField.preferredHeight
-		} else if nameErrorLabel.isHidden && emailErrorLabel.isHidden {
-			HADropDown.frameChange = 0
-		} else {
-			HADropDown.frameChange = UITextField.preferredHeight * 0.5
-		}
-	}
-
-}
-
-// MARK: - Actions
-extension CreateRequestView {
-
 	@objc func checkTexFields(sender: UITextField) {
+
+		configureUnderLine(field: sender)
 
 		switch sender.tag {
 		case 1:
 			if let text = nameTextField.trimmedText, text.count > 0 {
+				if fieldType == 3 {
+					sender.layer.borderColor = Colors.createScreenFormInputFocusBorderColor.cgColor
+					sender.backgroundColor = Colors.createScreenFormInputFocusBackgroundColor
+				}
 				nameErrorLabel.isHidden = true
-				checkChangeFrame()
+				showTopLabel(sender)
+			} else {
+				if fieldType == 3 {
+					sender.layer.borderColor = Colors.createScreenFormInputBorderColor.cgColor
+					sender.backgroundColor = Colors.createScreenFormInputBackgroundColor
+				}
+				hideTopLabel(sender)
 			}
 		case 2:
+			if let text = emailTextField.trimmedText, text.count > 0 {
+				showTopLabel(sender)
+				if fieldType == 3 {
+					sender.layer.borderColor = Colors.createScreenFormInputFocusBorderColor.cgColor
+					sender.backgroundColor = Colors.createScreenFormInputFocusBackgroundColor
+				}
+			} else {
+				if fieldType == 3 {
+					sender.layer.borderColor = Colors.createScreenFormInputBorderColor.cgColor
+					sender.backgroundColor = Colors.createScreenFormInputBackgroundColor
+				}
+				hideTopLabel(sender)
+			}
 			if emailTextField.emailAddress != nil {
 				emailErrorLabel.isHidden = true
-				checkChangeFrame()
+
+			}
+		case 3:
+			if let text = sender.trimmedText, text.count > 0 {
+				if fieldType == 3 {
+					sender.layer.borderColor = Colors.createScreenFormInputFocusBorderColor.cgColor
+					sender.backgroundColor = Colors.createScreenFormInputFocusBackgroundColor
+				}
+				showTopLabel(sender)
+			} else {
+				if fieldType == 3 {
+					sender.layer.borderColor = Colors.createScreenFormInputBorderColor.cgColor
+					sender.backgroundColor = Colors.createScreenFormInputBackgroundColor
+				}
+				hideTopLabel(sender)
 			}
 		default:
 			break
+
 		}
 
 	}
 
+}
+
+// MARK: - Configure TextView
+private extension CreateRequestView {
+
+	func setTextViewStyle(view: UITextView) {
+		if fieldType == 1 {
+//			setFieldStyle1(view)
+		} else if fieldType == 2 {
+			setFieldStyle2(view)
+		} else if fieldType == 3 {
+			setTextViewStyle3(view)
+		}
+	}
+
+	func setTextViewStyle3(_ view: UITextView) {
+
+	}
 }
 
 // MARK: - Helpers
 private extension CreateRequestView {
 
 	func setFieldStyle(_ field: UIView) {
-		field.layer.cornerRadius = Desk360.Config.Requests.Create.cornerRadius
-		field.layer.masksToBounds = true
-		field.layer.borderWidth = Desk360.Config.Requests.Create.borderWidth
-		field.layer.borderColor = Desk360.Config.currentTheme.requestBorderColor.cgColor
-		field.tintColor = Desk360.Config.currentTheme.requestTintColor
 
-		let font = Desk360.Config.Requests.Create.font
+		if let currentField = field as? UITextField {
+			if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+				currentField.textAlignment = .right
+			} else {
+				currentField.textAlignment = .left
+			}
+		}
+
+		if fieldType == 1 {
+			setFieldStyle1(field)
+		} else if fieldType == 2 {
+			setFieldStyle2(field)
+		} else if fieldType == 3 {
+			setFieldStyle3(field)
+		}
+	}
+
+	func setFieldStyle1(_ view: UIView) {
+
+		for view in fields {
+			if let currentView = view as? UILabel {
+				if currentView.tag == 30 {
+					currentView.isHidden = false
+				}
+			}
+		}
+		messageTextViewLabel.isHidden = false
+		view.backgroundColor = .clear
+		view.tintColor = Colors.createScreenFormInputFocusColor
+
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+
+		if let textField = view as? UITextField {
+			textField.font = font
+			textField.addUnderLine()
+		}
+
+		if let textView = view as? UITextView {
+			textView.layer.borderWidth = 1
+			textView.layer.cornerRadius = 4
+			textView.clipsToBounds = true
+			textView.layer.borderColor = Colors.createScreenFormInputBorderColor.cgColor
+			textView.font = font
+			textView.textContainerInset = UIEdgeInsets.init(top: preferredSpacing / 2, left: preferredSpacing / 2, bottom: preferredSpacing / 2, right: preferredSpacing / 2)
+		}
+
+	}
+
+	func setFieldStyle2(_ field: UIView) {
+		field.tintColor = Colors.createScreenFormInputFocusColor
+
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 
 		if let textField = field as? UITextField {
 			textField.font = font
 		}
 
-		if let textView = field as? UITextView {
+	}
+
+	func setFieldStyle3(_ view: UIView) {
+		view.layer.cornerRadius = 8
+		view.layer.masksToBounds = true
+		view.layer.borderWidth = 1
+		view.layer.borderColor = Colors.createScreenFormInputBorderColor.cgColor
+		view.tintColor = Colors.createScreenFormInputFocusColor
+		view.backgroundColor = Colors.createScreenFormInputBackgroundColor
+		view.tintColor = Colors.createScreenFormInputFocusColor
+		view.layer.shadowColor = UIColor.black.cgColor
+		view.layer.shadowOffset = CGSize.zero
+		view.layer.shadowRadius = 10
+		view.layer.shadowOpacity = 0.3
+		view.layer.masksToBounds = false
+
+		if let currentView = view as? HADropDown {
+			currentView.layer.borderColor = Colors.createScreenFormInputBorderColor.cgColor
+			currentView.layer.borderWidth = 1
+		}
+
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+
+		if let textField = view as? UITextField {
+			textField.font = font
+		}
+
+		if let textView = view as? UITextView {
 			textView.font = font
-			textView.textContainerInset = UIEdgeInsets.init(top: preferredSpacing / 2, left: preferredSpacing / 2, bottom: preferredSpacing / 2, right: preferredSpacing / 2)
+			textView.textContainerInset = UIEdgeInsets.init(top: preferredSpacing , left: preferredSpacing / 2, bottom: preferredSpacing / 2, right: preferredSpacing / 2)
+		}
+
+	}
+
+	func setTextViewStyle(_ textView: UITextView) {
+
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		textView.font = font
+		textView.textContainerInset = UIEdgeInsets.init(top: preferredSpacing, left: preferredSpacing / 2, bottom: preferredSpacing / 2, right: preferredSpacing / 2)
+
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			textView.textAlignment = .right
+		} else {
+			textView.textAlignment = .left
 		}
 	}
 
+}
+
+// MARK: - Configure
+extension CreateRequestView {
+
+	func configure() {
+		fieldType = Config.shared.model.createScreen?.formStyleId ?? 1
+
+		addFields()
+
+		self.backgroundColor = Colors.backgroundColor
+		nameTextField.placeholder = Config.shared.model.generalSettings?.nameFieldText
+		emailTextField.placeholder = Config.shared.model.generalSettings?.emailFieldText
+		dropDownListView.itemTextColor = Colors.createScreenFormInputFocusColor
+		dropDownListView.titleColor = Colors.createScreenFormInputColor
+		dropDownListView.itemBackground = Colors.backgroundColor
+		dropDownListView.addArrowIcon(tintColor: Colors.createScreenFormInputColor)
+		dropDownListView.placeHolderText = Config.shared.model.generalSettings?.subjectFieldText ?? ""
+		dropDownListView.title = Config.shared.model.generalSettings?.subjectFieldText ?? ""
+		dropDownListView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		checkDropDownType(dropDown: dropDownListView)
+		hideTopLabel(dropDownListView)
+		attachmentButton.imageView?.tintColor = Colors.createScreenFormInputColor
+		attachmentButton.setTitleColor(Colors.createScreenLabelTextColor, for: .normal)
+		attachmentButton.setTitle(Config.shared.model.generalSettings?.addFileText, for: .normal)
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+//			attachmentButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
+			attachmentButton.imageView?.frame.origin.x = attachmentButton.frame.size.width - preferredSpacing * 0.5 - (attachmentButton.imageView?.frame.size.width ?? 0)
+			attachmentButton.titleLabel?.frame.origin.x = 0
+		} else {
+			attachmentButton.imageView?.frame.origin.x = preferredSpacing * 0.5
+			attachmentButton.titleLabel?.frame.origin.x = (attachmentButton.imageView?.frame.size.width ?? 0) + preferredSpacing
+		}
+
+
+
+		attachmentCancelButton.imageView?.tintColor = Colors.createScreenFormInputColor
+		attachmentLabel.textColor = Colors.createScreenLabelTextColor
+		attachmentLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400))
+		attachmentContainerView.isHidden = !(Config.shared.model.createScreen?.addedFileIsHidden ?? false)
+		configureField(field: nameTextField)
+		configureField(field: emailTextField)
+		configureErrorLabel(label: nameErrorLabel)
+		configureErrorLabel(label: emailErrorLabel)
+		configureErrorLabel(label: messageTextViewErrorLabel)
+		messageTextView.textColor =  Colors.createScreenFormInputFocusColor
+		messageTextView.tintColor =  Colors.createScreenFormInputFocusColor
+		messageTextViewLabel.textColor = Colors.createScreenFormInputColor
+		messageTextViewLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		configureUnderLine(field: nameTextField)
+		configureUnderLine(field: emailTextField)
+		bottomDescriptionLabel.text = Config.shared.model.createScreen?.bottomNoteText
+		bottomScrollView.isHidden = !(Config.shared.model.createScreen?.bottomNoteIsHidden ?? false)
+		bottomDescriptionLabel.textColor = Colors.bottomNoteColor
+		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.bottomNoteFontSize ?? 8) , weight: Font.weight(type: Config.shared.model.generalSettings?.bottomNoteFontWeight ?? 400))
+		sendButton.layer.borderColor = Colors.createScreenButttonBorderColor.cgColor
+		configureFields()
+		setFieldStyle(messageTextView)
+		setFieldStyle(nameTextField)
+		setFieldStyle(emailTextField)
+		setFieldStyle(dropDownListView)
+		configureButton()
+
+		configureTextViewTopLabels(messageTextView, Config.shared.model.generalSettings?.messageFieldText ?? "")
+
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			attachmentButton.snp.remakeConstraints { remake in
+				remake.width.equalTo((attachmentButton.titleLabel?.frame.size.width ?? 0) + (attachmentButton.imageView?.frame.size.width ?? 0) + preferredSpacing)
+				remake.leading.top.bottom.equalToSuperview()
+			}
+		} else {
+			attachmentButton.snp.remakeConstraints { remake in
+				remake.width.equalTo((attachmentButton.titleLabel?.frame.size.width ?? 0) + (attachmentButton.imageView?.frame.size.width ?? 0) + preferredSpacing)
+				remake.leading.top.bottom.equalToSuperview()
+			}
+		}
+
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			attachmentButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: preferredSpacing * 0.5, bottom: 0, right: 0)
+		} else {
+			attachmentButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: preferredSpacing * 0.5)
+		}
+
+		guard !(Config.shared.model.createScreen?.bottomNoteIsHidden ?? false)  else { return }
+		remakeScrollLyaout()
+	}
+
+	func configureErrorLabel(label: UILabel) {
+		label.textColor = Colors.createScreenErrorLabelTextColor
+	}
+
+	func configureField(field: UITextField) {
+
+		if fieldType == 3 {
+			field.backgroundColor = Colors.createScreenFormInputBackgroundColor
+			field.layer.borderColor = Colors.createScreenFormInputBorderColor.cgColor
+		} else {
+			field.backgroundColor = .clear
+		}
+		field.setPlaceHolderTextColor(Colors.createScreenFormInputColor)
+		field.textColor = Colors.createScreenFormInputFocusColor
+		field.tintColor = Colors.createScreenFormInputFocusColor
+
+	}
+
+	func configureFields() {
+
+		checkTopLabels(field: nameTextField, text: Config.shared.model.generalSettings?.nameFieldText ?? "")
+		checkTopLabels(field: emailTextField, text: Config.shared.model.generalSettings?.emailFieldText ?? "")
+
+		hideTopLabel(nameTextField)
+		hideTopLabel(emailTextField)
+
+	}
+
+	func showTopLabel(_ currentView: UIView) {
+
+		for view in currentView.subviews {
+			if view.tag == 1 {
+				view.isHidden = false
+			}
+		}
+
+		showSpecialLayer(currentView)
+	}
+
+	func hideTopLabel(_ currentView: UIView) {
+		for view in currentView.subviews {
+			if view.tag == 1 {
+				view.isHidden = true
+			}
+		}
+		hideSpecialLabel(currentView)
+	}
+
+	func showSpecialLayer(_ currentView: UIView) {
+		guard let layers = currentView.layer.sublayers else { return }
+
+		for layer in layers {
+			if layer.name == "specialLayer" {
+				layer.isHidden = false
+			}  else if layer.name == "borderLayer" {
+				layer.isHidden = true
+			}
+		}
+	}
+
+	func hideSpecialLabel(_ currentView: UIView) {
+		guard let layers = currentView.layer.sublayers else { return }
+
+		for layer in layers {
+			if layer.name == "specialLayer" {
+				layer.isHidden = true
+			} else if layer.name == "borderLayer" {
+				layer.isHidden = false
+			}
+		}
+	}
+
+
+
+	func configureUnderLine(field: UITextField) {
+		let subViews = field.subviews
+		for view in subViews {
+			if view.tag == 10 {
+				if let text = field.trimmedText, text.count > 0 {
+					view.backgroundColor = Colors.createScreenFormInputFocusBorderColor
+				} else {
+					view.backgroundColor = Colors.createScreenFormInputBorderColor
+				}
+			}
+		}
+	}
+
+
+	func checkTopLabels(field: UITextField, text: String) {
+		switch fieldType {
+		case 1:
+			field.addTopLabel(text: text, textColor: Colors.createScreenLabelTextColor ?? UIColor.init(hex: "58b0fa")!, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
+		case 2:
+			field.addType2TopLabel(text: text, textColor: Colors.createScreenLabelTextColor ?? UIColor.init(hex: "58b0fa")!, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)), backgroundColor: Colors.backgroundColor ?? .gray)
+		case 3:
+			field.addType3TopLabel(text: text, textColor: Colors.createScreenLabelTextColor ?? UIColor.init(hex: "58b0fa")!, font: UIFont.systemFont(ofSize: CGFloat(12), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 300)))
+		default:
+			break
+		}
+	}
+
+	func remakeScrollLyaout() {
+		scrollView.snp.remakeConstraints { make in
+			make.leading.trailing.top.equalToSuperview()
+			make.bottom.equalTo(desk360BottomView.snp.top)
+		}
+	}
+
+}
+
+//MARK: - Configure Send Button
+extension CreateRequestView {
+
+	func configureButton() {
+
+		sendButton.backgroundColor = Colors.createScreenButtonBackgroundColor
+		sendButton.layer.borderColor = Colors.createScreenButttonBorderColor.cgColor
+		sendButton.setTitleColor(Colors.createScreenButtonTextColor, for: .normal)
+		sendButton.tintColor = Colors.createScreenButtonTextColor
+		sendButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type: Config.shared.model.createScreen?.buttonTextFontWeight ?? 400))
+		sendButton.setTitle(Config.shared.model.createScreen?.buttonText, for: .normal)
+
+		sendButton.layer.shadowColor = UIColor.clear.cgColor
+		sendButton.setImage(UIImage(), for: .normal)
+		let type = Config.shared.model.createScreen?.buttonStyleId
+
+		let imageIshidden =  Config.shared.model.createScreen?.buttonIconIsHidden ?? true
+		let buttonShadowIsHidden = Config.shared.model.createScreen?.buttonShadowIsHidden ?? true
+
+		switch type {
+		case 1:
+			sendButtonType1()
+		case 2:
+			sendButtonType2()
+		case 3:
+			sendButtonType3()
+		case 4:
+			sendButtonType4()
+		default:
+			sendButtonType1()
+		}
+
+		if imageIshidden {
+			sendButton.setImage(Desk360.Config.Images.unreadIcon, for: .normal)
+//			sendButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 20)
+			if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+				sendButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
+			} else {
+				sendButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 20)
+			}
+			sendButton.imageView?.tintColor = Colors.createScreenButtonTextColor
+		}
+
+		if buttonShadowIsHidden {
+			sendButton.layer.shadowColor = UIColor.black.cgColor
+			sendButton.layer.shadowOffset = CGSize.zero
+			sendButton.layer.shadowRadius = 10
+			sendButton.layer.shadowOpacity = 0.3
+			sendButton.layer.masksToBounds = false
+		}
+	}
+
+	func sendButtonType1() {
+		sendButton.layer.cornerRadius = 22
+		setupButtonDefaultLayout()
+	}
+
+	func sendButtonType2() {
+		sendButton.layer.cornerRadius = 10
+		setupButtonDefaultLayout()
+	}
+
+	func sendButtonType3() {
+		sendButton.layer.cornerRadius = 2
+		setupButtonDefaultLayout()
+	}
+
+	func sendButtonType4() {
+
+		sendButton.layer.cornerRadius = 0
+
+		sendButton.snp.remakeConstraints { make in
+			make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 1.5)
+			make.height.equalTo(UIButton.preferredHeight)
+			make.centerX.equalToSuperview()
+			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) + 2)
+			make.bottom.equalToSuperview()
+		}
+	}
+
+	func setupButtonDefaultLayout() {
+		sendButton.snp.remakeConstraints { make in
+			make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 1.5)
+			make.height.equalTo(UIButton.preferredHeight)
+			make.centerX.equalToSuperview()
+			make.width.equalTo(stackView)
+			make.bottom.equalToSuperview().inset(preferredSpacing)
+		}
+	}
 }
 
 // MARK: - KeyboardHandling

@@ -77,8 +77,6 @@ extension Ticket: Codable {
 		status = try container.decode(Status.self, forKey: .status)
 		message = try container.decode(String.self, forKey: .message)
 		attachmentUrl = try (container.decodeIfPresent(URL.self, forKey: .attachment_url))
-		print("attachmentUrl_Test")
-		print(attachmentUrl)
 		let dateString = try container.decode(String.self, forKey: .created)
 
 		let formatter = DateFormatter()

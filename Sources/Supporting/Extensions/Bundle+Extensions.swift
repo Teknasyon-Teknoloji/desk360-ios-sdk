@@ -26,12 +26,6 @@ extension Bundle {
 		guard let resourceBundleUrl = bundle?.url(forResource: "Desk360", withExtension: "lproj") else { return nil }
 		guard let resourceBundle = Bundle(url: resourceBundleUrl) else { return nil }
 		return resourceBundle
-//		if let path = Bundle.main.path(forResource: "Desk360", ofType: "lproj") {
-//			if let baseBundle = Bundle(path: path) {
-//				return baseBundle
-//			}
-//		}
-//		return Bundle.main
 	}
 
 }

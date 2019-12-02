@@ -34,18 +34,20 @@ public final class Desk360 {
 
 	static let apiProvider = MoyaProvider<Service>(plugins: [authPlugin])
 
+	static var isRegister = false
+
 	/// Whether internet is reachable or not.
 	static var isReachable: Bool {
 		return NetworkReachabilityManager()?.isReachable ?? false
 	}
 
-	public init(appId: String, deviceId: String, isDebug: Bool) {
+	public init(appId: String, deviceId: String, isDebug: Bool, language: String) {
 		Desk360.appId = appId
 		Desk360.deviceId = deviceId
 		Desk360.appPlatform = "iOS"
 		Desk360.appVersion = getVersion()
 		Desk360.timeZone = TimeZone.current.identifier
-		Desk360.languageCode = Locale.current.languageCode
+		Desk360.languageCode = language
 		Desk360.isDebug = isDebug
 	}
 
@@ -63,14 +65,20 @@ public final class Desk360 {
 		return aDesk
 	}
 
-	public static func start(appId: String, deviceId: String? = nil, isDebug: Bool? = false) {
+	public static func start(appId: String, deviceId: String? = nil, isDebug: Bool? = false, language: String? = nil) {
 		var id: String = ""
 		if deviceId == nil {
 			id = UIDevice.current.uniqueIdentifier
 		} else {
 			id = deviceId ?? ""
 		}
-		desk = Desk360(appId: appId, deviceId: id, isDebug: isDebug ?? false)
+		var currentLanguage = "en"
+		if language == nil {
+			currentLanguage = Locale.current.languageCode ?? "en"
+		} else {
+			currentLanguage = language ?? "en"
+		}
+		desk = Desk360(appId: appId, deviceId: id, isDebug: isDebug ?? false, language: currentLanguage)
 		Stores.setStoresInitialValues()
 		print("Desk360 SDK was initialized successfully!")
 	}
@@ -81,17 +89,9 @@ public final class Desk360 {
 		}
 		let listingViewController = ListingViewController()
 		listingViewController.hidesBottomBarWhenPushed = true
-		let desk360Navcontroller = Desk360NavigationController(rootViewController: listingViewController)
+		let desk360Navcontroller = UINavigationController(rootViewController: listingViewController)
 		desk360Navcontroller.modalPresentationStyle = .fullScreen
 		navController.present(desk360Navcontroller, animated: true, completion: nil)
-	}
-
-	static func register() {
-
-//		guard let date = Stores.registerExpiredAt.object else { return }
-//		guard date < Date() else { return }
-
-		
 	}
 
 }

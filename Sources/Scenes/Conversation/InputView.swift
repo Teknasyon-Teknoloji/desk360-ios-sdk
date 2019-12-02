@@ -25,11 +25,15 @@ final class InputView: UIView, Layoutable {
 		view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 		view.translatesAutoresizingMaskIntoConstraints = false
 		view.backgroundColor = .clear
-		view.textColor = Desk360.Config.currentTheme.conversationInputTextColor
-		view.tintColor = Desk360.Config.currentTheme.conversationInputTextColor
 		view.font = UIFont.systemFont(ofSize: 18)
 		view.clipsToBounds = true
 		view.textContainerInset = UIEdgeInsets.init(top: 8, left: 8, bottom: 8, right: 8)
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			view.textAlignment = .right
+		} else {
+			view.textAlignment = .left
+		}
+
 		return view
 	}()
 	
@@ -43,18 +47,14 @@ final class InputView: UIView, Layoutable {
 		let label = UILabel()
 		label.font = UIFont.systemFont(ofSize: 18)
 		label.text = Desk360.Strings.Support.conversationMessageTextViewPlaceholder
-		label.textColor = Desk360.Config.currentTheme.requestPlaceholderTextColor
 		label.translatesAutoresizingMaskIntoConstraints = false
 		return label
 	}()
 	
 	lazy var sendButton: UIButton = {
 		let button = UIButton(type: .system)
-		button.backgroundColor = Desk360.Config.currentTheme.backgroundColor
-		button.tintColor = Desk360.Config.currentTheme.conversationSendButtonTintColor
-		button.setImage(Desk360.Config.Conversation.Input.SendButton.icon, for: .normal)
+		button.setImage(Desk360.Config.Images.sendIcon, for: .normal)
 		button.imageView?.contentMode = .scaleAspectFit
-		button.titleLabel?.font = Desk360.Config.Conversation.Input.SendButton.font
 		button.setContentCompressionResistancePriority(.required, for: .horizontal)
 		button.setContentHuggingPriority(.defaultLow, for: .horizontal)
 		button.translatesAutoresizingMaskIntoConstraints = false
@@ -63,18 +63,11 @@ final class InputView: UIView, Layoutable {
 	
 	private lazy var activityIndicator: UIActivityIndicatorView = {
 		let view = UIActivityIndicatorView()
-		view.color = Desk360.Config.currentTheme.conversationSendButtonTintColor
 		return view
 	}()
 	
 	lazy var createRequestButton: UIButton = {
 		let button = UIButton(type: .system)
-		button.backgroundColor = Desk360.Config.currentTheme.requestSendButtonBackgroundColor
-		button.tintColor = Desk360.Config.currentTheme.requestTintColor
-//		button.setTitle(Desk360.Strings.Support.conversationExpiredButtonTitle, for: .normal)
-		button.titleLabel?.font = Desk360.Config.Conversation.Input.CreateRequestButton.font
-		button.setTitleColor(Desk360.Config.currentTheme.requestSendButtonTintColor, for: .normal)
-		button.layer.cornerRadius = Desk360.Config.Conversation.Input.CreateRequestButton.cornerRadius
 		button.clipsToBounds = true
 		button.layer.borderWidth = 1
 		button.clipsToBounds = true
@@ -99,7 +92,6 @@ final class InputView: UIView, Layoutable {
 	
 	func setupViews() {
 		frame = initialFrame
-		backgroundColor = Desk360.Config.currentTheme.requestBackgroundColor
 		
 		textView.addSubview(placeholderLabel)
 		textView.delegate = self
@@ -294,7 +286,11 @@ internal extension InputView {
 		
 		if imageIshidden {
 			createRequestButton.setImage(Desk360.Config.Images.unreadIcon, for: .normal)
-			createRequestButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 20)
+			if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+				createRequestButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
+			} else {
+				createRequestButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 20)
+			}
 			createRequestButton.imageView?.tintColor = Colors.ticketDetailButtonTextColor
 		}
 		
@@ -324,9 +320,10 @@ internal extension InputView {
 		sendButton.backgroundColor = .clear
 		
 		textView.textColor = Colors.ticketDetailWriteMessageTextColor
+		textView.tintColor = Colors.ticketDetailWriteMessageTextColor
+		textView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.writeMessageFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.writeMessageFontWeight ?? 400))
 		textView.backgroundColor = Colors.ticketDetailChatWriteMessageBackgroundColor
-		
-		
+
 		createRequestButton.backgroundColor = Colors.ticketDetailButtonBackgroundColor
 		createRequestButton.layer.borderColor = Colors.ticketDetailButtonBorderColor.cgColor
 		createRequestButton.setTitleColor(Colors.ticketDetailButtonTextColor, for: .normal)

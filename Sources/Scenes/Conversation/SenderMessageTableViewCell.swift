@@ -12,7 +12,6 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 
 	private lazy var containerView: UIView = {
 		var view = UIView()
-		view.backgroundColor = Desk360.Config.currentTheme.senderCellBackgroundColor
 		view.clipsToBounds = true
 		return view
 	}()
@@ -20,7 +19,6 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 	private lazy var messageLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 0
-		label.textColor = Desk360.Config.currentTheme.senderCellMessageTextColor
 		label.font = Desk360.Config.Conversation.MessageCell.Sender.messageFont
 		label.addSubview(test)
 		return label
@@ -28,7 +26,6 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 
 	private lazy var dateLabel: UILabel = {
 		let label = UILabel()
-		label.textColor = Desk360.Config.currentTheme.senderCellDateTextColor
 		label.font = Desk360.Config.Conversation.MessageCell.Sender.dateFont
 		label.textAlignment = .right
 		return label

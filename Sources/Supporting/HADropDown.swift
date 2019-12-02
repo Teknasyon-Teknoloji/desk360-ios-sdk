@@ -28,7 +28,20 @@ class HADropDown: UIView {
 	weak var delegate: HADropDownDelegate!
 	fileprivate var label = UILabel()
 
+	fileprivate var placeHolderlabel = UILabel()
 	static var frameChange: CGFloat = 0
+
+	static var placeHolderText: String = ""
+
+	@IBInspectable
+	var placeHolderText: String {
+		set {
+			placeHolderlabel.text = newValue
+		}
+		get {
+			return placeHolderlabel.text ?? ""
+		}
+	}
 
 	@IBInspectable
 	var title: String {
@@ -43,7 +56,7 @@ class HADropDown: UIView {
 
 		}
 		get {
-			return label.text!
+			return label.text ?? ""
 		}
 	}
 
@@ -173,10 +186,6 @@ class HADropDown: UIView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 
-		self.layer.cornerRadius = 8
-		self.layer.borderColor = Desk360.Config.currentTheme.requestBorderColor.cgColor
-		self.layer.borderWidth = 1
-
 		label.frame = CGRect(x: (UIScreen.main.bounds.size.minDimension * 0.054) * 0.5, y: 0, width: self.frame.width - (UIScreen.main.bounds.size.minDimension * 0.054), height: self.frame.height)
 		self.addSubview(label)
 		textAllignment = .left
@@ -210,6 +219,148 @@ class HADropDown: UIView {
 		collapseTableView()
 	}
 
+	func addTopLabel(text: String, textColor: UIColor, font: UIFont) {
+		let label = UILabel()
+		label.tag = 1
+		label.font = font
+		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2)
+		label.frame.size.height = UIScreen.main.bounds.size.minDimension * 0.054 * 0.8
+		label.frame.origin.x = 0
+		label.frame.origin.y = -(UIScreen.main.bounds.size.minDimension * 0.054) * 0.4
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			label.textAlignment = .right
+		} else {
+			label.textAlignment = .left
+		}
+		label.text = text
+		label.textColor = textColor
+		let paragraphStyle = NSMutableParagraphStyle()
+		paragraphStyle.firstLineHeadIndent = UIScreen.main.bounds.size.minDimension * 0.054 * 0.5
+		label.attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+		label.baselineAdjustment = .alignBaselines
+		self.clipsToBounds = false
+		self.addSubview(label)
+	}
+
+	func addTopLabel2(text: String, textColor: UIColor, font: UIFont) {
+		let label = UILabel()
+		label.tag = 1
+		label.font = font
+		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2)
+		label.frame.size.height = UIScreen.main.bounds.size.minDimension * 0.054 * 0.8
+		label.frame.origin.x = 0
+		label.frame.origin.y = -(UIScreen.main.bounds.size.minDimension * 0.054) * 0.4
+		label.text = text
+		label.textColor = textColor
+		let paragraphStyle = NSMutableParagraphStyle()
+		paragraphStyle.firstLineHeadIndent = UIScreen.main.bounds.size.minDimension * 0.054 * 0.5
+		label.attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+		label.baselineAdjustment = .alignBaselines
+		self.addSubview(label)
+
+		label.sizeToFit()
+
+		let width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2)
+		let height = UITextField.preferredHeight * 1.2
+
+		let bezierPath = UIBezierPath()
+		bezierPath.move(to: CGPoint(x: width - 4, y: height))
+		bezierPath.addLine(to: CGPoint(x: 4, y: height))
+		bezierPath.addCurve(to: CGPoint(x: 0, y: height - 4), controlPoint1: CGPoint(x: 2, y: height), controlPoint2: CGPoint(x: 0, y: height - 2))
+		bezierPath.addLine(to: CGPoint(x: 0, y: 4))
+		bezierPath.addCurve(to: CGPoint(x: 4, y: 0), controlPoint1: CGPoint(x: 0, y: 2), controlPoint2: CGPoint(x: 2, y: 0))
+		bezierPath.addLine(to: CGPoint(x: ((UIScreen.main.bounds.size.minDimension * 0.054) * 0.4) , y: 0))
+		bezierPath.move(to: CGPoint(x: ((UIScreen.main.bounds.size.minDimension * 0.054) * 0.2) + label.frame.size.width , y: 0))
+		bezierPath.addLine(to: CGPoint(x: width - 4 , y: 0))
+		bezierPath.addCurve(to: CGPoint(x: width, y: 4), controlPoint1: CGPoint(x: width - 2 , y: 0), controlPoint2: CGPoint(x: width , y: 2))
+		bezierPath.addLine(to: CGPoint(x: width, y: height - 4))
+		bezierPath.addCurve(to: CGPoint(x: width - 4, y: height), controlPoint1: CGPoint(x: width, y: height - 2), controlPoint2: CGPoint(x: width - 2, y: height))
+
+		let specialFrameLayer = CAShapeLayer()
+		specialFrameLayer.path = bezierPath.cgPath
+		specialFrameLayer.frame = CGRect(x: 0,
+											y: 0,
+											width: width,
+											height: height)
+		specialFrameLayer.strokeColor = Colors.createScreenFormInputFocusBorderColor.cgColor
+		specialFrameLayer.fillColor = UIColor.clear.cgColor
+		specialFrameLayer.name = "specialLayer"
+
+
+		let bezierPathBorder = UIBezierPath()
+		bezierPath.move(to: CGPoint(x: width - 4, y: height))
+		bezierPath.addLine(to: CGPoint(x: 4, y: height))
+		bezierPath.addCurve(to: CGPoint(x: 0, y: height - 4), controlPoint1: CGPoint(x: 2, y: height), controlPoint2: CGPoint(x: 0, y: height - 2))
+		bezierPath.addLine(to: CGPoint(x: 0, y: 4))
+		bezierPath.addCurve(to: CGPoint(x: 4, y: 0), controlPoint1: CGPoint(x: 0, y: 2), controlPoint2: CGPoint(x: 2, y: 0))
+		bezierPath.addLine(to: CGPoint(x: width - 4 , y: 0))
+		bezierPath.addCurve(to: CGPoint(x: width, y: 4), controlPoint1: CGPoint(x: width - 2 , y: 0), controlPoint2: CGPoint(x: width , y: 2))
+		bezierPath.addLine(to: CGPoint(x: width, y: height - 4))
+		bezierPath.addCurve(to: CGPoint(x: width - 4, y: height), controlPoint1: CGPoint(x: width, y: height - 2), controlPoint2: CGPoint(x: width - 2, y: height))
+
+		let borderLayer = CAShapeLayer()
+		borderLayer.path = bezierPath.cgPath
+		borderLayer.frame = CGRect(x: 0,
+								   y: 0,
+								   width: width,
+								   height: height)
+		borderLayer.strokeColor = Colors.createScreenFormInputBorderColor.cgColor
+		borderLayer.fillColor = UIColor.clear.cgColor
+		borderLayer.name = "borderLayer"
+
+		if let layers = self.superview?.layer.sublayers {
+			for layer in layers {
+				if let currentLayer = layer as? CAShapeLayer {
+					layer.removeFromSuperlayer()
+				}
+			}
+		}
+
+		specialFrameLayer.isHidden = true
+		self.layer.insertSublayer(borderLayer, below: specialFrameLayer)
+		self.layer.insertSublayer(specialFrameLayer, below: label.layer)
+	}
+
+	func addTopLabel3(text: String, textColor: UIColor, font: UIFont) {
+		let label = UILabel()
+		label.tag = 1
+		label.font = font
+		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2)
+		label.frame.size.height = UIScreen.main.bounds.size.minDimension * 0.054 * 0.8
+		label.frame.origin.x = 0
+		label.frame.origin.y = 0
+//		label.frame.origin.y = (UIScreen.main.bounds.size.minDimension * 0.054) * 0.1
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			label.textAlignment = .right
+		} else {
+			label.textAlignment = .left
+		}
+		label.adjustsFontSizeToFitWidth = true
+		label.text = text
+		label.textColor = textColor
+		let paragraphStyle = NSMutableParagraphStyle()
+		paragraphStyle.firstLineHeadIndent = UIScreen.main.bounds.size.minDimension * 0.054 * 0.5
+		label.attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+		label.baselineAdjustment = .alignCenters
+		label.minimumScaleFactor = 0.3
+		self.clipsToBounds = false
+		self.addSubview(label)
+	}
+
+	func addArrowIcon(tintColor: UIColor) {
+		let imageView = UIImageView()
+		imageView.tag = 2
+		imageView.contentMode = .scaleAspectFit
+		imageView.image = Desk360.Config.Images.arrowIcon
+		imageView.tintColor = tintColor
+		self.addSubview(imageView)
+
+		imageView.snp.makeConstraints { make in
+			make.trailing.equalToSuperview().inset(UIScreen.main.bounds.size.minDimension * 0.054 * 0.5)
+			make.centerY.equalToSuperview()
+		}
+	}
+
 	func willChangeFrame() {
 //		var rootView = self.superview
 //		while rootView?.superview != nil {
@@ -229,8 +380,9 @@ class HADropDown: UIView {
 			}
 			let height: CGFloat = CGFloat(items.count > 5 ? itemHeight*5 : itemHeight*Double(items.count))
 			self.table.layer.zPosition = 1
+
 			self.table.removeFromSuperview()
-			self.table.layer.borderColor = Desk360.Config.currentTheme.requestBorderColor.cgColor
+			self.table.layer.borderColor = Colors.createScreenFormInputFocusColor.cgColor
 			self.table.layer.borderWidth = 1
 			self.table.layer.cornerRadius = 8
 			var rootView = self.superview
@@ -242,8 +394,21 @@ class HADropDown: UIView {
 			rootView?.addSubview(self.table)
 
 			self.table.reloadData()
+
+
+			self.table.snp.remakeConstraints { make in
+				make.top.equalTo(self.snp.bottom)
+				make.leading.equalTo(self.snp.leading)
+				make.width.equalTo(self.snp.width)
+			}
+
 			UIView.animate(withDuration: 0.25, animations: {
-				self.table.frame = CGRect(x: self.tableFrame.origin.x, y: HADropDown.frameChange + self.tableFrame.origin.y + self.frame.height+5, width: self.frame.width, height: height)
+				self.table.snp.makeConstraints { make in
+					make.height.equalTo(height)
+
+				}
+				self.table.superview?.layoutIfNeeded()
+//				self.table.frame = CGRect(x: self.frame.origin.x, y: self.frame.origin.y + self.frame.height+5, width: self.frame.width, height: height)
 			})
 
 			if delegate != nil {
@@ -279,6 +444,13 @@ class HADropDown: UIView {
 			while rootView?.superview != nil {
 				rootView = rootView?.superview
 			}
+			UIView.animate(withDuration: 0.25, animations: {
+				self.table.snp.updateConstraints { make in
+					make.height.equalTo(0)
+
+				}
+				self.table.superview?.layoutIfNeeded()
+			})
 
 			rootView?.viewWithTag(99121)?.removeFromSuperview()
 			self.superview?.viewWithTag(99121)?.removeFromSuperview()
@@ -301,7 +473,7 @@ extension HADropDown: UITableViewDelegate, UITableViewDataSource {
 		}
 		cell?.textLabel?.textAlignment = textAllignment
 		cell?.textLabel?.text = items[indexPath.row]
-		let font = UIFont(descriptor: itemFont.fontDescriptor, size: itemFontSize)
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16) , weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
 
 		cell?.textLabel?.font = font
 
@@ -317,7 +489,7 @@ extension HADropDown: UITableViewDelegate, UITableViewDataSource {
 
 		cell?.tintColor = self.tintColor
 
-		return cell!
+		return cell ?? UITableViewCell()
 	}
 
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
