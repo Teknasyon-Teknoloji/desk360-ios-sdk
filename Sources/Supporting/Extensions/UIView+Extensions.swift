@@ -37,11 +37,26 @@ extension UIView {
 		}
 	}
 
-	func roundCorners(_ corners: UIRectCorner, radius: CGFloat) {
+	func roundCorners(_ corners: UIRectCorner, radius: CGFloat, isShadow: Bool) {
 		let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
 		let mask = CAShapeLayer()
 		mask.path = path.cgPath
+		if isShadow {
+			mask.shadowColor = UIColor.black.cgColor
+			mask.shadowOffset = self.frame.size
+			mask.shadowRadius = 10
+			mask.shadowOpacity = 0.3
+			mask.masksToBounds = false
+		}
 		self.layer.mask = mask
+	}
+
+	func addViewUnderLine() {
+		let bottomLine = UIView()
+		bottomLine.frame = CGRect(origin: CGPoint(x: 0, y: UITextField.preferredHeight * 1.15 - 1), size: CGSize(width: UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2) , height: 1))
+		bottomLine.backgroundColor = Colors.createScreenFormInputBorderColor
+		bottomLine.tag = 10
+		self.addSubview(bottomLine)
 	}
 
 }

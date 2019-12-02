@@ -23,4 +23,52 @@ extension UIButton {
 		return height
 	}
 
+	func setImageAndTitle() {
+		self.titleLabel?.textAlignment = .center
+		self.titleLabel?.adjustsFontSizeToFitWidth = true
+		self.titleLabel?.minimumScaleFactor = 0.1
+		self.titleLabel?.baselineAdjustment = .alignCenters
+
+//		let offset = (self.frame.size.width - (self.imageView?.frame.size.width ?? 0)) - 30
+
+//		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+//			self.imageEdgeInsets = UIEdgeInsets(top: 0, left: offset, bottom: 0, right: 0)
+//		} else {
+//			self.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: offset)
+//		}
+		self.imageView?.frame.origin.x = (self.titleLabel?.frame.origin.x ?? 0) - (self.imageView?.frame.width ?? 0) - 15
+
+		self.contentEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+
+	}
+
+//	func setImageAndTitle() {
+//		self.titleLabel?.textAlignment = .center
+//		self.titleLabel?.adjustsFontSizeToFitWidth = true
+//		self.titleLabel?.minimumScaleFactor = 0.3
+//		self.titleLabel?.baselineAdjustment = .alignCenters
+//
+//		let offset = (self.frame.size.width - (self.imageView?.frame.size.width ?? 0)) - 30
+//		self.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: offset)
+//		self.contentEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+//	}
+
+	func setLeftImageAndTitle() {
+		self.titleLabel?.textAlignment = .center
+		self.titleLabel?.adjustsFontSizeToFitWidth = true
+		self.titleLabel?.minimumScaleFactor = 0.1
+		self.titleLabel?.baselineAdjustment = .alignCenters
+
+		let offset = (self.frame.size.width - (self.imageView?.frame.size.width ?? 0)) + 10
+
+		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			self.imageEdgeInsets = UIEdgeInsets(top: 0, left: offset, bottom: 0, right: 0)
+		} else {
+			self.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: offset)
+		}
+
+		self.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
+
+	}
+
 }
