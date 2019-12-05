@@ -37,15 +37,15 @@ pod 'Desk360'
 
 ## Usage
 
-### Start Desk360 with appId -and an optinal deviceId-
+### Start Desk360 with appId -and an optinal deviceId, an optional language-
 
-> Note: If no deviceId is provided, Desk360 will use device's [UUID](https://developer.apple.com/documentation/foundation/uuid), which might cause your app to lose tickets when the application is deleted. If no isDebug is provided, Desk360 will use false and Sdk looks at prod url.
+> Note: If no deviceId is provided, Desk360 will use device's [UUID](https://developer.apple.com/documentation/foundation/uuid), which might cause your app to lose tickets when the application is deleted. If no isDebug is provided, Desk360 will use false and Sdk looks at prod url. If no application language is provided, Desk360 will use device's language.
 
 ```swift
 import Desk360
 
 Desk360.start(appId: "12345")
-Desk360.start(appId: "12345", deviceId: "34567", isDebug: false)
+Desk360.start(appId: "12345", deviceId: "34567", isDebug: false, language: "en")
 ```
 
 ### Using Desk360
@@ -65,15 +65,7 @@ class ExampleViewController: UIViewController {
 
 ### Customize Desk360 Theme
 
-```swift
-import Desk360
-
-Desk360.Config.theme = .light
-
-// or
-
-Desk360.Config.theme = .dark
-```
+You should use [Desk360](https://desk360.com/) dashboard for custom config.
 
 ## Support
 
