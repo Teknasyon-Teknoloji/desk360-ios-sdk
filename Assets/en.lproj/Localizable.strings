@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "Under Maintenance";
 "connection.error.message" = "Network connection failed, please try again.";
+"general.error.message" = "An error occurred. Please contact the administrator.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

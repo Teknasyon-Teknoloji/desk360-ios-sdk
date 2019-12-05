@@ -83,15 +83,15 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	@objc func addFile() {
 		let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-		let showImagePicker = UIAlertAction(title: NSLocalizedString("Images", comment: ""), style: .default) { _ in
+		let showImagePicker = UIAlertAction(title: Config.shared.model.generalSettings?.attachmentImagesText ?? "Images", style: .default) { _ in
 			self.attachmentButtonConfigure()
 			self.didTapImagePicker()
 		}
-		let showFilePicker = UIAlertAction(title: "Browse", style: .default) { _ in
+		let showFilePicker = UIAlertAction(title: Config.shared.model.generalSettings?.attachmentBrowseText ?? "Browse", style: .default) { _ in
 			self.attachmentButtonConfigure()
 			self.didTapDocumentBrowse()
 		}
-		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+		let cancelAction = UIAlertAction(title: Config.shared.model.generalSettings?.attachmentCancelText ?? "Cancel", style: .cancel) { _ in
 			self.attachmentButtonConfigure()
 		}
 
@@ -171,9 +171,9 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 	func showAlert() {
 
-		let alert = UIAlertController(title: "Des360", message: "Test", preferredStyle: .alert)
+		let alert = UIAlertController(title: "Desk360", message: Config.shared.model.generalSettings?.galleryPermissionErrorMessage, preferredStyle: .alert)
 
-		let okayAction = UIAlertAction(title: "OK", style: .default) { _ in }
+		let okayAction = UIAlertAction(title: Config.shared.model.generalSettings?.galleryPermissionErrorButtonText ?? "ok.button".localize() , style: .default) { _ in }
 		alert.addAction(okayAction)
 
 		present(alert, animated: true, completion: nil)
@@ -321,10 +321,10 @@ private extension CreateRequestViewController {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
-					Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+					Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: false)
+				Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
 				print(error.localizedDescription)
 			case .success(let response):
 				guard let ticketTypes = try? response.map(DataResponse<[TicketType]>.self) else { return }
@@ -406,10 +406,10 @@ private extension CreateRequestViewController {
 				print(error.localizedServerDescription)
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
-					Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+					Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: false)
+				Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
 			case .success:
 				self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
 			}

@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "Vedlikehold pågår. Vennligst prøv senere";
 "connection.error.message" = "Nettverksforbindelsen feilet, vennligst prøv igjen.";
+"general.error.message" = "Det oppsto en feil. Vennligst kontakt administratoren.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

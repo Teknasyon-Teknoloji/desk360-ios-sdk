@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "Đang bảo trì. Vui lòng thử lại sau";
 "connection.error.message" = "Lỗi kết nối mạng, vui lòng thử lại";
+"general.error.message" = "Đã xảy ra lỗi. Vui lòng liên hệ với quản trị viên.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

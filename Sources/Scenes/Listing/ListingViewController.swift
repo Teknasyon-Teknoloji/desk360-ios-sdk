@@ -70,15 +70,15 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 
 		let count = navigationController?.viewControllers.count ?? 0
 		guard count > 1 else { return }
-		print(count)
 		navigationController?.viewControllers.removeSubrange(0..<count-1)
 	}
 
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
-		layoutableView.placeholderView.bottomScrollView.contentSize = CGSize(width: layoutableView.placeholderView.bottomScrollView.frame.size.width, height: layoutableView.placeholderView.bottomDescriptionLabel.frame.size.height + layoutableView.preferredSpacing * 0.5)
 
-		//		layoutableView.placeholderView.createRequestButton.setImageAndTitle()
+		self.layoutableView.placeholderView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.placeholderView.bottomScrollView.frame.size.width, height: self.layoutableView.placeholderView.bottomDescriptionLabel.frame.size.height)
+
+		self.layoutableView.placeholderView.bottomScrollView.setContentOffset(CGPoint(x: 0, y: 2), animated: true)
 	}
 
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -206,7 +206,7 @@ private extension ListingViewController {
 			guard let self = self else { return }
 			switch result {
 			case .failure:
-				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+				Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 			case .success(let response):
 				guard let register = try? response.map(DataResponse<RegisterRequest>.self) else { return }
 				Desk360.isRegister = true
@@ -236,10 +236,10 @@ private extension ListingViewController {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
-					Alert.showAlertForRegister(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+					Alert.showAlertForRegister(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+				Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 				print("error.localizedDescription")
 				print(error.localizedDescription)
 			case .success(let response):
@@ -264,17 +264,17 @@ private extension ListingViewController {
 			return
 		}
 
-		Desk360.apiProvider.request(.getConfig(appKey: Desk360.languageCode)) { [weak self] result in
+		Desk360.apiProvider.request(.getConfig(language: Desk360.languageCode)) { [weak self] result in
 			self?.layoutableView.setLoading(false)
 			guard let self = self else { return }
 			switch result {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
-					Alert.showAlertForRegister(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+					Alert.showAlertForRegister(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+				Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 				print(error.localizedDescription)
 				print("error.localizedDescription")
 			case .success(let response):

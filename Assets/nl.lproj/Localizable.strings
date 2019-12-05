@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "In onderhoud. Probeer het later opnieuw";
 "connection.error.message" = "Verbinding met netwerk mislukt, probeer alsjeblieft opnieuw.";
+"general.error.message" = "Er is een fout opgetreden. Neem contact op met de beheerder.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

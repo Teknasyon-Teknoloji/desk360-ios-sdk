@@ -907,6 +907,9 @@ extension CreateRequestView {
 		self.backgroundColor = Colors.backgroundColor
 		nameTextField.placeholder = Config.shared.model.generalSettings?.nameFieldText
 		emailTextField.placeholder = Config.shared.model.generalSettings?.emailFieldText
+		nameErrorLabel.text = Config.shared.model.generalSettings?.requiredFieldMessage
+		emailErrorLabel.text = Config.shared.model.generalSettings?.requiredEmailFieldMessage
+		messageTextViewErrorLabel.text = Config.shared.model.generalSettings?.requiredMessageViewMessage
 		dropDownListView.itemTextColor = Colors.createScreenFormInputFocusColor
 		dropDownListView.titleColor = Colors.createScreenFormInputColor
 		dropDownListView.itemBackground = Colors.backgroundColor
@@ -920,7 +923,6 @@ extension CreateRequestView {
 		attachmentButton.setTitleColor(Colors.createScreenLabelTextColor, for: .normal)
 		attachmentButton.setTitle(Config.shared.model.generalSettings?.addFileText, for: .normal)
 		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
-//			attachmentButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
 			attachmentButton.imageView?.frame.origin.x = attachmentButton.frame.size.width - preferredSpacing * 0.5 - (attachmentButton.imageView?.frame.size.width ?? 0)
 			attachmentButton.titleLabel?.frame.origin.x = 0
 		} else {

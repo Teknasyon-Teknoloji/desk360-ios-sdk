@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "زیر بحالی. براہ کرم کچھ دیر بعد دوبارہ کوشش کریں";
 "connection.error.message" = "نیٹ ورک کنکشن ناکام، براہ مہربانی پھر سے کوشش کریں.";
+"general.error.message" = "ایک نقص واقع ہوا. براہ مہربانی ایڈمنسٹریٹر سے رابطہ کریں.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

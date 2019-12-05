@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "Under underhåll. Vänligen försök igen senare";
 "connection.error.message" = "Nätverksanslutningen misslyckades, försök igen.";
+"general.error.message" = "Ett fel uppstod. Vänligen kontakta administratören.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

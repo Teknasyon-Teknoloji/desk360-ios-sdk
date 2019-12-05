@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "Prowadzone są prace konserwacyjne. Spróbuj ponownie później";
 "connection.error.message" = "Brak połączenia z siecią. Spróbuj ponownie.";
+"general.error.message" = "Wystąpił błąd. Proszę skontaktuj się z administratorem.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

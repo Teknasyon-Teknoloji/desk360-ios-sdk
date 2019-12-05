@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "Minimentena. Pakisubukang muli mamaya";
 "connection.error.message" = "Hindi matagumpay ang pagkonekta sa network, pakisubukang muli.";
+"general.error.message" = "An error occurred. Please contact the administrator.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

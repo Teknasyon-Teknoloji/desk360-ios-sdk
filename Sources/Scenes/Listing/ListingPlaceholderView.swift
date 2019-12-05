@@ -107,11 +107,6 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		}
 	}
 
-	override func layoutSubviews() {
-		super.layoutSubviews()
-
-		bottomScrollView.contentSize = CGSize(width: Int(UIScreen.main.bounds.width), height: Int(bottomDescriptionLabel.frame.height + preferredSpacing))
-	}
 
 }
 

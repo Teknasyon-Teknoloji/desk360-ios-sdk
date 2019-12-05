@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "Karbantartás alatt. Kérjük, próbáld meg újra később";
 "connection.error.message" = "Hálózat kapcsolódás sikertelen, kérjük próbálja újra.";
+"general.error.message" = "Kérjük, menj a Beállításokhoz és engedélyezd a következőt: Fotókönyvtár.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

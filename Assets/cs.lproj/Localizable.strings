@@ -33,8 +33,10 @@
 
 "maintenace.alert.title" = "Probíhá údržba. Opakujte akci později";
 "connection.error.message" = "Připojení k síti selhalo, prosím, zkuste to znovu.";
+"general.error.message" = "Vyskytla se chyba. Obraťte se na správce.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
+
 
 "name_regex" = "Prosím vložte hodnotu.";
 "email_regex" = "Uveďte platnou e-mailovou adresu.";

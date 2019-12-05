@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "점검중. 나중에 다시 시도해주십시오";
 "connection.error.message" = "네트워크 연결에 실패했습니다, 다시 시도해주세요.";
+"general.error.message" = "오류가 발생했습니다. 관리자에게 문의하세요.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

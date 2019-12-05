@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "تحت الصيانة. يرجى إعادة المحاولة لاحقا";
 "connection.error.message" = "فشل اتصال الشبكة ، يرجى المحاولة مرة أخرى.";
+"general.error.message" = "يرجى الانتقال إلى الإعدادات والسماح مكتبة الصور.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

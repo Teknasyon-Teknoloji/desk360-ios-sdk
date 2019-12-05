@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "Sob manuntenção. Por favor, tente novamente mais tarde";
 "connection.error.message" = "A ligação à rede falhou, por favor tente outra vez.";
+"general.error.message" = "Por favor, vá a Configurações e permita Biblioteca de Fotos.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

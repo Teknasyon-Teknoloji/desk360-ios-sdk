@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "Unter Wartung. Bitte versuchen Sie es später erneut";
 "connection.error.message" = "Netzwerkverbindung fehlgeschlagen, versuchen sie es erneut";
+"general.error.message" = "Es ist ein Fehler aufgetreten. Bitte wende dich an den Administrator.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "In manutenzione. Riprova più tardi";
 "connection.error.message" = "Connessione di rete fallita, riprova.";
+"general.error.message" = "Si è verificato un errore. Contattare l'amministratore.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

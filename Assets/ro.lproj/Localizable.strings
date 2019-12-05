@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "În regim de mentenanță. Vă rugăm să încercați din nou mai târziu";
 "connection.error.message" = "Conexiunea la rețea nu a reușit, vă rugăm să reîncercați.";
+"general.error.message" = "A apărut o eroare. Te rugăm să contactezi administratorul.";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

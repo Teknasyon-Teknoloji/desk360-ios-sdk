@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "กำลังดำเนินการซ่อมบำรุง. โปรดลองอีกครั้งในภายหลัง";
 "connection.error.message" = "การเชื่อมต่อเครือข่ายล้มเหลว โปรดลองอีกครั้ง";
+"general.error.message" = "มีความผิดพลาดเกิดขึ้น กรุณาติดต่อผู้ดูแลระบบ";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

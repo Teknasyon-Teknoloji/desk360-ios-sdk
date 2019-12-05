@@ -43,6 +43,23 @@ public struct GeneralConfigModel {
 	var subjectFieldText: String?
 
 	var addFileText: String?
+
+	var requiredFieldMessage : String?
+
+	var requiredMessageViewMessage : String?
+
+	var attachmentBrowseText : String?
+
+	var attachmentImagesText : String?
+
+	var attachmentCancelText : String?
+
+	var galleryPermissionErrorMessage : String?
+
+	var requiredEmailFieldMessage: String?
+
+	var galleryPermissionErrorButtonText: String?
+
 }
 
 extension GeneralConfigModel: Codable {
@@ -66,6 +83,14 @@ extension GeneralConfigModel: Codable {
 		case message_field_text
 		case subject_field_text
 		case add_file_text
+		case required_field_message
+		case required_textarea_message
+		case attachment_browse_text
+		case attachment_images_text
+		case attachment_cancel_text
+		case gallery_permission_error_message
+		case required_email_field_message
+		case gallery_permission_error_button_text
 	}
 
 	/// Creates a new instance by decoding from the given decoder.
@@ -104,14 +129,18 @@ extension GeneralConfigModel: Codable {
 				copyrightTextColor = UIColor.init(hex: copyrightTextHexValue)
 			}
 			nameFieldText = try (container.decodeIfPresent(String.self, forKey: .name_field_text))
-
 			emailFieldText = try (container.decodeIfPresent(String.self, forKey: .email_field_text))
-
 			messageFieldText = try (container.decodeIfPresent(String.self, forKey: .message_field_text))
-
 			subjectFieldText = try (container.decodeIfPresent(String.self, forKey: .subject_field_text))
-
 			addFileText = try (container.decodeIfPresent(String.self, forKey: .add_file_text))
+			requiredFieldMessage = try (container.decodeIfPresent(String.self, forKey: .required_field_message))
+			requiredEmailFieldMessage = try (container.decodeIfPresent(String.self, forKey: .required_email_field_message))
+			requiredMessageViewMessage = try (container.decodeIfPresent(String.self, forKey: .required_textarea_message))
+			attachmentBrowseText = try (container.decodeIfPresent(String.self, forKey: .attachment_browse_text))
+			attachmentImagesText = try (container.decodeIfPresent(String.self, forKey: .attachment_images_text))
+			attachmentCancelText = try (container.decodeIfPresent(String.self, forKey: .attachment_cancel_text))
+			galleryPermissionErrorMessage = try (container.decodeIfPresent(String.self, forKey: .gallery_permission_error_message))
+			galleryPermissionErrorButtonText = try (container.decodeIfPresent(String.self, forKey: .gallery_permission_error_button_text))
 
 		} catch let error as DecodingError {
 			print(error)
@@ -127,6 +156,7 @@ extension GeneralConfigModel: Codable {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 
 		do {
+			
 			try container.encodeIfPresent(fontType, forKey: .font_type)
 			try container.encodeIfPresent(mainBackgroundColor?.hexString(includeAlpha: true), forKey: .main_background_color)
 			try container.encodeIfPresent(navigationBackgroundColor?.hexString(includeAlpha: true), forKey: .header_background_color)
@@ -145,6 +175,14 @@ extension GeneralConfigModel: Codable {
 			try container.encodeIfPresent(messageFieldText, forKey: .message_field_text)
 			try container.encodeIfPresent(subjectFieldText, forKey: .subject_field_text)
 			try container.encodeIfPresent(addFileText, forKey: .add_file_text)
+			try container.encodeIfPresent(requiredFieldMessage, forKey: .required_field_message)
+			try container.encodeIfPresent(requiredEmailFieldMessage, forKey: .required_email_field_message)
+			try container.encodeIfPresent(requiredMessageViewMessage, forKey: .required_textarea_message)
+			try container.encodeIfPresent(attachmentBrowseText, forKey: .attachment_browse_text)
+			try container.encodeIfPresent(attachmentImagesText, forKey: .attachment_images_text)
+			try container.encodeIfPresent(attachmentCancelText, forKey: .attachment_cancel_text)
+			try container.encodeIfPresent(galleryPermissionErrorMessage, forKey: .gallery_permission_error_message)
+			try container.encodeIfPresent(galleryPermissionErrorButtonText, forKey: .gallery_permission_error_button_text)
 
 		} catch let error as EncodingError {
 			print(error)

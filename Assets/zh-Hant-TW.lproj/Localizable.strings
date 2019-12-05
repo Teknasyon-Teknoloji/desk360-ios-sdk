@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "正在維修。請稍後再試";
 "connection.error.message" = "網絡連接失敗，請重試";
+"general.error.message" = "发生错误。请与管理员联系。";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 

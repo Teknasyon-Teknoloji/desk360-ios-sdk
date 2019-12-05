@@ -33,6 +33,7 @@
 
 "maintenace.alert.title" = "रखरखाव जारी है. बाद में पुन: प्रयास करें";
 "connection.error.message" = "नेटवर्क कनेक्शन विफल हो गया, कृपया पुनः प्रयास करें।";
+"general.error.message" = "एक त्रुटि हो गई। कृपया व्यवस्थापक से संपर्क करें।";
 "server.error" = "Unknow Server Error";
 "subscription.expired" = "Your subscription period expired";
 
