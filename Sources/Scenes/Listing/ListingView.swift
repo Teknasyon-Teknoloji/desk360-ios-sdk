@@ -212,8 +212,8 @@ extension ListingView {
 		emptyView.backgroundColor = Colors.ticketListingScreenBackgroudColor
 		tableView.backgroundColor = Colors.ticketListingScreenBackgroudColor
 		configureSegmentedControl()
-		emptyTextLabel.textColor = Colors.ticketListingScreenEmptyTextColor
-		emptyImageView.tintColor = Colors.ticketListingScreenEmptyIconColor
+		emptyTextLabel.textColor = Colors.ticketListingScreenTabTextColor
+		emptyImageView.tintColor = Colors.ticketListingScreenTabTextActiveColor
 		placeholderView.configure()
 	}
 

@@ -265,11 +265,11 @@ internal extension InputView {
 	}
 
 	func configureButton() {
-		let type = Config.shared.model.ticketDetail?.buttonStyleId
+		let type = Config.shared.model.firstScreen?.buttonStyleId
 		createRequestButton.layer.shadowColor = UIColor.clear.cgColor
 		createRequestButton.setImage(UIImage(), for: .normal)
-		let imageIshidden = Config.shared.model.ticketDetail?.buttonIconIsHidden ?? true
-		let buttonShadowIsHidden = Config.shared.model.ticketDetail?.buttonShadowIsHidden ?? true
+		let imageIshidden = Config.shared.model.firstScreen?.buttonIconIsHidden ?? true
+		let buttonShadowIsHidden = Config.shared.model.firstScreen?.buttonShadowIsHidden ?? true
 
 		switch type {
 		case 1:
@@ -291,7 +291,7 @@ internal extension InputView {
 			} else {
 				createRequestButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 20)
 			}
-			createRequestButton.imageView?.tintColor = Colors.ticketDetailButtonTextColor
+			createRequestButton.imageView?.tintColor = Colors.firstScreenButtonTextColor
 		}
 
 		if buttonShadowIsHidden {
@@ -324,11 +324,11 @@ internal extension InputView {
 		textView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.writeMessageFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.writeMessageFontWeight ?? 400))
 		textView.backgroundColor = Colors.ticketDetailChatWriteMessageBackgroundColor
 
-		createRequestButton.backgroundColor = Colors.ticketDetailButtonBackgroundColor
-		createRequestButton.layer.borderColor = Colors.ticketDetailButtonBorderColor.cgColor
-		createRequestButton.setTitleColor(Colors.ticketDetailButtonTextColor, for: .normal)
-		createRequestButton.setTitle(Config.shared.model.ticketDetail?.buttonText, for: .normal)
-		createRequestButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.buttonTextFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.buttonTextFontWeight ?? 400))
+		createRequestButton.backgroundColor = Colors.firstScreenButtonBackgroundColor
+		createRequestButton.layer.borderColor = Colors.firstScreenButttonBorderColor.cgColor
+		createRequestButton.setTitleColor(Colors.firstScreenButtonTextColor, for: .normal)
+		createRequestButton.setTitle(Config.shared.model.firstScreen?.buttonText, for: .normal)
+		createRequestButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.firstScreen?.buttonTextFontSize ?? 18), weight: Font.weight(type: Config.shared.model.firstScreen?.buttonTextFontWeight ?? 400))
 
 		configureButton()
 
