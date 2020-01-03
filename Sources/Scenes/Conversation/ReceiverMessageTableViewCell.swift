@@ -70,8 +70,6 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 		return pdfView
 	}()
 
-	var moviePlayer: MPMoviePlayerController?
-
 	private var containerBackgroundColor: UIColor? {
 		didSet {
 			containerView.backgroundColor = containerBackgroundColor

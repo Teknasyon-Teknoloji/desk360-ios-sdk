@@ -423,7 +423,7 @@ private extension CreateRequestViewController {
 		ticket.append(Moya.MultipartFormData(provider: .data(countryCodeData), name: "country_code"))
 
 		if let json = Desk360.jsonInfo {
-			if let jsonData = try? JSONSerialization.data(withJSONObject: json) as? Data {
+			if let jsonData = try? JSONSerialization.data(withJSONObject: json) {
 				ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
 			}
 		}
