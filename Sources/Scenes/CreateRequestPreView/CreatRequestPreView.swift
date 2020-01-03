@@ -64,28 +64,16 @@ final class CreatRequestPreView: UIView, Layoutable {
 
 	private lazy var desk360BottomView: UIView = {
 		let view = UIView()
-		view.backgroundColor = UIColor.init(hex: "71717b")!
-		view.addSubview(self.desk360Label)
-		view.addSubview(self.poweredByLabel)
+		view.backgroundColor = .clear
+		view.addSubview(desk360LogoImageView)
 		return view
 	}()
 
-	private lazy var desk360Label: UILabel = {
-		let label = UILabel()
-		label.textColor = .white
-		label.text = " DESK360 "
-		label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
-		label.textAlignment = .right
-		return label
-	}()
-
-	private lazy var poweredByLabel: UILabel = {
-		let label = UILabel()
-		label.textColor = .white
-		label.text = "powered by"
-		label.font = UIFont.systemFont(ofSize: 12)
-		label.textAlignment = .right
-		return label
+	private lazy var desk360LogoImageView: UIImageView = {
+		let imageView = UIImageView()
+		imageView.image =  Desk360.Config.Images.desk360Logo
+		imageView.contentMode = .scaleAspectFit
+		return imageView
 	}()
 
 	public override var backgroundColor: UIColor? {
@@ -139,15 +127,11 @@ final class CreatRequestPreView: UIView, Layoutable {
 			make.bottom.equalTo(safeArea.bottom)
 		}
 
-		desk360Label.snp.makeConstraints { make in
-			make.bottom.top.equalToSuperview()
-			make.right.equalToSuperview().inset(preferredSpacing * 0.5)
+		desk360LogoImageView.snp.makeConstraints { make in
+			make.centerX.equalToSuperview()
+			make.top.equalToSuperview()
 		}
 
-		poweredByLabel.snp.makeConstraints { make in
-			make.bottom.top.equalToSuperview()
-			make.right.equalTo(desk360Label.snp.left)
-		}
 	}
 
 }
@@ -173,12 +157,6 @@ extension CreatRequestPreView {
 	func createButtonType4() {
 
 		createRequestButton.layer.cornerRadius = 0
-
-//		let offset = preferredSpacing * 0.5
-//
-//		if !(Config.shared.model.createPreScreen?.bottomNoteIsHidden ?? false) {
-//			offset = 0
-//		}
 
 		createRequestButton.snp.remakeConstraints { make in
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) + 2)

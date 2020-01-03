@@ -28,6 +28,8 @@ public final class Desk360 {
 
 	private(set) public static var isDebug: Bool!
 
+	private(set) public static var jsonInfo: [String: Any]!
+
 	static var token: String? = ""
 
 	static let authPlugin = AccessTokenPlugin { Desk360.token ?? "" }
@@ -41,7 +43,7 @@ public final class Desk360 {
 		return NetworkReachabilityManager()?.isReachable ?? false
 	}
 
-	public init(appId: String, deviceId: String, isDebug: Bool, language: String) {
+	public init(appId: String, deviceId: String, isDebug: Bool, language: String, jsonInfo: [String: Any]) {
 		Desk360.appId = appId
 		Desk360.deviceId = deviceId
 		Desk360.appPlatform = "iOS"
@@ -49,6 +51,7 @@ public final class Desk360 {
 		Desk360.timeZone = TimeZone.current.identifier
 		Desk360.languageCode = language
 		Desk360.isDebug = isDebug
+		Desk360.jsonInfo = jsonInfo
 	}
 
 	func getVersion() -> String {
@@ -65,7 +68,7 @@ public final class Desk360 {
 		return aDesk
 	}
 
-	public static func start(appId: String, deviceId: String? = nil, isDebug: Bool? = false, language: String? = nil) {
+	public static func start(appId: String, deviceId: String? = nil, isDebug: Bool? = false, language: String? = nil, jsonInfo: [String: Any]? = [:]) {
 		var id: String = ""
 		if deviceId == nil {
 			id = UIDevice.current.uniqueIdentifier
@@ -78,7 +81,8 @@ public final class Desk360 {
 		} else {
 			currentLanguage = language ?? "en"
 		}
-		desk = Desk360(appId: appId, deviceId: id, isDebug: isDebug ?? false, language: currentLanguage)
+
+		desk = Desk360(appId: appId, deviceId: id, isDebug: isDebug ?? false, language: currentLanguage, jsonInfo: jsonInfo ?? [:])
 		Stores.setStoresInitialValues()
 		print("Desk360 SDK was initialized successfully!")
 	}

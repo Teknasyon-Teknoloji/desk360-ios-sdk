@@ -72,28 +72,16 @@ final class SuccessView: UIView, Layoutable {
 
 	private lazy var desk360BottomView: UIView = {
 		let view = UIView()
-		view.backgroundColor = UIColor.init(hex: "71717b")!
-		view.addSubview(self.desk360Label)
-		view.addSubview(self.poweredByLabel)
+		view.backgroundColor = .clear
+		view.addSubview(desk360LogoImageView)
 		return view
 	}()
 
-	private lazy var desk360Label: UILabel = {
-		let label = UILabel()
-		label.textColor = .white
-		label.text = " DESK360 "
-		label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
-		label.textAlignment = .right
-		return label
-	}()
-
-	private lazy var poweredByLabel: UILabel = {
-		let label = UILabel()
-		label.textColor = .white
-		label.text = "powered by"
-		label.font = UIFont.systemFont(ofSize: 12)
-		label.textAlignment = .right
-		return label
+	private lazy var desk360LogoImageView: UIImageView = {
+		let imageView = UIImageView()
+		imageView.image =  Desk360.Config.Images.desk360Logo
+		imageView.contentMode = .scaleAspectFit
+		return imageView
 	}()
 
 	public override var backgroundColor: UIColor? {
@@ -163,14 +151,9 @@ final class SuccessView: UIView, Layoutable {
 			make.bottom.equalTo(safeArea.bottom)
 		}
 
-		desk360Label.snp.makeConstraints { make in
-			make.bottom.top.equalToSuperview()
-			make.right.equalToSuperview().inset(preferredSpacing * 0.5)
-		}
-
-		poweredByLabel.snp.makeConstraints { make in
-			make.bottom.top.equalToSuperview()
-			make.right.equalTo(desk360Label.snp.left)
+		desk360LogoImageView.snp.makeConstraints { make in
+			make.centerX.equalToSuperview()
+			make.top.equalToSuperview()
 		}
 	}
 

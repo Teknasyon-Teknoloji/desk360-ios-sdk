@@ -9,7 +9,7 @@ import UIKit
 
 final class Alert {
 
-	static func showAlert(viewController: UIViewController, title: String, message: String, dissmis: Bool ) {
+	static func showAlertWithDismiss(viewController: UIViewController, title: String, message: String, dissmis: Bool ) {
 
 		let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
 		alert.addAction(UIAlertAction(title: "ok.button".localize(), style: UIAlertAction.Style.default, handler: { _ in
@@ -25,7 +25,7 @@ final class Alert {
 
 	}
 
-	static func showAlertForRegister(viewController: UIViewController, title: String, message: String, dissmis: Bool ) {
+	static func showAlert(viewController: UIViewController, title: String, message: String ) {
 
 		let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
 		alert.addAction(UIAlertAction(title: "ok.button".localize(), style: UIAlertAction.Style.default, handler: { _ in }))
@@ -33,4 +33,5 @@ final class Alert {
 		viewController.present(alert, animated: true, completion: nil)
 
 	}
+
 }

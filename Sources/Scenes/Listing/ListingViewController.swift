@@ -206,7 +206,7 @@ private extension ListingViewController {
 			guard let self = self else { return }
 			switch result {
 			case .failure:
-				Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 			case .success(let response):
 				guard let register = try? response.map(DataResponse<RegisterRequest>.self) else { return }
 				Desk360.isRegister = true
@@ -236,10 +236,10 @@ private extension ListingViewController {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
-					Alert.showAlertForRegister(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 				print("error.localizedDescription")
 				print(error.localizedDescription)
 			case .success(let response):
@@ -271,10 +271,10 @@ private extension ListingViewController {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
-					Alert.showAlertForRegister(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 				print(error.localizedDescription)
 				print("error.localizedDescription")
 			case .success(let response):
@@ -302,7 +302,7 @@ private extension ListingViewController {
 
 	func networkError() {
 		layoutableView.setLoading(false)
-		Alert.showAlert(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+		Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
 	}
 
 }

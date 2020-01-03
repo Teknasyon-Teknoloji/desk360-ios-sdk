@@ -107,7 +107,6 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		}
 	}
 
-
 }
 
 // MARK: - Helpers

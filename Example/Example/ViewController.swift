@@ -32,7 +32,6 @@ final class ViewController: UIViewController {
 extension ViewController {
 
 	func configureDesk360() {
-		Desk360.Config.theme = .light
 	}
 
 }

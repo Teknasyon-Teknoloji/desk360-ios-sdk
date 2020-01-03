@@ -393,7 +393,6 @@ class HADropDown: UIView {
 			UIView.animate(withDuration: 0.25, animations: {
 				self.table.snp.makeConstraints { make in
 					make.height.equalTo(height)
-
 				}
 				self.table.superview?.layoutIfNeeded()
 			})

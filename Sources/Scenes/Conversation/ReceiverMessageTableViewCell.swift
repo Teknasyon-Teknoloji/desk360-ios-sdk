@@ -8,8 +8,22 @@
 import UIKit
 import PDFKit
 import Alamofire
+import AVFoundation
+import MediaPlayer
+import AVKit
 
 final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable {
+
+	lazy var videoView: VideoView = {
+		return VideoView()
+	}()
+
+	lazy var playButton: UIButton = {
+		let button = UIButton()
+		button.setImage(Desk360.Config.Images.playIcon, for: .normal)
+		button.setImage(Desk360.Config.Images.pauseIcon, for: .selected)
+		return button
+	}()
 
 	private lazy var containerView: UIView = {
 		var view = UIView()
@@ -45,11 +59,18 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 		return imageView
 	}()
 
+	lazy var previewVideoView: UIView = {
+		let view = UIView()
+		return view
+	}()
+
 	@available(iOS 11.0, *)
 	lazy var pdfView: PDFView = {
 		let pdfView = PDFView()
 		return pdfView
 	}()
+
+	var moviePlayer: MPMoviePlayerController?
 
 	private var containerBackgroundColor: UIColor? {
 		didSet {
@@ -117,10 +138,41 @@ internal extension ReceiverMessageTableViewCell {
 		guard let word = words.last else { return }
 		if word == "pdf" {
 			addPdf(url)
-		} else {
+		} else if word == "png" || word == "jpeg" {
 			addImageView(url)
+		} else {
+			addVideoView(url)
 		}
 
+	}
+
+	func addVideoView(_ url: URL) {
+
+		stackView.addArrangedSubview(previewVideoView)
+
+		previewVideoView.snp.remakeConstraints { remake in
+			remake.leading.trailing.equalToSuperview()
+			remake.height.equalTo(previewVideoView.snp.width)
+		}
+
+		previewVideoView.addSubview(videoView)
+		previewVideoView.addSubview(playButton)
+
+		playButton.snp.makeConstraints { make in
+			make.center.equalToSuperview()
+			make.width.height.equalTo(preferredSpacing * 2)
+		}
+
+		playButton.addTarget(self, action: #selector(didTapPlayButton), for: .touchUpInside)
+		playButton.tintColor = Colors.ticketDetailWriteMessageButtonIconColor
+
+		videoView.snp.makeConstraints { remake in
+			remake.leading.trailing.equalToSuperview()
+			remake.height.equalTo(previewVideoView.snp.width)
+		}
+
+		let options = BackgroundVideoPlayer.PlaybackOptions(url: url)
+		videoView.prepareForPlaying(options: options)
 	}
 
 	func addImageView(_ url: URL) {
@@ -135,9 +187,51 @@ internal extension ReceiverMessageTableViewCell {
 		previewImageView.contentMode = .scaleAspectFit
 	}
 
+	@objc func didTapPlayButton() {
+		playButton.isSelected = !playButton.isSelected
+		guard playButton.isSelected else {
+			videoView.player?.pause()
+			return
+		}
+		videoView.player?.play()
+	}
+
+	func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?) -> Void)) {
+		DispatchQueue.global().async { //1
+			let asset = AVAsset(url: url) //2
+			let avAssetImageGenerator = AVAssetImageGenerator(asset: asset) //3
+			avAssetImageGenerator.appliesPreferredTrackTransform = true //4
+			let thumnailTime = CMTimeMake(value: 50, timescale: 5) //5
+			do {
+				let cgThumbImage = try avAssetImageGenerator.copyCGImage(at: thumnailTime, actualTime: nil) //6
+				let thumbImage = UIImage(cgImage: cgThumbImage) //7
+				DispatchQueue.main.async { //8
+					completion(thumbImage) //9
+				}
+			} catch {
+				print(error.localizedDescription) //10
+				DispatchQueue.main.async {
+					completion(nil) //11
+				}
+			}
+		}
+	}
+
+	func videoFromUrl(url: URL) {
+		let request = URLRequest(url: url as URL)
+		let task = URLSession.shared.dataTask(with: request) { (data, _, _) in
+			if let imageData = data {
+				DispatchQueue.main.async {
+					self.previewImageView.image = UIImage(data: imageData)
+				}
+			}
+		}
+		task.resume()
+	}
+
 	func imageFromUrl(url: URL) {
 		let request = URLRequest(url: url as URL)
-		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+		let task = URLSession.shared.dataTask(with: request) { (data, _, _) in
 			if let imageData = data {
 				DispatchQueue.main.async {
 					self.previewImageView.image = UIImage(data: imageData)

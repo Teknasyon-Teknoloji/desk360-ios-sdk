@@ -137,6 +137,12 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		guard let url = urls.first else { return }
 		guard let pdfData = try? Data(contentsOf: url) else { return }
 		guard let name = url.pathComponents.last else { return }
+		guard pdfData.count < 20971520 else {
+			controller.dismiss(animated: true) {
+				Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model.generalSettings?.fileSizeErrorText ?? "")
+			}
+			return
+		}
 		ticket.removeAll()
 		ticket.append(Moya.MultipartFormData(provider: .data(pdfData as Data), name: "attachment", fileName: name, mimeType: "pdf"))
 		layoutableView.attachmentLabel.text = name
@@ -152,6 +158,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		imagePicker.delegate = self
 		imagePicker.modalPresentationStyle = .fullScreen
 		imagePicker.allowsEditing = false
+		imagePicker.mediaTypes = ["public.image", "public.movie"]
 		imagePicker.sourceType = .photoLibrary
 
 		PHPhotoLibrary.requestAuthorization { [weak self] result in
@@ -173,7 +180,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 		let alert = UIAlertController(title: "Desk360", message: Config.shared.model.generalSettings?.galleryPermissionErrorMessage, preferredStyle: .alert)
 
-		let okayAction = UIAlertAction(title: Config.shared.model.generalSettings?.galleryPermissionErrorButtonText ?? "ok.button".localize() , style: .default) { _ in }
+		let okayAction = UIAlertAction(title: Config.shared.model.generalSettings?.galleryPermissionErrorButtonText ?? "ok.button".localize(), style: .default) { _ in }
 		alert.addAction(okayAction)
 
 		present(alert, animated: true, completion: nil)
@@ -183,8 +190,6 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
 		guard let imgUrl = info[UIImagePickerController.InfoKey.referenceURL] as? URL else { return }
 		guard var name = imgUrl.pathComponents.last else { return }
-		guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
-		guard let data = image.jpegData(compressionQuality: 0.3) as NSData? else { return }
 
 		if #available(iOS 11.0, *) {
 			if let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset {
@@ -192,8 +197,30 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 				name = assetResources.first?.originalFilename ?? ""
 			}
 		}
+
 		ticket.removeAll()
-		ticket.append(Moya.MultipartFormData(provider: .data(data as Data), name: "attachment", fileName: name, mimeType: "image/jpeg"))
+		if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+			guard let data = image.jpegData(compressionQuality: 0.3) as NSData? else { return }
+			guard data.length < 20971520 else {
+				picker.dismiss(animated: true) {
+					Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model.generalSettings?.fileSizeErrorText ?? "")
+				}
+				return
+			}
+			ticket.append(Moya.MultipartFormData(provider: .data(data as Data), name: "attachment", fileName: name, mimeType: "image/jpeg"))
+		} else {
+			if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
+				guard let data = try? NSData(contentsOf: videoUrl as URL, options: .mappedIfSafe) else { return }
+				guard data.length < 20971520 else {
+					picker.dismiss(animated: true) {
+						Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model.generalSettings?.fileSizeErrorText ?? "")
+					}
+					return
+				}
+				ticket.append(Moya.MultipartFormData(provider: .data(data as Data), name: "attachment", fileName: name, mimeType: "video"))
+			}
+		}
+
 		layoutableView.attachmentLabel.text = name
 		layoutableView.attachmentCancelButton.isHidden = false
 		layoutableView.attachmentCancelButton.isEnabled = true
@@ -321,10 +348,10 @@ private extension CreateRequestViewController {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
-					Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
+				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
 				print(error.localizedDescription)
 			case .success(let response):
 				guard let ticketTypes = try? response.map(DataResponse<[TicketType]>.self) else { return }
@@ -395,6 +422,12 @@ private extension CreateRequestViewController {
 		let countryCodeData = Locale.current.countryCode.data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(countryCodeData), name: "country_code"))
 
+		if let json = Desk360.jsonInfo {
+			if let jsonData = try? JSONSerialization.data(withJSONObject: json) as? Data {
+				ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
+			}
+		}
+
 		layoutableView.endEditing(true)
 		layoutableView.setLoading(true)
 
@@ -406,10 +439,10 @@ private extension CreateRequestViewController {
 				print(error.localizedServerDescription)
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
-					Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlert(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
+				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
 			case .success:
 				self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
 			}

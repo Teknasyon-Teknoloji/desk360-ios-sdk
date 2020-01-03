@@ -51,6 +51,20 @@ public extension Desk360.Config {
 			return image.withRenderingMode(.alwaysTemplate)
 		}
 
+		static var desk360Logo: UIImage = {
+			guard let path = Desk360.Config.bundle?.path(forResource: "Images/desk360Logo", ofType: "png") else { return UIImage() }
+			guard let image = UIImage(contentsOfFile: path) else { return UIImage() }
+			return image
+		}()
+
+		static var playIcon: UIImage = {
+			return Desk360.Config.Images.createImage(resources: "Images/play")
+		}()
+
+		static var pauseIcon: UIImage = {
+			return Desk360.Config.Images.createImage(resources: "Images/pause")
+		}()
+
 		static var arrowIcon: UIImage = {
 			return Desk360.Config.Images.createImage(resources: "Images/arrowLight")
 		}()
