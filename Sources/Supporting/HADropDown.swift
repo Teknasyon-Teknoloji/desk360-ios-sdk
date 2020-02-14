@@ -226,7 +226,7 @@ class HADropDown: UIView {
 		let label = UILabel()
 		label.tag = 1
 		label.font = font
-		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2)
+		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2.5)
 		label.frame.size.height = UIScreen.main.bounds.size.minDimension * 0.054 * 0.8
 		label.frame.origin.x = 0
 		label.frame.origin.y = -(UIScreen.main.bounds.size.minDimension * 0.054) * 0.4
@@ -250,7 +250,7 @@ class HADropDown: UIView {
 		let label = UILabel()
 		label.tag = 1
 		label.font = font
-		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2)
+		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2.5)
 		label.frame.size.height = UIScreen.main.bounds.size.minDimension * 0.054 * 0.8
 		label.frame.origin.x = 0
 		label.frame.origin.y = -(UIScreen.main.bounds.size.minDimension * 0.054) * 0.4
@@ -326,10 +326,10 @@ class HADropDown: UIView {
 		let label = UILabel()
 		label.tag = 1
 		label.font = font
-		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2)
+		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2.5)
 		label.frame.size.height = UIScreen.main.bounds.size.minDimension * 0.054 * 0.8
 		label.frame.origin.x = 0
-		label.frame.origin.y = 0
+		label.frame.origin.y = 2
 		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
 			label.textAlignment = .right
 		} else {
@@ -367,7 +367,7 @@ class HADropDown: UIView {
 			if delegate != nil {
 				delegate.willShow(dropDown: self)
 			}
-			let height: CGFloat = CGFloat(items.count > 5 ? itemHeight*5 : itemHeight*Double(items.count))
+			let height: CGFloat = CGFloat(items.count > 5 ? itemHeight*5 : itemHeight*Double(items.count)) + 10
 			self.table.layer.zPosition = 1
 
 			self.table.removeFromSuperview()
@@ -384,6 +384,8 @@ class HADropDown: UIView {
 
 			self.table.reloadData()
 
+			self.layoutIfNeeded()
+			
 			self.table.snp.remakeConstraints { make in
 				make.top.equalTo(self.snp.bottom)
 				make.leading.equalTo(self.snp.leading)

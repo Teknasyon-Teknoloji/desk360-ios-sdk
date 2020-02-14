@@ -5,7 +5,7 @@
 //  Created by samet on 17.05.2019.
 //
 
-import PersistenceKit
+//import PersistenceKit
 
 /// Application data stores.
 struct Stores {
@@ -18,6 +18,12 @@ struct Stores {
 	static let ticketTypeStore = UserDefaultsStore<TicketType>(uniqueIdentifier: "support_tickets")!
 
 	static let registerExpiredAt = SingleUserDefaultsStore<Date>(uniqueIdentifier: "register_expired_at")!
+
+	static let registerModel = SingleUserDefaultsStore<RegisterModel>(uniqueIdentifier: "register_model")!
+
+	static let userName = SingleUserDefaultsStore<String>(uniqueIdentifier: "user_name")!
+
+	static let userMail = SingleUserDefaultsStore<String>(uniqueIdentifier: "user_mail")!
 
 	static func setStoresInitialValues() {
 

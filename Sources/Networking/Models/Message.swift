@@ -5,7 +5,7 @@
 //  Created by samet on 17.05.2019.
 //
 
-import PersistenceKit
+//import PersistenceKit
 
 /// Use `SupportMessage` to map JSON object returned from the methods in `SupportService`
 public struct Message {

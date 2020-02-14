@@ -33,7 +33,6 @@ final class InputView: UIView, Layoutable {
 		} else {
 			view.textAlignment = .left
 		}
-
 		return view
 	}()
 
@@ -129,9 +128,11 @@ final class InputView: UIView, Layoutable {
 			make.leading.equalTo(textView.snp.trailing).offset(preferredSpacing / 2)
 			make.trailing.equalToSuperview().inset(preferredSpacing / 2)
 			make.width.lessThanOrEqualToSuperview().multipliedBy(0.20)
+			make.centerY.equalToSuperview().priority(999)
 			make.bottom.equalTo(textView)
 			make.width.greaterThanOrEqualTo(preferredSpacing * 2)
 			make.height.equalTo(Desk360.Config.Conversation.Input.height - (preferredSpacing))
+//			make.centerY.equalToSuperview()
 		}
 
 		activityIndicator.snp.makeConstraints { $0.center.equalTo(sendButton) }
@@ -144,16 +145,28 @@ final class InputView: UIView, Layoutable {
 	}
 
 	func reset() {
-		setLoading(false)
+		DispatchQueue.main.async {
+			self.setLoading(false)
 
-		textView.text = ""
+			self.textView.text = ""
 
-		frame = initialFrame
-		textView.isScrollEnabled = false
-		placeholderLabel.isHidden = false
-		sendButton.isEnabled = false
-		translatesAutoresizingMaskIntoConstraints = false
-		invalidateIntrinsicContentSize()
+			self.frame = self.initialFrame
+			self.textView.isScrollEnabled = false
+			self.placeholderLabel.isHidden = false
+			self.sendButton.isEnabled = false
+			self.translatesAutoresizingMaskIntoConstraints = false
+			self.invalidateIntrinsicContentSize()
+
+//			self.sendButton.snp.remakeConstraints { remake in
+//				remake.leading.equalTo(self.textView.snp.trailing).offset(self.preferredSpacing / 2)
+//				remake.trailing.equalToSuperview().inset(self.preferredSpacing / 2)
+//				remake.width.lessThanOrEqualToSuperview().multipliedBy(0.20)
+//				remake.bottom.equalTo(self.textView)
+//				remake.width.greaterThanOrEqualTo(self.preferredSpacing * 2)
+//				remake.height.equalTo(Desk360.Config.Conversation.Input.height - (self.preferredSpacing))
+//			}
+		}
+
 	}
 
 }

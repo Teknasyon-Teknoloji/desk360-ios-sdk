@@ -24,7 +24,7 @@ extension Service: TargetType, AccessTokenAuthorizable {
 	}
 
 	var baseURL: URL {
-		if Desk360.isDebug {
+		if Desk360.environment == .test {
 			return URL(string: "http://52.59.142.138:10380/api/v1")!
 		} else {
 			return URL(string: "https://teknasyon.desk360.com/api/v1")!

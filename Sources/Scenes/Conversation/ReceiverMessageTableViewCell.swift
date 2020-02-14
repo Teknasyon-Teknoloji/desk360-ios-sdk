@@ -31,11 +31,15 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 		return view
 	}()
 
-	private lazy var messageLabel: UILabel = {
-		let label = UILabel()
-		label.numberOfLines = 0
-		label.font = Desk360.Config.Conversation.MessageCell.Receiver.messageFont
-		return label
+	private lazy var messageTextView: UITextView = {
+		let textView = UITextView()
+		textView.isEditable = false
+		textView.isScrollEnabled = false
+		textView.allowsEditingTextAttributes = false
+		textView.dataDetectorTypes = .link
+		textView.font = Desk360.Config.Conversation.MessageCell.Receiver.messageFont
+		textView.backgroundColor = .clear
+		return textView
 	}()
 
 	private lazy var dateLabel: UILabel = {
@@ -46,7 +50,7 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 	}()
 
 	private lazy var stackView: UIStackView = {
-		let view = UIStackView(arrangedSubviews: [messageLabel])
+		let view = UIStackView(arrangedSubviews: [messageTextView])
 		view.axis = .vertical
 		view.alignment = .fill
 		view.distribution = .fill
@@ -73,7 +77,7 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 	private var containerBackgroundColor: UIColor? {
 		didSet {
 			containerView.backgroundColor = containerBackgroundColor
-			messageLabel.backgroundColor = containerBackgroundColor
+			messageTextView.backgroundColor = containerBackgroundColor
 			dateLabel.backgroundColor = containerBackgroundColor
 		}
 	}
@@ -115,13 +119,22 @@ internal extension ReceiverMessageTableViewCell {
 
 	func configure(for request: Message, _ indexPath: IndexPath, _ attachment: URL? = nil) {
 		containerView.backgroundColor = Colors.ticketDetailChatReceiverBackgroundColor
-		messageLabel.text = request.message
-		messageLabel.textColor = Colors.ticketDetailChatReceiverTextColor
-		messageLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.chatReceiverFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.chatReceiverFontWeight ?? 400))
+		messageTextView.text = request.message
+		messageTextView.textColor = Colors.ticketDetailChatReceiverTextColor
+		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.chatReceiverFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.chatReceiverFontWeight ?? 400))
 		dateLabel.textColor = Colors.ticketDetailChatChatReceiverDateColor
 		roundCorner()
 		if let dateString = request.createdAt {
 			dateLabel.text = dateString
+		}
+
+		if stackView.arrangedSubviews.count > 1 {
+			stackView.removeArrangedSubview(stackView.arrangedSubviews[1])
+		}
+		previewImageView.isHidden = true
+		previewVideoView.isHidden = true
+		if #available(iOS 11.0, *) {
+			pdfView.isHidden = true
 		}
 		guard indexPath.row == 0 else { return }
 		guard let attachmentUrl = attachment else { return }
@@ -163,7 +176,7 @@ internal extension ReceiverMessageTableViewCell {
 
 		playButton.addTarget(self, action: #selector(didTapPlayButton), for: .touchUpInside)
 		playButton.tintColor = Colors.ticketDetailWriteMessageButtonIconColor
-
+		previewVideoView.isHidden = false
 		videoView.snp.makeConstraints { remake in
 			remake.leading.trailing.equalToSuperview()
 			remake.height.equalTo(previewVideoView.snp.width)
@@ -178,6 +191,7 @@ internal extension ReceiverMessageTableViewCell {
 		imageFromUrl(url: url)
 
 		stackView.addArrangedSubview(previewImageView)
+		previewImageView.isHidden = false
 		previewImageView.snp.remakeConstraints { remake in
 			remake.leading.trailing.equalToSuperview()
 			remake.height.equalTo(previewImageView.snp.width)
@@ -242,6 +256,7 @@ internal extension ReceiverMessageTableViewCell {
 	func addPdf(_ url: URL) {
 		guard #available(iOS 11.0, *) else { return }
 		pdfView.translatesAutoresizingMaskIntoConstraints = false
+		pdfView.isHidden = false
 		stackView.addArrangedSubview(pdfView)
 
 		pdfView.snp.remakeConstraints { remake  in

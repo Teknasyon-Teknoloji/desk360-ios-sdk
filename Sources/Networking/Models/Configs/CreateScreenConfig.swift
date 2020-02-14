@@ -9,7 +9,7 @@ public struct CreateScreenConfigModel {
 
 	var navigationTitle: String?
 
-	var formStyleId: Int?
+	var formStyleId: FieldType?
 
 	var formInputColor: UIColor?
 
@@ -49,7 +49,7 @@ public struct CreateScreenConfigModel {
 
 	var buttonTextFontWeight: Int?
 
-	var buttonStyleId: Int?
+	var buttonStyleId: ButtonType?
 
 	var buttonBackgroundColor: UIColor?
 
@@ -111,7 +111,7 @@ extension CreateScreenConfigModel: Codable {
 
 		do {
 			navigationTitle = try (container.decodeIfPresent(String.self, forKey: .title))
-			formStyleId = try (container.decodeIfPresent(Int.self, forKey: .form_style_id))
+			formStyleId = try (container.decodeIfPresent(FieldType.self, forKey: .form_style_id))
 			if let formInputHexValue = try container.decodeIfPresent(String.self, forKey: .form_input_color) {
 				formInputColor = UIColor.init(hex: formInputHexValue)
 			}
@@ -149,7 +149,7 @@ extension CreateScreenConfigModel: Codable {
 			}
 			buttonTextFontSize = try (container.decodeIfPresent(Int.self, forKey: .button_text_font_size))
 			buttonTextFontWeight = try (container.decodeIfPresent(Int.self, forKey: .button_text_font_weight))
-			buttonStyleId = try (container.decodeIfPresent(Int.self, forKey: .button_style_id))
+			buttonStyleId = try (container.decodeIfPresent(ButtonType.self, forKey: .button_style_id))
 			if let buttonBackgroundHexValue = try container.decodeIfPresent(String.self, forKey: .button_background_color) {
 				buttonBackgroundColor = UIColor.init(hex: buttonBackgroundHexValue)
 			}

@@ -260,11 +260,11 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 			return
 		}
 
-		guard let message = layoutableView.messageTextView.trimmedText, message.count > 0 else {
+		guard let message = layoutableView.messageTextView.messageTextView.trimmedText, message.count > 0 else {
 			layoutableView.messageTextViewErrorLabel.isHidden = false
-			layoutableView.messageTextView.shake()
-			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: layoutableView.messageTextView.frame.origin.y + layoutableView.preferredSpacing * 0.25), animated: true)
-			layoutableView.messageTextView.becomeFirstResponder()
+			layoutableView.messageTextView.messageTextView.shake()
+			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: layoutableView.messageTextView.messageTextView.frame.origin.y + layoutableView.preferredSpacing * 0.25), animated: true)
+			layoutableView.messageTextView.messageTextView.becomeFirstResponder()
 			return
 		}
 		layoutableView.messageTextViewErrorLabel.isHidden = true
@@ -272,6 +272,10 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		let ticketTypes = layoutableView.ticketTypes
 		guard ticketTypes.count > 0 else { return }
 		_ = ticketTypes[layoutableView.dropDownListView.getSelectedIndex].id
+
+		try? Stores.userName.save(name)
+		try? Stores.userMail.save(layoutableView.emailTextField.emailAddress)
+
 		sendRequest()
 	}
 
@@ -407,10 +411,11 @@ private extension CreateRequestViewController {
 				addDropDownList(view: currentDropDown)
 			}
 
-			if let currentTextView = field as? UITextView {
-				addTextView(view: currentTextView)
+			if let currentView = field as? CustomMessageTextView {
+				if let currentTextView = currentView.messageTextView as? UITextView {
+					addTextView(view: currentTextView)
+				}
 			}
-
 		}
 
 		let sourceData = "App".data(using: String.Encoding.utf8) ?? Data()
@@ -428,6 +433,11 @@ private extension CreateRequestViewController {
 			}
 		}
 
+		if let pushTokenString = Desk360.pushToken {
+			let pushTokenData = pushTokenString.data(using: String.Encoding.utf8) ?? Data()
+			ticket.append(Moya.MultipartFormData(provider: .data(pushTokenData), name: "push_token"))
+		}
+
 		layoutableView.endEditing(true)
 		layoutableView.setLoading(true)
 
@@ -437,6 +447,7 @@ private extension CreateRequestViewController {
 			switch result {
 			case .failure(let error):
 				print(error.localizedServerDescription)
+				print(error.response)
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)

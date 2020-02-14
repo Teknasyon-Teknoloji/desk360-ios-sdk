@@ -5,7 +5,7 @@
 //  Created by samet on 4.11.2019.
 //
 
-import PersistenceKit
+//import PersistenceKit
 
 public struct Config {
 
@@ -17,6 +17,19 @@ public struct Config {
 		Config.shared.model = newModel
 	}
 
+}
+
+enum FieldType: Int, Codable {
+	case line = 1
+	case box = 2
+	case shadow = 3
+}
+
+enum ButtonType: Int, Codable {
+	case radius1 = 1
+	case radius2 = 2
+	case sharp = 3
+	case fullWidth = 4
 }
 
 /// Use `SupportMessage` to map JSON object returned from the methods in `SupportService`ss

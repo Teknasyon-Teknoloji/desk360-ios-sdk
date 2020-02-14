@@ -186,6 +186,11 @@ extension ConversationViewController {
 	}
 
 	func addMessage(_ message: String, to request: Ticket) {
+		let id = (request.messages.last?.id ?? 0) + 1
+
+		let formatter = DateFormatter()
+		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+		self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
 
 		Desk360.apiProvider.request(.ticketMessages(message, request.id)) { [weak self] result in
 			guard let self = self else { return }
@@ -202,7 +207,6 @@ extension ConversationViewController {
 			case .success(let response):
 				guard let responseObject = try? response.map(DataResponse<Message>.self) else { return }
 				guard let message = responseObject.data else { return }
-				self.appendMessage(message: message)
 			}
 		}
 	}

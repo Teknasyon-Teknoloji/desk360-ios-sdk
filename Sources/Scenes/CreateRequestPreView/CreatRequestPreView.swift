@@ -62,18 +62,8 @@ final class CreatRequestPreView: UIView, Layoutable {
 		return label
 	}()
 
-	private lazy var desk360BottomView: UIView = {
-		let view = UIView()
-		view.backgroundColor = .clear
-		view.addSubview(desk360LogoImageView)
-		return view
-	}()
-
-	private lazy var desk360LogoImageView: UIImageView = {
-		let imageView = UIImageView()
-		imageView.image =  Desk360.Config.Images.desk360Logo
-		imageView.contentMode = .scaleAspectFit
-		return imageView
+	private lazy var desk360BottomView: Desk360View = {
+		return Desk360View.create()
 	}()
 
 	public override var backgroundColor: UIColor? {
@@ -125,11 +115,6 @@ final class CreatRequestPreView: UIView, Layoutable {
 			make.leading.trailing.equalToSuperview()
 			make.height.equalTo(preferredSpacing * 1.5)
 			make.bottom.equalTo(safeArea.bottom)
-		}
-
-		desk360LogoImageView.snp.makeConstraints { make in
-			make.centerX.equalToSuperview()
-			make.top.equalToSuperview()
 		}
 
 	}

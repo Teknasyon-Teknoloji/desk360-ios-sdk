@@ -16,12 +16,15 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 		return view
 	}()
 
-	private lazy var messageLabel: UILabel = {
-		let label = UILabel()
-		label.numberOfLines = 0
-		label.font = Desk360.Config.Conversation.MessageCell.Sender.messageFont
-		label.addSubview(test)
-		return label
+	private lazy var messageTextView: UITextView = {
+		let textView = UITextView()
+		textView.isEditable = false
+		textView.isScrollEnabled = false
+		textView.allowsEditingTextAttributes = false
+		textView.dataDetectorTypes = .link
+		textView.font = Desk360.Config.Conversation.MessageCell.Receiver.messageFont
+		textView.backgroundColor = .clear
+		return textView
 	}()
 
 	private lazy var dateLabel: UILabel = {
@@ -31,13 +34,8 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 		return label
 	}()
 
-	private lazy var test: UITextView = {
-		let test = UITextView()
-		return test
-	}()
-
 	private lazy var stackView: UIStackView = {
-		let view = UIStackView(arrangedSubviews: [messageLabel])
+		let view = UIStackView(arrangedSubviews: [messageTextView ])
 		view.axis = .vertical
 		view.alignment = .fill
 		view.distribution = .fill
@@ -48,7 +46,7 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 	private var containerBackgroundColor: UIColor? {
 		didSet {
 			containerView.backgroundColor = containerBackgroundColor
-			messageLabel.backgroundColor = containerBackgroundColor
+			messageTextView .backgroundColor = containerBackgroundColor
 			dateLabel.backgroundColor = containerBackgroundColor
 		}
 	}
@@ -91,9 +89,9 @@ internal extension SenderMessageTableViewCell {
 
 	func configure(for request: Message) {
 		containerView.backgroundColor = Colors.ticketDetailChatSenderBackgroundColor
-		messageLabel.text = request.message
-		messageLabel.textColor = Colors.ticketDetailChatSenderTextColor
-		messageLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.chatSenderFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.chatSenderFontWeight ?? 400))
+		messageTextView.text = request.message
+		messageTextView.textColor = Colors.ticketDetailChatSenderTextColor
+		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.chatSenderFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.chatSenderFontWeight ?? 400))
 		dateLabel.textColor = Colors.ticketDetailChatSenderDateColor
 
 		roundCorner()
