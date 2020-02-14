@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 protocol ListingViewControllerDelegate: AnyObject {
 
@@ -138,7 +139,7 @@ extension ListingViewController {
 }
 
 // MARK: - Helpers
-private extension ListingViewController {
+extension ListingViewController {
 
 	func segmentcontrolButtonBarLayout() {
 		print(self.layoutableView.buttonBar.frame.origin.x)
@@ -170,7 +171,16 @@ private extension ListingViewController {
 		}
 
 		navigationItem.rightBarButtonItem = NavigationItems.add(target: self, action: #selector(didTapCreateBarButtonItem(_:)))
+	}
 
+	func checkNotificationDeeplink() {
+		guard let id = Desk360.messageId else { return }
+		for request in requests where request.id == id {
+			Desk360.messageId = nil
+			let viewController = ConversationViewController(request: request)
+			viewController.hidesBottomBarWhenPushed = true
+			navigationController?.pushViewController(viewController, animated: false)
+		}
 	}
 
 }
@@ -185,6 +195,7 @@ extension ListingViewController {
 
 	@objc
 	func didTapCloseButton() {
+		Desk360.isActive = false
 		dismiss(animated: true, completion: nil)
 	}
 
@@ -192,6 +203,7 @@ extension ListingViewController {
 		if navigationController?.presentingViewController == nil {
 			navigationController?.popViewController(animated: true)
 		} else {
+			Desk360.isActive = false
 			navigationController?.dismiss(animated: true, completion: nil)
 		}
 	}
@@ -250,6 +262,8 @@ private extension ListingViewController {
 				self.refreshView()
 				self.layoutableView.showPlaceholder(self.requests.isEmpty)
 				self.configureLayoutableView()
+				self.checkNotificationDeeplink()
+
 			}
 		}
 
