@@ -12,7 +12,7 @@ extension Locale {
 	/// Country code.
 	var countryCode: String {
 		let nsLocale = self as NSLocale
-		return nsLocale.object(forKey: .countryCode) as! String
+		return nsLocale.object(forKey: .countryCode) as? String ?? "en"
 	}
 
 }

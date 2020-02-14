@@ -16,6 +16,18 @@ private var height: CGFloat = {
 	return 50.0
 }()
 
+final class SupportTextField: UITextField {
+
+	override func textRect(forBounds bounds: CGRect) -> CGRect {
+		return bounds.insetBy(dx: 10, dy: 5)
+	}
+
+	override func editingRect(forBounds bounds: CGRect) -> CGRect {
+		return bounds.inset(by: UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10))
+	}
+
+}
+
 extension UITextField {
 
 	/// Use `TextType` to set up common text input properties for `UITextField`.
@@ -271,45 +283,16 @@ extension UITextField {
 		self.layoutSubviews()
 	}
 
-	func addTopLabel(text: String, textColor: UIColor, font: UIFont) {
+
+	//FIXME: merge with addType3Toplabel Use origin y parameter.
+	func addTopLabel(text: String, textColor: UIColor, font: UIFont, origin: CGPoint) {
 		let label = UILabel()
 		label.tag = 1
-		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2)
+		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2.5)
 		label.frame.size.height = UIScreen.main.bounds.size.minDimension * 0.054 * 0.8
-		label.frame.origin.x = 0
-		label.frame.origin.y = -(UIScreen.main.bounds.size.minDimension * 0.054) * 0.4
+		label.frame.origin = origin
 		label.font = font
-		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
-			label.textAlignment = .right
-		} else {
-			label.textAlignment = .left
-		}
-		label.text = text
-		label.textColor = textColor
-		let paragraphStyle = NSMutableParagraphStyle()
-		paragraphStyle.firstLineHeadIndent = UIScreen.main.bounds.size.minDimension * 0.054 * 0.5
-		label.attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
-		label.baselineAdjustment = .alignBaselines
-//		label.backgroundColor = .red
-		self.clipsToBounds = false
-
-		self.addSubview(label)
-	}
-
-	func addType3TopLabel(text: String, textColor: UIColor, font: UIFont) {
-		let label = UILabel()
-		label.tag = 1
-		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2)
-		label.frame.size.height = UIScreen.main.bounds.size.minDimension * 0.054 * 0.7
-		label.frame.origin.x = 0
-//		label.frame.origin.y = (UIScreen.main.bounds.size.minDimension * 0.054) * 0.1
-		label.frame.origin.y = 0
-		label.font = font
-		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
-			label.textAlignment = .right
-		} else {
-			label.textAlignment = .left
-		}
+		label.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right: .left
 		label.text = text
 		label.textColor = textColor
 		let paragraphStyle = NSMutableParagraphStyle()
@@ -318,7 +301,27 @@ extension UITextField {
 		label.baselineAdjustment = .alignBaselines
 		label.adjustsFontSizeToFitWidth = true
 		label.minimumScaleFactor = 0.3
-		//label.backgroundColor = .red
+		self.clipsToBounds = false
+
+		self.addSubview(label)
+	}
+
+	func addType3TopLabel(text: String, textColor: UIColor, font: UIFont) {
+		let label = UILabel()
+		label.tag = 1
+		label.frame.size.width = UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2.5)
+		label.frame.size.height = UIScreen.main.bounds.size.minDimension * 0.054 * 0.7
+		label.frame.origin = .init(x: 0, y: 3)
+		label.font = font
+		label.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right: .left
+		label.text = text
+		label.textColor = textColor
+		let paragraphStyle = NSMutableParagraphStyle()
+		paragraphStyle.firstLineHeadIndent = UIScreen.main.bounds.size.minDimension * 0.054 * 0.5
+		label.attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+		label.baselineAdjustment = .alignBaselines
+		label.adjustsFontSizeToFitWidth = true
+		label.minimumScaleFactor = 0.3
 		self.clipsToBounds = false
 
 		self.addSubview(label)
@@ -340,7 +343,6 @@ extension UITextField {
         self.leftView = paddingView
 		self.leftViewMode = UITextField.ViewMode.always
         self.layer.cornerRadius = self.bounds.height * 0.5
-//        self.backgroundColor = EA_DesignHelper.textFieldBackgroundColor
         self.layer.borderColor = UIColor.lightGray.cgColor
         self.layer.borderWidth = 1
         self.attributedPlaceholder = NSAttributedString(string: NSLocalizedString(placeholder, comment: ""),
