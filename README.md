@@ -12,7 +12,7 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Support](#installation)
+- [Support](#support)
 - [License](#license)
 
 ## Summary
@@ -48,13 +48,13 @@ Permission text is optional. you can type whatever you want. But this permission
 
 ### Start Desk360 with appId -and an optinal deviceId, an optional language-
 
-> Note: If no deviceId is provided, Desk360 will use device's [UUID](https://developer.apple.com/documentation/foundation/uuid), which might cause your app to lose tickets when the application is deleted. If no isDebug is provided, Desk360 will use false and Sdk looks at prod url. If no application language is provided, Desk360 will use device's language.
+> Note: If no deviceId is provided, Desk360 will use device's [UUID](https://developer.apple.com/documentation/foundation/uuid), which might cause your app to lose tickets when the application is deleted. If use environment type .production, Desk360 will look at prod url. If no application language is provided, Desk360 will use device's language.
 
 ```swift
 import Desk360
 
 Desk360.start(appId: "12345")
-Desk360.start(appId: "12345", deviceId: "34567", isDebug: false, language: "en", jsonInfo: jsonObject: [String: Any] = ["yourInfoKey": "yourInfoValue"])
+Desk360.start(appId: "12345", deviceId: "34567", environment: .production, language: "en", jsonInfo: jsonObject: [String: Any] = ["yourInfoKey": "yourInfoValue"])
 ```
 
 ### Using Desk360
@@ -69,6 +69,68 @@ class ExampleViewController: UIViewController {
     Desk360.show(on: self, animated: true)
   }
   
+}
+```
+
+### Using Optional Notification System
+If you need to send a notification when a message is sent to the users. You have to do this integration.
+
+
+```swift
+import Desk360
+
+@UIApplicationMain
+final class AppDelegate: UIResponder, UIApplicationDelegate {
+
+  func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+       Desk360.setPushToken(deviceToken: deviceToken)
+  }
+  
+}
+```
+After the above integration, it is sufficient to make the notification certificate settings in the [Desk360](https://desk360.com/) admin panel. You can now use notifications
+
+Also if you want notification redirect deeplink system. You should some extra integration.
+
+
+```swift
+import Desk360
+
+@UIApplicationMain
+final class AppDelegate: UIResponder, UIApplicationDelegate {
+  
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+  
+      Desk360.applicationLaunchChecker(launchOptions)
+      return true
+      
+    }
+}
+
+
+// MARK: - UNUserNotificationCenterDelegate
+extension AppDelegate: UNUserNotificationCenterDelegate {
+
+  func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+      Desk360.applicationUserInfoChecker(userInfo)
+  }
+  
+}
+```
+
+When you click on the notification when your application is closed, you need to add this code on which page you want Des360 to open.
+
+```swift
+import Desk360
+
+final class YourMainViewController: UIViewController {
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    Desk360.showWithPushDeeplink(on: self)
+  }
+
 }
 ```
 
