@@ -6,7 +6,7 @@
 //
 
 import Foundation
-//import PersistenceKit
+import PersistenceKit
 
 public struct RegisterModel {
 

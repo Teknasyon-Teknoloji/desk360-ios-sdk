@@ -384,19 +384,19 @@ class HADropDown: UIView {
 
 			self.table.reloadData()
 
-			self.layoutIfNeeded()
-			
+//			self.layoutIfNeeded()
+
 			self.table.snp.remakeConstraints { make in
 				make.top.equalTo(self.snp.bottom)
 				make.leading.equalTo(self.snp.leading)
 				make.width.equalTo(self.snp.width)
 			}
 
-			UIView.animate(withDuration: 0.25, animations: {
+			UIView.animate(withDuration: 0.1, animations: {
 				self.table.snp.makeConstraints { make in
 					make.height.equalTo(height)
 				}
-				self.table.superview?.layoutIfNeeded()
+				self.layoutIfNeeded()
 			})
 
 			if delegate != nil {
@@ -424,7 +424,7 @@ class HADropDown: UIView {
 
 		if isCollapsed {
 			// removing tableview from rootview
-			UIView.animate(withDuration: 0.25, animations: {
+			UIView.animate(withDuration: 0.1, animations: {
 				self.table.frame = CGRect(x: self.tableFrame.origin.x, y: HADropDown.frameChange + self.tableFrame.origin.y+self.frame.height, width: self.frame.width, height: 0)
 			})
 			var rootView = self.superview
@@ -432,10 +432,9 @@ class HADropDown: UIView {
 			while rootView?.superview != nil {
 				rootView = rootView?.superview
 			}
-			UIView.animate(withDuration: 0.25, animations: {
+			UIView.animate(withDuration: 0.1, animations: {
 				self.table.snp.updateConstraints { make in
 					make.height.equalTo(0)
-
 				}
 				self.table.superview?.layoutIfNeeded()
 			})

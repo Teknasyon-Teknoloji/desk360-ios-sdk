@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
 
     s.dependency "SnapKit"
     s.dependency "Moya"
-    # s.dependency "PersistenceKit"
+    s.dependency "PersistenceKit"
     s.dependency "DeviceKit"
     s.dependency "NVActivityIndicatorView"
 end

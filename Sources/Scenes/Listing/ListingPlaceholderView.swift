@@ -13,7 +13,6 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		let label = UILabel()
 		label.numberOfLines = 4
 		label.textAlignment = .center
-		label.text = Desk360.Strings.Support.listingPlaceholderLabelTitle
 		label.setContentCompressionResistancePriority(.required, for: .vertical)
 		return label
 	}()
@@ -22,7 +21,6 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		let label = UILabel()
 		label.numberOfLines = 6
 		label.textAlignment = .center
-		label.text = Desk360.Strings.Support.listingPlaceholderLabelTitle
 		label.setContentCompressionResistancePriority(.required, for: .vertical)
 		return label
 	}()

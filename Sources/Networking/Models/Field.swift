@@ -41,13 +41,6 @@ public struct Field {
 
 extension Field: Codable {
 
-//	public init(name: String, type: FieldType, placeholder: String, isRequired: Bool) {
-//		self.name = name
-//		self.type = type
-//		self.isRequired = isRequired
-//		self.placeholder = placeholder
-//	}
-
 	private enum CodingKeys: String, CodingKey {
 		case id
 		case name

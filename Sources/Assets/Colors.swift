@@ -205,18 +205,4 @@ struct Colors {
 		return Config.shared.model.successScreen?.butttonBorderColor ?? UIColor.init(hex: "FFFFFF")!
 	}
 
-//	static let grape = UIColor.ars.create(hex: "6a305d")!
-//	static let purplyPink = UIColor.ars.create(hex: "ed77d2")!
-//	static let skyBlue = UIColor.ars.create(hex: "7cb9fe")!
-//	static let skyBlueTwo = UIColor.ars.create(hex: "7dbafe")!
-//	static let skyBlueThree = UIColor.ars.create(hex: "7bb8fe")!
-//	static let white65 = UIColor.ars.create(hex: "ffffffa6")!
-//	static let bubblegumPink = UIColor.ars.create(hex: "ef8ad8")!
-//	static let supportBackgroundColor = UIColor.ars.create(hex: "F2DCED")!
-//	static let twilight = UIColor.ars.create(hex: "4c528c")!
-//	static let peachyPink = UIColor.ars.create(hex: "ff9786")!
-//	static let white35 = UIColor.ars.create(hex: "ffffff59")!
-//	static let brightCyan = UIColor.ars.create(hex: "56c5f2")!
-//	static let veryLightPink = UIColor.ars.create(hex: "ececec")!
-
 }

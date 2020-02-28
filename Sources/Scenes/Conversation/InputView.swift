@@ -24,15 +24,9 @@ final class InputView: UIView, Layoutable {
 		view.setContentCompressionResistancePriority(.required, for: .vertical)
 		view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 		view.translatesAutoresizingMaskIntoConstraints = false
-		view.backgroundColor = .clear
-		view.font = UIFont.systemFont(ofSize: 18)
 		view.clipsToBounds = true
 		view.textContainerInset = UIEdgeInsets.init(top: 8, left: 8, bottom: 8, right: 8)
-		if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
-			view.textAlignment = .right
-		} else {
-			view.textAlignment = .left
-		}
+		view.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right: .left
 		return view
 	}()
 
@@ -45,7 +39,6 @@ final class InputView: UIView, Layoutable {
 	private lazy var placeholderLabel: UILabel = {
 		let label = UILabel()
 		label.font = UIFont.systemFont(ofSize: 18)
-		label.text = Desk360.Strings.Support.conversationMessageTextViewPlaceholder
 		label.translatesAutoresizingMaskIntoConstraints = false
 		return label
 	}()
@@ -113,8 +106,9 @@ final class InputView: UIView, Layoutable {
 		}
 
 		textView.snp.makeConstraints { make in
-			make.leading.top.equalToSuperview().inset(preferredSpacing / 2)
-			make.bottom.equalToSuperview().inset(preferredSpacing / 2).priority(.low)
+			make.centerY.equalToSuperview().priority(.required)
+			make.leading.top.equalToSuperview().inset(preferredSpacing * 0.5)
+			make.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
 		}
 
 		buttonBar.snp.makeConstraints { make in
@@ -129,7 +123,7 @@ final class InputView: UIView, Layoutable {
 			make.trailing.equalToSuperview().inset(preferredSpacing / 2)
 			make.width.lessThanOrEqualToSuperview().multipliedBy(0.20)
 			make.centerY.equalToSuperview().priority(999)
-			make.bottom.equalTo(textView)
+			make.bottom.equalToSuperview().inset(preferredSpacing / 2)
 			make.width.greaterThanOrEqualTo(preferredSpacing * 2)
 			make.height.equalTo(Desk360.Config.Conversation.Input.height - (preferredSpacing))
 //			make.centerY.equalToSuperview()
@@ -156,15 +150,6 @@ final class InputView: UIView, Layoutable {
 			self.sendButton.isEnabled = false
 			self.translatesAutoresizingMaskIntoConstraints = false
 			self.invalidateIntrinsicContentSize()
-
-//			self.sendButton.snp.remakeConstraints { remake in
-//				remake.leading.equalTo(self.textView.snp.trailing).offset(self.preferredSpacing / 2)
-//				remake.trailing.equalToSuperview().inset(self.preferredSpacing / 2)
-//				remake.width.lessThanOrEqualToSuperview().multipliedBy(0.20)
-//				remake.bottom.equalTo(self.textView)
-//				remake.width.greaterThanOrEqualTo(self.preferredSpacing * 2)
-//				remake.height.equalTo(Desk360.Config.Conversation.Input.height - (self.preferredSpacing))
-//			}
 		}
 
 	}
@@ -196,6 +181,7 @@ extension InputView: UITextViewDelegate {
 	}
 
 	func textViewDidChange(_ textView: UITextView) {
+
 		setSendButton()
 		setPlaceholderLabel()
 
@@ -329,14 +315,20 @@ internal extension InputView {
 			self.backgroundColor = Colors.ticketDetailChatWriteMessageBackgroundColor
 		}
 
-		sendButton.imageView?.tintColor = Colors.ticketDetailWriteMessageButtonIconDisableColor
+		if sendButton.isEnabled {
+			sendButton.imageView?.tintColor = Colors.ticketDetailWriteMessageButtonIconColor
+		} else {
+			sendButton.imageView?.tintColor = Colors.ticketDetailWriteMessageButtonIconDisableColor
+		}
 		sendButton.backgroundColor = .clear
 
 		textView.textColor = Colors.ticketDetailWriteMessageTextColor
 		textView.tintColor = Colors.ticketDetailWriteMessageTextColor
-		textView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.writeMessageFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.writeMessageFontWeight ?? 400))
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.writeMessageFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.writeMessageFontWeight ?? 400))
+		textView.font = font
 		textView.backgroundColor = Colors.ticketDetailChatWriteMessageBackgroundColor
-
+		placeholderLabel.text = Config.shared.model.ticketDetail?.writeMessagePlaceHolderText
+		placeholderLabel.font = font
 		createRequestButton.backgroundColor = Colors.firstScreenButtonBackgroundColor
 		createRequestButton.layer.borderColor = Colors.firstScreenButttonBorderColor.cgColor
 		createRequestButton.setTitleColor(Colors.firstScreenButtonTextColor, for: .normal)
@@ -362,13 +354,10 @@ private extension InputView {
 	func setSendButton() {
 		sendButton.isEnabled = textView.trimmedText != nil
 
-		if sendButton.isEnabled {
-			sendButton.imageView?.tintColor = Colors.ticketDetailWriteMessageButtonIconColor
-		} else {
-			sendButton.imageView?.tintColor = Colors.ticketDetailWriteMessageButtonIconDisableColor
-		}
+		let activeColor = Colors.ticketDetailWriteMessageButtonIconColor
+		let passiveColor = Colors.ticketDetailWriteMessageButtonIconDisableColor
 
-		sendButton.alpha = 1
+		sendButton.imageView?.tintColor = sendButton.isEnabled ? activeColor : passiveColor
 
 	}
 

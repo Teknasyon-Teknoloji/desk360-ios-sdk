@@ -7,6 +7,8 @@
 
 import Foundation
 
+
+/// This view using for bottom desk360 bottom bar
 final class Desk360View: UIView, Layoutable {
 
 	private lazy var desk360LogoImageView: UIImageView = {
@@ -29,8 +31,6 @@ final class Desk360View: UIView, Layoutable {
 			make.centerX.equalToSuperview()
 			make.top.equalToSuperview()
 		}
-		
 	}
-
 
 }

@@ -5,7 +5,7 @@
 //  Created by samet on 17.05.2019.
 //
 
-//import PersistenceKit
+import PersistenceKit
 
 /// Use `SupportRequest` to map JSON objects returned from methods in `SupportService`
 public struct Ticket {

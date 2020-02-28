@@ -64,7 +64,6 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
 			self.layoutableView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.bottomScrollView.frame.size.width, height: self.layoutableView.bottomDescriptionLabel.frame.size.height + self.layoutableView.preferredSpacing * 0.5)
 		}
-
 	}
 
 	override func viewDidDisappear(_ animated: Bool) {
@@ -263,7 +262,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		guard let message = layoutableView.messageTextView.messageTextView.trimmedText, message.count > 0 else {
 			layoutableView.messageTextViewErrorLabel.isHidden = false
 			layoutableView.messageTextView.messageTextView.shake()
-			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: layoutableView.messageTextView.messageTextView.frame.origin.y + layoutableView.preferredSpacing * 0.25), animated: true)
+			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: layoutableView.messageTextView.messageTextView.frame.origin.y + layoutableView.preferredSpacing * 0.25 + layoutableView.messageTextView.frame.size.height), animated: true)
 			layoutableView.messageTextView.messageTextView.becomeFirstResponder()
 			return
 		}
@@ -332,7 +331,9 @@ extension CreateRequestViewController: KeyboardObserving {
 		layoutableView.keyboardWillHide(notification)
 	}
 
-	func keyboardDidHide(_ notification: KeyboardNotification?) {}
+	func keyboardDidHide(_ notification: KeyboardNotification?) {
+		layoutableView.keyboardDidHide(notification)
+	}
 	func keyboardDidShow(_ notification: KeyboardNotification?) {}
 	func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {
 		layoutableView.keyboardWillChangeFrame(notification)
@@ -397,12 +398,12 @@ private extension CreateRequestViewController {
 		ticket.append(Moya.MultipartFormData(provider: .data(fieldData), name: name))
 	}
 
+	// swiftlint:disable cyclomatic_complexity
 	func sendRequest() {
 
 		let fields = layoutableView.fields
 
 		for field in fields {
-
 			if let currentField = field as? UITextField {
 				addField(field: currentField)
 			}
@@ -412,9 +413,7 @@ private extension CreateRequestViewController {
 			}
 
 			if let currentView = field as? CustomMessageTextView {
-				if let currentTextView = currentView.messageTextView as? UITextView {
-					addTextView(view: currentTextView)
-				}
+				addTextView(view: currentView.messageTextView)
 			}
 		}
 
@@ -447,7 +446,6 @@ private extension CreateRequestViewController {
 			switch result {
 			case .failure(let error):
 				print(error.localizedServerDescription)
-				print(error.response)
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)

@@ -283,8 +283,7 @@ extension UITextField {
 		self.layoutSubviews()
 	}
 
-
-	//FIXME: merge with addType3Toplabel Use origin y parameter.
+	//TODO: merge with addType3Toplabel Use origin y parameter.
 	func addTopLabel(text: String, textColor: UIColor, font: UIFont, origin: CGPoint) {
 		let label = UILabel()
 		label.tag = 1

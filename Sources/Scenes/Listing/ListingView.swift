@@ -66,7 +66,6 @@ class ListingView: UIView, Layoutable, Loadingable {
 		view.contentInset = UIEdgeInsets(top: preferredSpacing, left: 0, bottom: preferredSpacing, right: 0)
 		view.rowHeight = UITableView.automaticDimension
 		view.estimatedRowHeight = 90.0
-//		view.backgroundColor = .red
 		view.showsVerticalScrollIndicator = false
 		return view
 	}()

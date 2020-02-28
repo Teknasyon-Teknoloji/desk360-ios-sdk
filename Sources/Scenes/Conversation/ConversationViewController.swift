@@ -6,33 +6,20 @@
 //
 
 import UIKit
-import Result
 
 final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
 	var request: Ticket!
+
 	convenience init(request: Ticket) {
 		self.init()
 		self.request = request
 	}
 
 	typealias ViewType = ConversationView
+
 	override func loadView() {
 		view = ViewType.create()
-	}
-
-	var additionalBottomInset: CGFloat = 0 {
-		didSet {
-			let delta = additionalBottomInset - oldValue
-			tableViewBottomInset += delta
-		}
-	}
-
-	var tableViewBottomInset: CGFloat = 0 {
-		didSet {
-			layoutableView.tableView.contentInset.bottom = tableViewBottomInset
-			layoutableView.tableView.scrollIndicatorInsets.bottom = tableViewBottomInset
-		}
 	}
 
 	override var inputAccessoryView: UIView? {
@@ -46,7 +33,28 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		return true
 	}
 
+	/// This parameter is used to ticket media objects
 	var attachment: URL?
+
+	/// This parameter is used to fix to problems created by the custom keyboard
+	var previousLineCount = 0
+	var currentLineCount = 0
+
+	var safeAreaBottom: CGFloat = {
+		if #available(iOS 11.0, *) {
+			return UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
+		} else {
+			return 0
+		}
+	}()
+
+	var safeAreaTop: CGFloat = {
+		if #available(iOS 11.0, *) {
+			return UIApplication.shared.keyWindow?.safeAreaInsets.top ?? 0
+		} else {
+			return 0
+		}
+	}()
 
 	func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
 		scrollToBottom(animated: true)
@@ -62,23 +70,26 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		layoutableView.conversationInputView.delegate = self
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidChangeState(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+
+		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
+		previousLineCount = 0
+		currentLineCount = 0
+
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidChangeState(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-
-		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
 		navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 		navigationController?.interactivePopGestureRecognizer?.delegate  = self
-
 		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
 
 		configure()
+
+		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
 
 	}
 
@@ -86,12 +97,6 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		super.viewDidAppear(animated)
 		layoutableView.setLoading(true)
 		readRequest(request)
-	}
-
-	override func viewDidLayoutSubviews() {
-		super.viewDidLayoutSubviews()
-
-		tableViewBottomInset = requiredInitialScrollViewBottomInset()
 	}
 
 	override func viewWillDisappear(_ animated: Bool) {
@@ -103,20 +108,8 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 	@objc
 	private func handleKeyboardDidChangeState(_ notification: Notification) {
-		guard let keyboardStartFrameInScreenCoords = notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect else { return }
-		guard !keyboardStartFrameInScreenCoords.isEmpty else { return }
-		guard let keyboardEndFrameInScreenCoords = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-		let keyboardEndFrame = view.convert(keyboardEndFrameInScreenCoords, from: view.window)
 
-		let newBottomInset = requiredScrollViewBottomInset(forKeyboardFrame: keyboardEndFrame)
-		let differenceOfBottomInset = newBottomInset - tableViewBottomInset
 
-		if  differenceOfBottomInset != 0 {
-			let contentOffset = CGPoint(x: layoutableView.tableView.contentOffset.x, y: layoutableView.tableView.contentOffset.y + differenceOfBottomInset)
-			layoutableView.tableView.setContentOffset(contentOffset, animated: false)
-		}
-
-		tableViewBottomInset = newBottomInset
 	}
 
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -143,7 +136,6 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 extension ConversationViewController: InputViewDelegate {
 
 	func inputView(_ view: InputView, didTapCreateRequestButton button: UIButton) {
-//		delegate?.conversationViewController(self, didTapCreateRequestButton: button)
 	}
 
 	func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String) {
@@ -156,6 +148,8 @@ extension ConversationViewController: InputViewDelegate {
 // MARK: - Networking
 extension ConversationViewController {
 
+	/// This method use is to get one ticket from the use id
+	/// - Parameter request: this parameter is a ticket object we will use its id and we will use its properties
 	func readRequest(_ request: Ticket) {
 		Desk360.apiProvider.request(.ticketWithId(request.id)) { [weak self] result in
 
@@ -185,6 +179,10 @@ extension ConversationViewController {
 		}
 	}
 
+	/// This method is used to send a request to backend for add a message in ticket
+	/// - Parameters:
+	///   - message: this parameter is a user message
+	///   - request: this parameter is a ticket object
 	func addMessage(_ message: String, to request: Ticket) {
 		let id = (request.messages.last?.id ?? 0) + 1
 
@@ -204,9 +202,8 @@ extension ConversationViewController {
 				}
 				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
 				print(error.localizedDescription)
-			case .success(let response):
-				guard let responseObject = try? response.map(DataResponse<Message>.self) else { return }
-				guard let message = responseObject.data else { return }
+			case .success:
+				print("Add ticket new message")
 			}
 		}
 	}
@@ -216,6 +213,8 @@ extension ConversationViewController {
 // MARK: - Helpers
 private extension ConversationViewController {
 
+	/// This method is used to  a add a message in ticket
+	/// - Parameter message: this parameter is a user message
 	func appendMessage(message: Message) {
 		layoutableView.conversationInputView.resignFirstResponder()
 
@@ -225,36 +224,18 @@ private extension ConversationViewController {
 		let indexPath = IndexPath(row: request.messages.count - 1, section: 0)
 		layoutableView.tableView.insertRows(at: [indexPath], with: .top)
 		layoutableView.tableView.endUpdates()
-		scrollToBottom(animated: true)
+
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+			self.scrollToBottom(animated: true)
+		}
 
 		try? Stores.ticketsStore.save(request)
 
 		layoutableView.conversationInputView.reset()
 	}
 
-	func requiredInitialScrollViewBottomInset() -> CGFloat {
-		guard let inputAccessoryView = inputAccessoryView else { return 0 }
-		return max(0, inputAccessoryView.frame.height + additionalBottomInset - automaticallyAddedBottomInset)
-	}
-
-	var automaticallyAddedBottomInset: CGFloat {
-		if #available(iOS 11.0, *) {
-			return layoutableView.tableView.adjustedContentInset.bottom - layoutableView.tableView.contentInset.bottom
-		} else {
-			return 0
-		}
-	}
-
-	func requiredScrollViewBottomInset(forKeyboardFrame keyboardFrame: CGRect) -> CGFloat {
-		let intersection = layoutableView.tableView.frame.intersection(keyboardFrame)
-
-		if intersection.isNull || intersection.maxY < layoutableView.tableView.frame.maxY {
-			return max(0, additionalBottomInset - automaticallyAddedBottomInset)
-		} else {
-			return max(0, intersection.height + additionalBottomInset - automaticallyAddedBottomInset)
-		}
-	}
-
+	/// This method is used to scroll to tableview bottom
+	/// - Parameter animated:this parameter is used  to scroll animation
 	func scrollToBottom(animated: Bool) {
 		let row = request.messages.count - 1
 		guard row >= 0 else { return }
@@ -265,26 +246,34 @@ private extension ConversationViewController {
 		}
 	}
 
+	
+
 }
 
 // MARK: - Actions
 extension ConversationViewController {
 
+	/// This method is used to direction to create request screen
 	@objc func didTapNewRequestButton() {
 		navigationController?.pushViewController(CreateRequestViewController(checkLastClass: true), animated: true)
 	}
 
+	/// This method is used to pop action on navigationcontroller
 	@objc func didTapBackButton() {
 		navigationController?.popViewController(animated: true)
 	}
 
 }
 
+// MARK: - Configure
 extension ConversationViewController {
 
 	func configure() {
+		let fontWeight = Font.weight(type: Config.shared.model.generalSettings?.navigationTitleFontWeight ?? 400)
+		let fontSize = CGFloat(Config.shared.model.generalSettings?.navigationTitleFontSize ?? 16)
+		let font = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
 		let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
-		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
+		NSAttributedString.Key.font: font, NSAttributedString.Key.shadow: NSShadow() ]
 		let navigationTitle = NSAttributedString(string: Config.shared.model.ticketDetail?.title ?? "", attributes: selectedattributes as [NSAttributedString.Key: Any])
 		let titleLabel = UILabel()
 		titleLabel.attributedText = navigationTitle
@@ -306,22 +295,34 @@ extension ConversationViewController {
 // MARK: - KeyboardObserving
 extension ConversationViewController: KeyboardObserving {
 
-	func keyboardWillShow(_ notification: KeyboardNotification?) {
-		let height = notification?.endFrame.size.height ?? 300
-		layoutableView.conversationInputView.layoutIfNeeded()
-		layoutableView.conversationInputView.layoutSubviews()
-		additionalBottomInset = height - layoutableView.conversationInputView.frame.size.height
-	}
+	func keyboardWillShow(_ notification: KeyboardNotification?) { }
 
 	func keyboardWillHide(_ notification: KeyboardNotification?) {
-		additionalBottomInset = 0
+
+		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
+		scrollToBottom(animated: true)
+
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
 	}
 
 	func keyboardDidHide(_ notification: KeyboardNotification?) {}
 	func keyboardDidShow(_ notification: KeyboardNotification?) {}
-	func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {}
+	func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {
+
+		guard let keyboardEndFrame = notification?.endFrame else { return }
+
+		currentLineCount = Int(layoutableView.conversationInputView.textView.frame.height / (layoutableView.conversationInputView.textView.font?.lineHeight ?? 1))
+
+		var safeArea: CGFloat = 0
+
+		if layoutableView.isCustomKeyboardActive {
+			safeArea = safeAreaBottom
+		}
+
+		layoutableView.remakeTableViewConstraint(bottomInset: keyboardEndFrame.size.height - safeArea)
+		scrollToBottom(animated: true)
+	}
 	func keyboardDidChangeFrame(_ notification: KeyboardNotification?) {}
 
 }

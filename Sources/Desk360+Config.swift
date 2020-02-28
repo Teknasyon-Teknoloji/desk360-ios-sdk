@@ -11,17 +11,6 @@ import UIKit
 /// Use `Desk360.Config` to set up the contact us page in your application.
 public extension Desk360 {
 
-	enum ThemeType: String {
-		case light
-		case dark
-	}
-
-	enum FontWeightType: String {
-		case bold
-		case regular
-		case light
-	}
-
 	struct Config {
 		private init() {}
 
@@ -36,7 +25,6 @@ public extension Desk360 {
 		/// The icon to be used instead of system's default back icon in the navigation bar. _default is nil_
 		static var backBarButtonIcon: UIImage?
 
-		static var bottomTextFonthWeight: FontWeightType?
 	}
 }
 

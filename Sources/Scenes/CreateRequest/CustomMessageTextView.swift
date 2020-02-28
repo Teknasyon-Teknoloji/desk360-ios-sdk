@@ -23,7 +23,6 @@ final class CustomMessageTextView: UIView, Layoutable {
 		return view
 	}()
 
-
 	func setupViews() {
 		addSubview(frameView)
 		addSubview(messageTextView)

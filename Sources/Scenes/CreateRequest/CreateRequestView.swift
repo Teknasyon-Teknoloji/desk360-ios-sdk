@@ -8,15 +8,21 @@
 import UIKit
 
 /// Create request view.
-// swiftlint:disable type_body_length
 //swiftlint:disable file_length
 final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	var ticketTypes: [TicketType] = []
 	var fields: [AnyObject] = []
 
-	
 	var fieldType: FieldType = .line
+
+	public override var frame: CGRect {
+		willSet { }
+		didSet {
+			guard self.frame.origin.y < 0 else { return }
+			self.frame = oldValue
+		}
+	}
 
 	var inputFont: UIFont = {
 		return UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
@@ -42,7 +48,6 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	internal lazy var nameErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
-		label.text = Desk360.Strings.Support.createNameRegex
 		configureErrorLabels(label)
 		return label
 	}()
@@ -60,7 +65,6 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	internal lazy var emailErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
-		label.text = Desk360.Strings.Support.createEmailRegex
 		configureErrorLabels(label)
 		return label
 	}()
@@ -100,7 +104,6 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	lazy var messageTextViewErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
-		label.text = Desk360.Strings.Support.createMessageRegex
 		configureErrorLabels(label)
 		return label
 	}()
@@ -142,7 +145,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	private lazy var desk360BottomView: Desk360View = {
 		return Desk360View.create()
 	}()
-	
+
 	internal lazy var bottomScrollView: UIScrollView = {
 		let scrollView = UIScrollView()
 		scrollView.showsVerticalScrollIndicator = false
@@ -172,8 +175,6 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	lazy var attachmentLabel: UILabel = {
 		let label = UILabel()
 		label.lineBreakMode = .byTruncatingMiddle
-		label.text = ""
-		label.font = UIFont.systemFont(ofSize: 12)
 		label.textAlignment = .right
 		return label
 	}()
@@ -444,7 +445,6 @@ extension CreateRequestView {
 		paragraphStyle.firstLineHeadIndent = preferredSpacing * 0.5
 		label.attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
 		label.baselineAdjustment = .alignBaselines
-		
 		configureLabelTextAlignment(label)
 		label.isHidden = true
 		fields.append(label)
@@ -483,8 +483,6 @@ extension CreateRequestView: HADropDownDelegate {
 			dropDown.addTopLabel2(text: dropDown.placeHolderText, textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
 		case .shadow:
 			dropDown.addTopLabel3(text: dropDown.placeHolderText, textColor: Colors.createScreenLabelTextColor, font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400)))
-		default:
-			break
 		}
 	}
 
@@ -541,13 +539,18 @@ extension CreateRequestView: UITextViewDelegate {
 			}
 		}
 		var offsetY: CGFloat = textView.superview?.frame.minY ?? 0
-		guard let lastTextField = lastField as? CustomMessageTextView else { return }
+		guard let lastTextField = lastField else { return }
 		if lastTextField.messageTextView == textView {
-			var differance = ((textView.superview?.frame.height ?? 0) + UIButton.preferredHeight + (preferredSpacing * 2))
+			let differance = ((textView.superview?.frame.height ?? 0) + UIButton.preferredHeight + (preferredSpacing * 2))
 			offsetY -= differance
 		}
-		let offset = CGPoint(x: 0, y: offsetY)
-		scrollView.setContentOffset(offset, animated: true)
+		if scrollView.contentSize.height > scrollView.frame.size.height {
+//			let offset = CGPoint(x: 0, y: offsetY)
+//			scrollView.setContentOffset(offset, animated: true)
+		} else {
+			scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+		}
+
 	}
 
 	func textViewDidChange(_ textView: UITextView) {
@@ -629,7 +632,7 @@ extension CreateRequestView: UITextViewDelegate {
 				if currentView.messageTextView == textView {
 					currentIndex = index
 				}
-			} 
+			}
 		}
 		guard currentIndex > 1 else { return }
 		(fields[currentIndex - 1] as? UILabel)?.textColor = color
@@ -689,16 +692,16 @@ extension CreateRequestView {
 	@objc func didTap() {
 		if !dropDownListView.isCollapsed {
 			self.dropDownListView.hideList()
-//			self.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+			//			self.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
 		}
 		self.endEditing(true)
-//		scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+		//		scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
 		guard !dropDownListView.isCollapsed else { return }
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//			self.dropDownListView.hideList()
-//			self.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
-//			self.scrollView.scroll
-//			self.scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+			//			self.dropDownListView.hideList()
+			//			self.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+			//			self.scrollView.scroll
+			//			self.scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
 		}
 	}
 
@@ -766,24 +769,23 @@ extension CreateRequestView {
 
 // MARK: - Helpers
 private extension CreateRequestView {
-	
 
 	func configureLabelTextAlignment(_ label: UILabel) {
 		label.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right: .left
-//		guard UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft else {
-//			label.textAlignment = .left
-//			return
-//		}
-//		label.textAlignment = .right
+		//		guard UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft else {
+		//			label.textAlignment = .left
+		//			return
+		//		}
+		//		label.textAlignment = .right
 	}
 
 	func configureTextViewAlignment(_ textView: UITextView) {
 		textView.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right: .left
-//		guard UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft else {
-//			textView.textAlignment = .left
-//			return
-//		}
-//		textView.textAlignment = .right
+		//		guard UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft else {
+		//			textView.textAlignment = .left
+		//			return
+		//		}
+		//		textView.textAlignment = .right
 	}
 
 	func setInputFont(_ field: UIView) {
@@ -806,11 +808,11 @@ private extension CreateRequestView {
 
 		if let currentField = field as? UITextField {
 			currentField.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right: .left
-//			if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
-//				currentField.textAlignment = .right
-//			} else {
-//				currentField.textAlignment = .left
-//			}
+			//			if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+			//				currentField.textAlignment = .right
+			//			} else {
+			//				currentField.textAlignment = .left
+			//			}
 		}
 
 		switch fieldType {
@@ -861,7 +863,6 @@ private extension CreateRequestView {
 
 	func setFieldStyle3(_ view: UIView) {
 
-
 		if let currentView = view as? HADropDown {
 			currentView.layer.borderColor = Colors.createScreenFormInputBorderColor.cgColor
 			currentView.layer.borderWidth = 1
@@ -905,16 +906,10 @@ private extension CreateRequestView {
 
 }
 
-
-
 // MARK: - Configure
 extension CreateRequestView {
 
-	// swiftlint:disable function_body_length
 	func configure() {
-
-//		messageTextView.messageTextView.addDoneButtonOnKeyboard()
-
 		self.backgroundColor = Colors.backgroundColor
 
 		fieldType = Config.shared.model.createScreen?.formStyleId ?? .line
@@ -1244,24 +1239,17 @@ extension CreateRequestView: KeyboardHandling {
 	/// - Parameter notification: `KeyboardNotification`
 	public func keyboardWillHide(_ notification: KeyboardNotification?) {
 		self.scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+		self.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
 	}
 
 	/// Called right before the keyboard is about to change its frame.
 	///
 	/// - Parameter notification: `KeyboardNotification`
-	public func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {
-//		let height = notification?.endFrame.size.height ?? 300
-//		self.scrollView.contentInset = .init(top: 0, left: 0, bottom: height, right: 0)
-	}
-
+	public func keyboardWillChangeFrame(_ notification: KeyboardNotification?) { }
 
 	/// Called right after the keyboard did changed its frame.
 	///
 	/// - Parameter notification: `KeyboardNotification`
-	public func keyboardDidChangeFrame(_ notification: KeyboardNotification?) {
-//		let height = notification?.endFrame.size.height ?? 300
-//		self.scrollView.contentInset = .init(top: 0, left: 0, bottom: height, right: 0)
-	}
+	public func keyboardDidChangeFrame(_ notification: KeyboardNotification?) { }
 
 }
-
