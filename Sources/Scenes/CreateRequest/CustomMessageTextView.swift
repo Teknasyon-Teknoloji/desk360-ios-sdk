@@ -11,7 +11,7 @@ final class CustomMessageTextView: UIView, Layoutable {
 
 	lazy var messageTextView: UITextView = {
 		var view = UITextView()
-		view.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		view.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model?.createScreen?.formInputFontWeight ?? 400))
 		view.backgroundColor = .clear
 		view.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right: .left
 		return view

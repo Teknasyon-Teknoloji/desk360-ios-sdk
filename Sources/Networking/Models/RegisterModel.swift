@@ -31,7 +31,6 @@ extension RegisterModel: Codable {
 		case deviceId
 		case environment
 		case language
-		case jsonInfo
 	}
 
 	/// Creates a new instance by decoding from the given decoder.

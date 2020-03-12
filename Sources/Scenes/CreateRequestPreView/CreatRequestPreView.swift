@@ -145,7 +145,7 @@ extension CreatRequestPreView {
 
 		createRequestButton.snp.remakeConstraints { make in
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) + 2)
-			if !(Config.shared.model.createPreScreen?.bottomNoteIsHidden ?? false) {
+			if !(Config.shared.model?.createPreScreen?.bottomNoteIsHidden ?? false) {
 				make.bottom.equalTo(desk360BottomView.snp.top)
 			} else {
 				make.bottom.equalTo(bottomScrollView.snp.top).offset(-preferredSpacing * 0.5)
@@ -171,36 +171,36 @@ extension CreatRequestPreView {
 
 	func configure() {
 		self.backgroundColor = Colors.backgroundColor
-		titleLabel.text = Config.shared.model.createPreScreen?.title
+		titleLabel.text = Config.shared.model?.createPreScreen?.title
 		titleLabel.textColor = Colors.createPreScreenTitleColor
-		titleLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createPreScreen?.titleFontSize ?? 18), weight: Font.weight(type: Config.shared.model.createPreScreen?.titleFontWeight ?? 400))
+		titleLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.createPreScreen?.titleFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.createPreScreen?.titleFontWeight ?? 400))
 
-		descriptionLabel.text = Config.shared.model.createPreScreen?.description
+		descriptionLabel.text = Config.shared.model?.createPreScreen?.description
 		descriptionLabel.textColor = Colors.createPreScreenDescriptionColor
-		descriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createPreScreen?.descriptionFontSize ?? 14), weight: Font.weight(type: Config.shared.model.createPreScreen?.descriptionFontWeight ?? 400))
+		descriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.createPreScreen?.descriptionFontSize ?? 14), weight: Font.weight(type: Config.shared.model?.createPreScreen?.descriptionFontWeight ?? 400))
 
 		createRequestButton.backgroundColor = Colors.createPreScreenButtonBackgroundColor
 		createRequestButton.layer.borderColor = Colors.createPreScreenButttonBorderColor.cgColor
 		createRequestButton.setTitleColor(Colors.createPreScreenButtonTextColor, for: .normal)
 		createRequestButton.tintColor = Colors.createPreScreenButtonTextColor
-		createRequestButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createPreScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type: Config.shared.model.createPreScreen?.buttonTextFontWeight ?? 400))
-		createRequestButton.setTitle(Config.shared.model.createPreScreen?.buttonText, for: .normal)
-		bottomDescriptionLabel.text = Config.shared.model.createPreScreen?.bottomNoteText
+		createRequestButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.createPreScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type: Config.shared.model?.createPreScreen?.buttonTextFontWeight ?? 400))
+		createRequestButton.setTitle(Config.shared.model?.createPreScreen?.buttonText, for: .normal)
+		bottomDescriptionLabel.text = Config.shared.model?.createPreScreen?.bottomNoteText
 		bottomDescriptionLabel.textColor = Colors.bottomNoteColor
-		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model.generalSettings?.bottomNoteFontWeight ?? 400))
+		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model?.generalSettings?.bottomNoteFontWeight ?? 400))
 		bottomDescriptionLabel.sizeToFit()
-		bottomScrollView.isHidden = !(Config.shared.model.createPreScreen?.bottomNoteIsHidden ?? false)
-		bottomScrollView.isUserInteractionEnabled = Config.shared.model.createPreScreen?.bottomNoteIsHidden ?? false
+		bottomScrollView.isHidden = !(Config.shared.model?.createPreScreen?.bottomNoteIsHidden ?? false)
+		bottomScrollView.isUserInteractionEnabled = Config.shared.model?.createPreScreen?.bottomNoteIsHidden ?? false
 
 		configureButton()
 
 	}
 
 	func configureButton() {
-		let type = Config.shared.model.createPreScreen?.buttonStyleId
+		let type = Config.shared.model?.createPreScreen?.buttonStyleId
 
-		let imageIshidden =  Config.shared.model.createPreScreen?.buttonIconIsHidden ?? true
-		let buttonShadowIsHidden = Config.shared.model.createPreScreen?.buttonShadowIsHidden ?? true
+		let imageIshidden =  Config.shared.model?.createPreScreen?.buttonIconIsHidden ?? true
+		let buttonShadowIsHidden = Config.shared.model?.createPreScreen?.buttonShadowIsHidden ?? true
 
 		switch type {
 		case 1:

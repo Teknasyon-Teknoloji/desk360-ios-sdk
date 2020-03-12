@@ -1,8 +1,8 @@
 PODS:
   - Alamofire (4.9.1)
-  - Desk360 (1.0.0):
+  - Desk360 (1.2.1):
     - DeviceKit
-    - Moya
+    - Moya (= 13.0.1)
     - NVActivityIndicatorView
     - PersistenceKit
     - SnapKit
@@ -38,7 +38,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
-  Desk360: 6062af8febfac9461b65abc335ae24b77f7307a3
+  Desk360: f7cf8fa872e1ac9249c21b7ffff2dabdaa507f84
   DeviceKit: da103891aa928d89f64ea8dd8aca738c5f3d8ac0
   Moya: f4a4b80ff2f8a4ffc208dfb31cd91636622fee6e
   NVActivityIndicatorView: d24b7ebcf80af5dcd994adb650e2b6c93379270f
@@ -48,4 +48,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 80a0853c652863e32bee25d114afaabfec9de1ae
 
-COCOAPODS: 1.8.0
+COCOAPODS: 1.9.0

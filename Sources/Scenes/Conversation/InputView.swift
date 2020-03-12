@@ -264,11 +264,11 @@ internal extension InputView {
 	}
 
 	func configureButton() {
-		let type = Config.shared.model.firstScreen?.buttonStyleId
+		let type = Config.shared.model?.firstScreen?.buttonStyleId
 		createRequestButton.layer.shadowColor = UIColor.clear.cgColor
 		createRequestButton.setImage(UIImage(), for: .normal)
-		let imageIshidden = Config.shared.model.firstScreen?.buttonIconIsHidden ?? true
-		let buttonShadowIsHidden = Config.shared.model.firstScreen?.buttonShadowIsHidden ?? true
+		let imageIshidden = Config.shared.model?.firstScreen?.buttonIconIsHidden ?? true
+		let buttonShadowIsHidden = Config.shared.model?.firstScreen?.buttonShadowIsHidden ?? true
 
 		switch type {
 		case 1:
@@ -324,16 +324,16 @@ internal extension InputView {
 
 		textView.textColor = Colors.ticketDetailWriteMessageTextColor
 		textView.tintColor = Colors.ticketDetailWriteMessageTextColor
-		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.writeMessageFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.writeMessageFontWeight ?? 400))
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.writeMessageFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.writeMessageFontWeight ?? 400))
 		textView.font = font
 		textView.backgroundColor = Colors.ticketDetailChatWriteMessageBackgroundColor
-		placeholderLabel.text = Config.shared.model.ticketDetail?.writeMessagePlaceHolderText
+		placeholderLabel.text = Config.shared.model?.ticketDetail?.writeMessagePlaceHolderText
 		placeholderLabel.font = font
 		createRequestButton.backgroundColor = Colors.firstScreenButtonBackgroundColor
 		createRequestButton.layer.borderColor = Colors.firstScreenButttonBorderColor.cgColor
 		createRequestButton.setTitleColor(Colors.firstScreenButtonTextColor, for: .normal)
-		createRequestButton.setTitle(Config.shared.model.firstScreen?.buttonText, for: .normal)
-		createRequestButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.firstScreen?.buttonTextFontSize ?? 18), weight: Font.weight(type: Config.shared.model.firstScreen?.buttonTextFontWeight ?? 400))
+		createRequestButton.setTitle(Config.shared.model?.firstScreen?.buttonText, for: .normal)
+		createRequestButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.firstScreen?.buttonTextFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.firstScreen?.buttonTextFontWeight ?? 400))
 
 		configureButton()
 

@@ -13,11 +13,9 @@ struct Stores {
 
 	static let ticketsStore = UserDefaultsStore<Ticket>(uniqueIdentifier: "desk360_support_tickets")!
 
-	static let ticketsStore2 = FilesStore<Ticket>(uniqueIdentifier: "desk360_support_tickets2")
+	static let ticketWithMessageStore = UserDefaultsStore<Ticket>(uniqueIdentifier: "desk360_support_tickets_with_message")!
 
 	static let tokenStore = SingleUserDefaultsStore<String>(uniqueIdentifier: "access_token")!
-
-	static let ticketTypeStore = UserDefaultsStore<TicketType>(uniqueIdentifier: "ticket_types_store")!
 
 	static let registerExpiredAt = SingleUserDefaultsStore<Date>(uniqueIdentifier: "register_expired_at")!
 
@@ -27,10 +25,12 @@ struct Stores {
 
 	static let userMail = SingleUserDefaultsStore<String>(uniqueIdentifier: "user_mail")!
 
+	static let configStore = SingleUserDefaultsStore<ConfigModel>(uniqueIdentifier: "config_model")!
+
 	static func setStoresInitialValues() {
 
 		if registerExpiredAt.object == nil {
-			try? registerExpiredAt.save(Date())
+			try? registerExpiredAt.save(Date().addingTimeInterval(-24 * 3600))
 		}
 
 	}

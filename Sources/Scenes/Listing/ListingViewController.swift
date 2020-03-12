@@ -32,6 +32,8 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 			} else {
 				filterTickets = requests.filter({ $0.status == .expired })
 			}
+			self.setTicketWithMessageStore()
+			filterTickets = filterTickets.sorted()
 			//			layoutableView.emptyView.isHidden = !filterTickets.isEmpty
 			layoutableView.tableView.reloadData()
 		}
@@ -46,9 +48,6 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		layoutableView.tableView.dataSource = self
-		layoutableView.tableView.delegate = self
-
 		self.navigationController?.navigationBar.setColors(background: .white, text: .white)
 		layoutableView.placeholderView.createRequestButton.addTarget(self, action: #selector(didTapCreateRequestButton), for: .touchUpInside)
 		layoutableView.segmentControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
@@ -59,6 +58,8 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
+
+		Desk360.isActive = true
 
 		navigationItem.leftBarButtonItem = NavigationItems.close(target: self, action: #selector(didTapCloseButton))
 		//		segmentcontrolButtonBarLayout()
@@ -89,12 +90,13 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(ListingTableViewCell.self)
-		cell.configure(for: filterTickets[indexPath.row])
+		cell.configure(for: filterTickets.sorted()[indexPath.row])
 		return cell
 	}
 
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		let request = filterTickets[indexPath.row]
+		guard request.id != -1 else { return }
 		let viewController = ConversationViewController(request: request)
 		viewController.hidesBottomBarWhenPushed = true
 		navigationController?.pushViewController(viewController, animated: true)
@@ -130,20 +132,48 @@ extension ListingViewController {
 			filterTickets = requests.filter({ $0.status == .expired })
 		}
 
-		if Desk360.isRegister {
-			getConfig()
-		} else {
-			register()
+		filterTickets = filterTickets.sorted()
+
+		layoutableView.tableView.dataSource = self
+		layoutableView.tableView.delegate = self
+
+		layoutableView.tableView.reloadData()
+		
+		if let token = Stores.tokenStore.object {
+			Desk360.token = token
 		}
+
+		configureLayoutableView()
+
+		guard let expiredAt = Stores.registerExpiredAt.object else {
+			register()
+			return
+		}
+
+		guard expiredAt > Date() else {
+			register()
+			return
+		}
+
+		getAsyncRequest()
 	}
 }
 
 // MARK: - Helpers
 extension ListingViewController {
 
-	func segmentcontrolButtonBarLayout() {
-		print(self.layoutableView.buttonBar.frame.origin.x)
+	func getAsyncRequest() {
 
+		getConfig(showLoading: false)
+//		if Stores.configStore.object != nil {
+//
+//		} else {
+//			getConfig(showLoading: true)
+//		}
+
+	}
+
+	func segmentcontrolButtonBarLayout() {
 		self.layoutableView.buttonBar.snp.remakeConstraints { make in
 			make.leading.equalTo((self.layoutableView.segmentControl.frame.width / CGFloat(self.layoutableView.segmentControl.numberOfSegments)) * CGFloat(self.layoutableView.segmentControl.selectedSegmentIndex))
 			make.bottom.equalTo(self.layoutableView.segmentControl.snp.bottom)
@@ -169,14 +199,13 @@ extension ListingViewController {
 			navigationItem.rightBarButtonItem = nil
 			return
 		}
-
 		navigationItem.rightBarButtonItem = NavigationItems.add(target: self, action: #selector(didTapCreateBarButtonItem(_:)))
 	}
 
 	func checkNotificationDeeplink() {
 		guard let id = Desk360.messageId else { return }
+		Desk360.messageId = nil
 		for request in requests where request.id == id {
-			Desk360.messageId = nil
 			let viewController = ConversationViewController(request: request)
 			viewController.hidesBottomBarWhenPushed = true
 			navigationController?.pushViewController(viewController, animated: false)
@@ -188,13 +217,11 @@ extension ListingViewController {
 // MARK: - Actions
 extension ListingViewController {
 
-	@objc
-	func segmentedControlValueChanged() {
+	@objc func segmentedControlValueChanged() {
 		segmentcontrolButtonBarLayout()
 	}
 
-	@objc
-	func didTapCloseButton() {
+	@objc func didTapCloseButton() {
 		Desk360.isActive = false
 		dismiss(animated: true, completion: nil)
 	}
@@ -214,6 +241,11 @@ private extension ListingViewController {
 
 	func register() {
 
+		guard Desk360.appId != nil else {
+			Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+			return
+		}
+
 		Desk360.apiProvider.request(.register(appKey: Desk360.appId, deviceId: Desk360.deviceId, appPlatform: Desk360.appPlatform, appVersion: Desk360.appVersion, timeZone: Desk360.timeZone, languageCode: Desk360.languageCode)) { [weak self]  result in
 			guard let self = self else { return }
 			switch result {
@@ -223,8 +255,10 @@ private extension ListingViewController {
 				guard let register = try? response.map(DataResponse<RegisterRequest>.self) else { return }
 				Desk360.isRegister = true
 				Desk360.token = register.data?.accessToken
+				try? Stores.tokenStore.save(register.data?.accessToken)
 				try? Stores.registerExpiredAt.save(register.data?.expiredDate)
-				self.getConfig()
+				Stores.configStore.object == nil ? self.getConfig(showLoading: true) : self.getConfig(showLoading: false)
+
 			}
 		}
 
@@ -242,8 +276,8 @@ private extension ListingViewController {
 		}
 
 		Desk360.apiProvider.request(.getTickets) { [weak self] result in
-			self?.layoutableView.setLoading(false)
 			guard let self = self else { return }
+			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
@@ -252,26 +286,38 @@ private extension ListingViewController {
 					return
 				}
 				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
-				print("error.localizedDescription")
-				print(error.localizedDescription)
 			case .success(let response):
 				guard let tickets = try? response.map(DataResponse<[Ticket]>.self) else { return }
 				guard let data = tickets.data else { return }
-				try? Stores.ticketsStore.save(data.sorted())
-				self.requests = data
+				try? Stores.ticketsStore.save(data)
+				Stores.ticketsStore.delete(withId: -1)
+				self.requests = Stores.ticketsStore.allObjects().sorted()
 				self.refreshView()
 				self.layoutableView.showPlaceholder(self.requests.isEmpty)
 				self.configureLayoutableView()
 				self.checkNotificationDeeplink()
-
 			}
 		}
 
 	}
 
-	func getConfig() {
+	func setTicketWithMessageStore() {
+		let tickets = Stores.ticketsStore.allObjects().sorted()
+		let ticketsWithMessages = Stores.ticketWithMessageStore.allObjects()
+		Stores.ticketWithMessageStore.deleteAll()
+		for ticket in tickets {
+			let currentTicketWithMessage = ticketsWithMessages.filter({ $0.id == ticket.id })
+			var currentTicket = ticket
+			if !currentTicketWithMessage.isEmpty {
+				currentTicket.messages = currentTicketWithMessage.first?.messages ?? []
+			}
+			try? Stores.ticketWithMessageStore.save(currentTicket)
+		}
+	}
 
-		layoutableView.setLoading(true)
+	func getConfig(showLoading: Bool) {
+
+		layoutableView.setLoading(showLoading)
 
 		guard Desk360.isReachable else {
 			networkError()
@@ -279,8 +325,8 @@ private extension ListingViewController {
 		}
 
 		Desk360.apiProvider.request(.getConfig(language: Desk360.languageCode)) { [weak self] result in
-			self?.layoutableView.setLoading(false)
 			guard let self = self else { return }
+			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
@@ -293,8 +339,10 @@ private extension ListingViewController {
 				print("error.localizedDescription")
 			case .success(let response):
 				guard let config = try? response.map(DataResponse<ConfigModel>.self) else { return }
-				Config.shared.updateConfig(config.data!)
-				self.fetchRequests(showLoading: self.requests.isEmpty)
+				guard let configData = config.data else { return }
+				Config.shared.updateConfig(configData)
+				try? Stores.configStore.save(configData)
+				self.fetchRequests(showLoading: false)
 			}
 		}
 
@@ -303,12 +351,13 @@ private extension ListingViewController {
 	func refreshView() {
 		if layoutableView.segmentControl.selectedSegmentIndex == 0 {
 			filterTickets = requests.filter({ $0.status != .expired })
-			layoutableView.emptyTextLabel.text = Config.shared.model.ticketListingScreen?.emptyCurrentText
+			layoutableView.emptyTextLabel.text = Config.shared.model?.ticketListingScreen?.emptyCurrentText
 		} else {
 			filterTickets = requests.filter({ $0.status == .expired })
-			layoutableView.emptyTextLabel.text = Config.shared.model.ticketListingScreen?.emptyPastText
+			layoutableView.emptyTextLabel.text = Config.shared.model?.ticketListingScreen?.emptyPastText
 		}
 
+		filterTickets.sorted()
 		layoutableView.emptyView.isHidden = !filterTickets.isEmpty
 
 		self.layoutableView.tableView.reloadData()
@@ -316,7 +365,18 @@ private extension ListingViewController {
 
 	func networkError() {
 		layoutableView.setLoading(false)
-		Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "connection.error.message".localize(), dissmis: true)
+
+		let cancel = "cancel.button".localize()
+		let tryAgain = "try.again.button".localize()
+
+		Alert.shared.showAlert(viewController: self, withType: .info, title: "Desk360", message: "connection.error.message".localize(), buttons: [cancel,tryAgain], dismissAfter: 0.1) { [weak self] value in
+			guard let self = self else { return }
+			if value == 1 {
+				self.dismiss(animated: true, completion: nil)
+			} else {
+				self.initialView()
+			}
+		}
 	}
 
 }
@@ -327,13 +387,13 @@ extension ListingViewController {
 	func configureLayoutableView() {
 		var title = ""
 		if self.requests.isEmpty {
-			title = Config.shared.model.firstScreen?.navigationTitle ?? ""
+			title = Config.shared.model?.firstScreen?.navigationTitle ?? ""
 		} else {
-			title = Config.shared.model.ticketListingScreen?.title ?? ""
+			title = Config.shared.model?.ticketListingScreen?.title ?? ""
 		}
 
 		let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
-		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
+		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model?.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
 		let navigationTitle = NSAttributedString(string: title, attributes: selectedattributes as [NSAttributedString.Key: Any])
 		let titleLabel = UILabel()
 		titleLabel.attributedText = navigationTitle
@@ -348,7 +408,7 @@ extension ListingViewController {
 
 		layoutableView.configure()
 
-		guard Config.shared.model.generalSettings?.navigationShadow ?? false else { return }
+		guard Config.shared.model?.generalSettings?.navigationShadow ?? false else { return }
 
 		self.navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
 		self.navigationController?.navigationBar.layer.shadowOffset = CGSize.zero

@@ -65,6 +65,8 @@ public struct CreateScreenConfigModel {
 
 	var bottomNoteText: String?
 
+	var ticketTypes: [TicketType]?
+
 }
 
 extension CreateScreenConfigModel: Codable {
@@ -98,6 +100,7 @@ extension CreateScreenConfigModel: Codable {
 		case bottom_note_is_hidden
 		case bottom_note_text
 		case custom_fields
+		case types
 	}
 
 	/// Creates a new instance by decoding from the given decoder.
@@ -161,6 +164,7 @@ extension CreateScreenConfigModel: Codable {
 			addedFileIsHidden = try (container.decodeIfPresent(Bool.self, forKey: .added_file_is_hidden))
 			bottomNoteIsHidden = try (container.decodeIfPresent(Bool.self, forKey: .bottom_note_is_hidden))
 			bottomNoteText = try (container.decodeIfPresent(String.self, forKey: .bottom_note_text))
+			ticketTypes = try (container.decodeIfPresent([TicketType].self, forKey: .types))
 
 		} catch let error as DecodingError {
 			print(error)
@@ -202,6 +206,7 @@ extension CreateScreenConfigModel: Codable {
 			try container.encodeIfPresent(buttonShadowIsHidden, forKey: .button_shadow_is_hidden)
 			try container.encodeIfPresent(bottomNoteIsHidden, forKey: .bottom_note_is_hidden)
 			try container.encodeIfPresent(bottomNoteText, forKey: .bottom_note_text)
+			try container.encodeIfPresent(ticketTypes, forKey: .types)
 
 		} catch let error as EncodingError {
 			print(error)

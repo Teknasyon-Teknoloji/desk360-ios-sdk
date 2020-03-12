@@ -11,7 +11,7 @@ public struct Config {
 
 	public private(set) static var shared = Config()
 
-	public private(set) var model = ConfigModel()
+	public private(set) var model = Stores.configStore.object
 
 	public func updateConfig(_ newModel: ConfigModel) {
 		Config.shared.model = newModel

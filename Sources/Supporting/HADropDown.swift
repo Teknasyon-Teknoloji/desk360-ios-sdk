@@ -460,7 +460,7 @@ extension HADropDown: UITableViewDelegate, UITableViewDataSource {
 		}
 		cell?.textLabel?.textAlignment = textAllignment
 		cell?.textLabel?.text = items[indexPath.row]
-		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model?.createScreen?.formInputFontWeight ?? 400))
 
 		cell?.textLabel?.font = font
 

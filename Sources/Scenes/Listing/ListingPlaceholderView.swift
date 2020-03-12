@@ -131,7 +131,7 @@ extension ListingPlaceholderView {
 
 		createRequestButton.snp.remakeConstraints { make in
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) + 2)
-			if !(Config.shared.model.firstScreen?.bottomNoteIsHidden ?? false) {
+			if !(Config.shared.model?.firstScreen?.bottomNoteIsHidden ?? false) {
 				make.bottom.equalToSuperview()
 			} else {
 				make.bottom.equalTo(bottomScrollView.snp.top).offset(-preferredSpacing * 0.5)
@@ -151,12 +151,12 @@ extension ListingPlaceholderView {
 	}
 
 	func configureButton() {
-		let type = Config.shared.model.firstScreen?.buttonStyleId
+		let type = Config.shared.model?.firstScreen?.buttonStyleId
 		createRequestButton.layer.shadowColor = UIColor.clear.cgColor
 		createRequestButton.setImage(UIImage(), for: .normal)
 
-		let imageIshidden = Config.shared.model.firstScreen?.buttonIconIsHidden ?? true
-		let buttonShadowIsHidden = Config.shared.model.firstScreen?.buttonShadowIsHidden ?? true
+		let imageIshidden = Config.shared.model?.firstScreen?.buttonIconIsHidden ?? true
+		let buttonShadowIsHidden = Config.shared.model?.firstScreen?.buttonShadowIsHidden ?? true
 
 		switch type {
 		case 1:
@@ -210,28 +210,28 @@ extension ListingPlaceholderView {
 
 		self.backgroundColor = Colors.backgroundColor
 
-		titleLabel.text = Config.shared.model.firstScreen?.title
+		titleLabel.text = Config.shared.model?.firstScreen?.title
 		titleLabel.textColor = Colors.firstScreenTitleColor
-		titleLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.firstScreen?.titleFontSize ?? 18), weight: Font.weight(type: Config.shared.model.firstScreen?.titleFontWeight ?? 400))
+		titleLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.firstScreen?.titleFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.firstScreen?.titleFontWeight ?? 400))
 
-		descriptionLabel.text = Config.shared.model.firstScreen?.description
+		descriptionLabel.text = Config.shared.model?.firstScreen?.description
 		descriptionLabel.textColor = Colors.firstScreenDescriptionColor
-		descriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.firstScreen?.descriptionFontSize ?? 16), weight: Font.weight(type: Config.shared.model.firstScreen?.descriptionFontWeight ?? 400))
+		descriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.firstScreen?.descriptionFontSize ?? 16), weight: Font.weight(type: Config.shared.model?.firstScreen?.descriptionFontWeight ?? 400))
 
 		createRequestButton.backgroundColor = Colors.firstScreenButtonBackgroundColor
 		createRequestButton.layer.borderColor = Colors.firstScreenButttonBorderColor.cgColor
 		createRequestButton.setTitleColor(Colors.firstScreenButtonTextColor, for: .normal)
 		createRequestButton.imageView?.tintColor = Colors.firstScreenButtonTextColor
 		createRequestButton.tintColor = Colors.firstScreenButtonTextColor
-		createRequestButton.setTitle(Config.shared.model.firstScreen?.buttonText, for: .normal)
-		createRequestButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.firstScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type: Config.shared.model.firstScreen?.buttonTextFontWeight ?? 400))
+		createRequestButton.setTitle(Config.shared.model?.firstScreen?.buttonText, for: .normal)
+		createRequestButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.firstScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type: Config.shared.model?.firstScreen?.buttonTextFontWeight ?? 400))
 
-		bottomDescriptionLabel.text = Config.shared.model.firstScreen?.bottomNoteText
+		bottomDescriptionLabel.text = Config.shared.model?.firstScreen?.bottomNoteText
 		bottomDescriptionLabel.sizeToFit()
-		bottomScrollView.isHidden = !(Config.shared.model.firstScreen?.bottomNoteIsHidden ?? false)
+		bottomScrollView.isHidden = !(Config.shared.model?.firstScreen?.bottomNoteIsHidden ?? false)
 		bottomDescriptionLabel.textColor = Colors.bottomNoteColor
-		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model.generalSettings?.bottomNoteFontWeight ?? 400))
-		bottomScrollView.isUserInteractionEnabled = Config.shared.model.firstScreen?.bottomNoteIsHidden ?? false
+		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model?.generalSettings?.bottomNoteFontWeight ?? 400))
+		bottomScrollView.isUserInteractionEnabled = Config.shared.model?.firstScreen?.bottomNoteIsHidden ?? false
 
 		configureButton()
 

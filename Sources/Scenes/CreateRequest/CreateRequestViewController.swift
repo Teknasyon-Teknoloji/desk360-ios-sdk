@@ -26,6 +26,9 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 	var isConfigure = false
 
+	var attachmentUrl: URL?
+
+
 	convenience init(checkLastClass: Bool) {
 		self.init()
 		self.checkLastClass = checkLastClass
@@ -50,7 +53,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 		configLayoutableView()
 
-		fetchTicketType()
+//		fetchTicketType()
 
 		navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 		navigationController?.interactivePopGestureRecognizer?.delegate  = self
@@ -82,15 +85,15 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	@objc func addFile() {
 		let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-		let showImagePicker = UIAlertAction(title: Config.shared.model.generalSettings?.attachmentImagesText ?? "Images", style: .default) { _ in
+		let showImagePicker = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentImagesText ?? "Images", style: .default) { _ in
 			self.attachmentButtonConfigure()
 			self.didTapImagePicker()
 		}
-		let showFilePicker = UIAlertAction(title: Config.shared.model.generalSettings?.attachmentBrowseText ?? "Browse", style: .default) { _ in
+		let showFilePicker = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentBrowseText ?? "Browse", style: .default) { _ in
 			self.attachmentButtonConfigure()
 			self.didTapDocumentBrowse()
 		}
-		let cancelAction = UIAlertAction(title: Config.shared.model.generalSettings?.attachmentCancelText ?? "Cancel", style: .cancel) { _ in
+		let cancelAction = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentCancelText ?? "Cancel", style: .cancel) { _ in
 			self.attachmentButtonConfigure()
 		}
 
@@ -134,11 +137,12 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 
 		guard let url = urls.first else { return }
+		attachmentUrl = url
 		guard let pdfData = try? Data(contentsOf: url) else { return }
 		guard let name = url.pathComponents.last else { return }
 		guard pdfData.count < 20971520 else {
 			controller.dismiss(animated: true) {
-				Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model.generalSettings?.fileSizeErrorText ?? "")
+				Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model?.generalSettings?.fileSizeErrorText ?? "")
 			}
 			return
 		}
@@ -177,9 +181,9 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 	func showAlert() {
 
-		let alert = UIAlertController(title: "Desk360", message: Config.shared.model.generalSettings?.galleryPermissionErrorMessage, preferredStyle: .alert)
+		let alert = UIAlertController(title: "Desk360", message: Config.shared.model?.generalSettings?.galleryPermissionErrorMessage, preferredStyle: .alert)
 
-		let okayAction = UIAlertAction(title: Config.shared.model.generalSettings?.galleryPermissionErrorButtonText ?? "ok.button".localize(), style: .default) { _ in }
+		let okayAction = UIAlertAction(title: Config.shared.model?.generalSettings?.galleryPermissionErrorButtonText ?? "ok.button".localize(), style: .default) { _ in }
 		alert.addAction(okayAction)
 
 		present(alert, animated: true, completion: nil)
@@ -190,6 +194,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		guard let imgUrl = info[UIImagePickerController.InfoKey.referenceURL] as? URL else { return }
 		guard var name = imgUrl.pathComponents.last else { return }
 
+		attachmentUrl = imgUrl
 		if #available(iOS 11.0, *) {
 			if let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset {
 				let assetResources = PHAssetResource.assetResources(for: asset)
@@ -202,17 +207,18 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 			guard let data = image.jpegData(compressionQuality: 0.3) as NSData? else { return }
 			guard data.length < 20971520 else {
 				picker.dismiss(animated: true) {
-					Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model.generalSettings?.fileSizeErrorText ?? "")
+					Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model?.generalSettings?.fileSizeErrorText ?? "")
 				}
 				return
 			}
 			ticket.append(Moya.MultipartFormData(provider: .data(data as Data), name: "attachment", fileName: name, mimeType: "image/jpeg"))
 		} else {
 			if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
+				attachmentUrl = videoUrl
 				guard let data = try? NSData(contentsOf: videoUrl as URL, options: .mappedIfSafe) else { return }
 				guard data.length < 20971520 else {
 					picker.dismiss(animated: true) {
-						Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model.generalSettings?.fileSizeErrorText ?? "")
+						Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model?.generalSettings?.fileSizeErrorText ?? "")
 					}
 					return
 				}
@@ -289,8 +295,8 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		}
 	}
 
-	@objc
-	func didTapBackButton() {
+	@objc func didTapBackButton() {
+		self.layoutableView.endEditing(true)
 		navigationController?.popViewController(animated: true)
 	}
 }
@@ -300,8 +306,8 @@ extension CreateRequestViewController {
 	func configLayoutableView() {
 
 		let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
-		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
-		let navigationTitle = NSAttributedString(string: Config.shared.model.createScreen?.navigationTitle ?? "", attributes: selectedattributes as [NSAttributedString.Key: Any])
+		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model?.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
+		let navigationTitle = NSAttributedString(string: Config.shared.model?.createScreen?.navigationTitle ?? "", attributes: selectedattributes as [NSAttributedString.Key: Any])
 		let titleLabel = UILabel()
 		titleLabel.attributedText = navigationTitle
 		titleLabel.sizeToFit()
@@ -309,7 +315,7 @@ extension CreateRequestViewController {
 		titleLabel.textColor = Colors.navigationTextColor
 		navigationItem.titleView = titleLabel
 
-		navigationItem.title = Config.shared.model.createScreen?.navigationTitle
+		navigationItem.title = Config.shared.model?.createScreen?.navigationTitle
 		self.navigationController?.navigationBar.setColors(background: Colors.navigationBackgroundColor, text: Colors.navigationTextColor)
 		navigationController?.navigationBar.tintColor = Colors.navigationImageViewTintColor
 		self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
@@ -401,6 +407,15 @@ private extension CreateRequestViewController {
 	// swiftlint:disable cyclomatic_complexity
 	func sendRequest() {
 
+		layoutableView.endEditing(true)
+
+		guard Desk360.isReachable else {
+			networkError()
+			return
+		}
+
+		cacheTicket()
+
 		let fields = layoutableView.fields
 
 		for field in fields {
@@ -437,8 +452,9 @@ private extension CreateRequestViewController {
 			ticket.append(Moya.MultipartFormData(provider: .data(pushTokenData), name: "push_token"))
 		}
 
-		layoutableView.endEditing(true)
-		layoutableView.setLoading(true)
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+			self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
+		}
 
 		Desk360.apiProvider.request(.create(ticket: ticket)) { [weak self] result in
 			guard let self = self else { return }
@@ -453,7 +469,37 @@ private extension CreateRequestViewController {
 				}
 				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
 			case .success:
-				self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
+				break
+			}
+		}
+	}
+
+	func cacheTicket() {
+		guard let name = layoutableView.nameTextField.text else { return  }
+		guard let email = layoutableView.emailTextField.text else { return }
+		guard let message = layoutableView.messageTextView.messageTextView.text else { return }
+
+		let formatter = DateFormatter()
+		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+		let dateString = formatter.string(from: Date())
+
+		let currentMessage = Message(id: -1, message: message, isAnswer: false, createdAt: dateString)
+
+		let ticket = Ticket(id: -1, name: name, email: email, status: .open, createdAt: Date(), message: message, messages: [currentMessage], attachmentUrl: attachmentUrl, createDateString: dateString)
+
+		try? Stores.ticketsStore.save(ticket)
+	}
+
+	func networkError() {
+		layoutableView.setLoading(false)
+
+		let cancel = "cancel.button".localize()
+		let tryAgain = "try.again.button".localize()
+
+		Alert.shared.showAlert(viewController: self, withType: .info, title: "Desk360", message: "connection.error.message".localize(), buttons: [cancel,tryAgain], dismissAfter: 0.1) { [weak self] value in
+			guard let self = self else { return }
+			if value == 2 {
+				self.sendRequest()
 			}
 		}
 	}

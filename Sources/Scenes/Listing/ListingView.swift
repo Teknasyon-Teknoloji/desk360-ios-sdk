@@ -211,8 +211,8 @@ extension ListingView {
 		segmentControl.layer.cornerRadius = 0
 		segmentControl.layer.masksToBounds = true
 
-		let fontWeight = Font.weight(type: Config.shared.model.ticketListingScreen?.tabTextFontWeight ?? 400)
-		let fontSize = CGFloat(Config.shared.model.ticketListingScreen?.tabTextFontSize ?? 18)
+		let fontWeight = Font.weight(type: Config.shared.model?.ticketListingScreen?.tabTextFontWeight ?? 400)
+		let fontSize = CGFloat(Config.shared.model?.ticketListingScreen?.tabTextFontSize ?? 18)
 
 		let selectedattributes = [NSAttributedString.Key.foregroundColor: Colors.ticketListingScreenTabTextActiveColor,
 								  NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize, weight: fontWeight)]
@@ -225,7 +225,7 @@ extension ListingView {
 		segmentControl.setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
 		segmentControl.setDividerImage(UIImage(), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
 		segmentControl.layer.borderColor = UIColor.clear.cgColor
-		segmentControl.setTitle(Config.shared.model.ticketListingScreen?.tabCurrentText, forSegmentAt: 0)
-		segmentControl.setTitle(Config.shared.model.ticketListingScreen?.tabPastText, forSegmentAt: 1)
+		segmentControl.setTitle(Config.shared.model?.ticketListingScreen?.tabCurrentText, forSegmentAt: 0)
+		segmentControl.setTitle(Config.shared.model?.ticketListingScreen?.tabPastText, forSegmentAt: 1)
 	}
 }

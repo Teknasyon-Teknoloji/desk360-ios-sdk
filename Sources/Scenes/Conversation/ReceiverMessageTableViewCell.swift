@@ -14,6 +14,13 @@ import AVKit
 
 final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable {
 
+	override var isSelected: Bool {
+		didSet {
+			checkMark.image = isSelected ? Desk360.Config.Images.checkMarkActive : Desk360.Config.Images.checkMarkPassive
+			checkMark.tintColor = Colors.ticketDetailWriteMessageButtonIconDisableColor
+		}
+	}
+
 	lazy var videoView: VideoView = {
 		return VideoView()
 	}()
@@ -28,6 +35,7 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 	private lazy var containerView: UIView = {
 		var view = UIView()
 		view.clipsToBounds = true
+		view.addSubview(checkMark)
 		return view
 	}()
 
@@ -63,6 +71,13 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 		return imageView
 	}()
 
+	lazy var checkMark: UIImageView = {
+		let imageView = UIImageView()
+		imageView.image = Desk360.Config.Images.checkMarkActive
+		imageView.contentMode = .scaleAspectFit
+		return imageView
+	}()
+
 	lazy var previewVideoView: UIView = {
 		let view = UIView()
 		return view
@@ -92,11 +107,18 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 	}
 
 	func setupLayout() {
+
 		containerView.snp.makeConstraints { make in
 			make.top.trailing.equalToSuperview().inset(preferredSpacing / 2)
 			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
 		}
+		
 		stackView.snp.makeConstraints { $0.edges.equalToSuperview().inset(preferredSpacing / 2) }
+
+		checkMark.snp.makeConstraints { make in
+			make.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
+			make.bottom.equalToSuperview().inset(preferredSpacing)
+		}
 
 		dateLabel.snp.makeConstraints { make in
 			make.trailing.equalTo(containerView.snp.trailing).offset(-preferredSpacing * 0.5)
@@ -121,7 +143,7 @@ internal extension ReceiverMessageTableViewCell {
 		containerView.backgroundColor = Colors.ticketDetailChatReceiverBackgroundColor
 		messageTextView.text = request.message
 		messageTextView.textColor = Colors.ticketDetailChatReceiverTextColor
-		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.chatReceiverFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.chatReceiverFontWeight ?? 400))
+		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.chatReceiverFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.chatReceiverFontWeight ?? 400))
 		dateLabel.textColor = Colors.ticketDetailChatChatReceiverDateColor
 		roundCorner()
 		if let dateString = request.createdAt {
@@ -270,9 +292,9 @@ internal extension ReceiverMessageTableViewCell {
 	}
 
 	func roundCorner() {
-		let type = Config.shared.model.ticketDetail?.chatBoxStyle
+		let type = Config.shared.model?.ticketDetail?.chatBoxStyle
 
-		let containerShadowIsHidden = Config.shared.model.ticketDetail?.chatReceiverShadowIsHidden ?? true
+		let containerShadowIsHidden = Config.shared.model?.ticketDetail?.chatReceiverShadowIsHidden ?? true
 
 		switch type {
 		case 1:

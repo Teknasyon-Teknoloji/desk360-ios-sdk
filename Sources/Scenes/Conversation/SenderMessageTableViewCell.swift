@@ -91,7 +91,7 @@ internal extension SenderMessageTableViewCell {
 		containerView.backgroundColor = Colors.ticketDetailChatSenderBackgroundColor
 		messageTextView.text = request.message
 		messageTextView.textColor = Colors.ticketDetailChatSenderTextColor
-		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.ticketDetail?.chatSenderFontSize ?? 18), weight: Font.weight(type: Config.shared.model.ticketDetail?.chatSenderFontWeight ?? 400))
+		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.chatSenderFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.chatSenderFontWeight ?? 400))
 		dateLabel.textColor = Colors.ticketDetailChatSenderDateColor
 
 		roundCorner()
@@ -102,9 +102,9 @@ internal extension SenderMessageTableViewCell {
 	}
 
 	func roundCorner() {
-		let type = Config.shared.model.ticketDetail?.chatBoxStyle
+		let type = Config.shared.model?.ticketDetail?.chatBoxStyle
 
-		let containerShadowIsHidden = Config.shared.model.ticketDetail?.chatSenderShadowIsHidden ?? true
+		let containerShadowIsHidden = Config.shared.model?.ticketDetail?.chatSenderShadowIsHidden ?? true
 
 		switch type {
 		case 1:

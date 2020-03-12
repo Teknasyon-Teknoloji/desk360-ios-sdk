@@ -183,7 +183,7 @@ extension SuccessView {
 			remake.width.equalTo(minDimension(size: UIScreen.main.bounds.size) + 2)
 			remake.height.equalTo(UIButton.preferredHeight * 1.25)
 			remake.centerX.equalToSuperview()
-			if !(Config.shared.model.successScreen?.bottomNoteIsHidden ?? false) {
+			if !(Config.shared.model?.successScreen?.bottomNoteIsHidden ?? false) {
 				remake.bottom.equalTo(desk360BottomView.snp.top)
 			} else {
 				remake.bottom.equalTo(bottomScrollView.snp.top).offset(-preferredSpacing * 0.5)
@@ -207,34 +207,34 @@ extension SuccessView {
 	func configure() {
 
 		self.backgroundColor = Colors.backgroundColor
-		titleLabel.text = Config.shared.model.successScreen?.title
+		titleLabel.text = Config.shared.model?.successScreen?.title
 		titleLabel.textColor = Colors.ticketSuccessScreenTitleColor
-		titleLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.successScreen?.titleFontSize ?? 18), weight: Font.weight(type: Config.shared.model.successScreen?.titleFontWeight ?? 400))
+		titleLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.successScreen?.titleFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.successScreen?.titleFontWeight ?? 400))
 
-		descriptionLabel.text = Config.shared.model.successScreen?.description
+		descriptionLabel.text = Config.shared.model?.successScreen?.description
 		descriptionLabel.textColor = Colors.ticketSuccessScreenDescriptionColor
-		descriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.successScreen?.descriptionFontSize ?? 14), weight: Font.weight(type: Config.shared.model.successScreen?.descriptionFontWeight ?? 400))
+		descriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.successScreen?.descriptionFontSize ?? 14), weight: Font.weight(type: Config.shared.model?.successScreen?.descriptionFontWeight ?? 400))
 
 		showListButton.backgroundColor = Colors.ticketSuccessScreenButtonBackgroundColor
 		showListButton.setTitleColor(Colors.ticketSuccessScreenButtonTextColor, for: .normal)
 		showListButton.imageView?.tintColor = Colors.ticketSuccessScreenButtonTextColor
 		showListButton.tintColor = Colors.ticketSuccessScreenButtonTextColor
 		showListButton.layer.borderColor = Colors.ticketSuccessScreenButttonBorderColor.cgColor
-		showListButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.successScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type: Config.shared.model.successScreen?.buttonTextFontWeight ?? 400))
-		showListButton.setTitle(Config.shared.model.successScreen?.buttonText, for: .normal)
+		showListButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.successScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type: Config.shared.model?.successScreen?.buttonTextFontWeight ?? 400))
+		showListButton.setTitle(Config.shared.model?.successScreen?.buttonText, for: .normal)
 
 		imageView.tintColor = Colors.ticketSuccessScreenIconColor
 
-		bottomDescriptionLabel.text = Config.shared.model.successScreen?.bottomNoteText
-		bottomScrollView.isHidden = !(Config.shared.model.successScreen?.bottomNoteIsHidden ?? false)
+		bottomDescriptionLabel.text = Config.shared.model?.successScreen?.bottomNoteText
+		bottomScrollView.isHidden = !(Config.shared.model?.successScreen?.bottomNoteIsHidden ?? false)
 		bottomDescriptionLabel.textColor = Colors.bottomNoteColor
-		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model.generalSettings?.bottomNoteFontWeight ?? 400))
+		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model?.generalSettings?.bottomNoteFontWeight ?? 400))
 		bottomDescriptionLabel.sizeToFit()
-		bottomScrollView.isUserInteractionEnabled = Config.shared.model.successScreen?.bottomNoteIsHidden ?? false
+		bottomScrollView.isUserInteractionEnabled = Config.shared.model?.successScreen?.bottomNoteIsHidden ?? false
 
 		configureButton()
 
-		let size = Config.shared.model.successScreen?.iconSize ?? 100
+		let size = Config.shared.model?.successScreen?.iconSize ?? 100
 		imageView.snp.remakeConstraints { remake in
 			remake.width.height.equalTo(CGFloat(size))
 			remake.centerX.equalToSuperview()
@@ -254,12 +254,12 @@ extension SuccessView {
 	}
 
 	func configureButton() {
-		let type = Config.shared.model.successScreen?.buttonStyleId
+		let type = Config.shared.model?.successScreen?.buttonStyleId
 
 		showListButton.layer.shadowColor = UIColor.clear.cgColor
 		showListButton.setImage(UIImage(), for: .normal)
-		let imageIshidden = Config.shared.model.successScreen?.buttonIconIsHidden ?? true
-		let buttonShadowIsHidden = Config.shared.model.successScreen?.buttonShadowIsHidden ?? true
+		let imageIshidden = Config.shared.model?.successScreen?.buttonIconIsHidden ?? true
+		let buttonShadowIsHidden = Config.shared.model?.successScreen?.buttonShadowIsHidden ?? true
 
 		switch type {
 		case 1:

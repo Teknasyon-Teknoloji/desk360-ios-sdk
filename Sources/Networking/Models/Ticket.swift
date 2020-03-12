@@ -28,26 +28,28 @@ public struct Ticket {
 	}
 
 	/// Id.
-	public var id: Int
+	var id: Int
 
 	/// Name.
-	public var name: String
+	var name: String
 
 	/// Email
-	public var email: String
+	var email: String
 
 	/// Status
 	var status: Status
 
 	/// Date the request was created.
-	public var createdAt: Date
+	var createdAt: Date
 
-	public var message: String
+	var message: String
 
 	/// Array of conversation `SupportMessage`s.
-	public var messages: [Message]
+	var messages: [Message]
 
-	public var attachmentUrl: URL?
+	var attachmentUrl: URL?
+
+	var createDateString: String?
 
 }
 
@@ -77,11 +79,11 @@ extension Ticket: Codable {
 		status = try container.decode(Status.self, forKey: .status)
 		message = try container.decode(String.self, forKey: .message)
 		attachmentUrl = try (container.decodeIfPresent(URL.self, forKey: .attachment_url))
-		let dateString = try container.decode(String.self, forKey: .created)
+		createDateString = try container.decode(String.self, forKey: .created)
 
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-		createdAt = formatter.date(from: dateString) ?? Date()
+		createdAt = formatter.date(from: createDateString ?? "") ?? Date()
 
 		messages = (try? container.decodeIfPresent([Message].self, forKey: .messages) ?? []) ?? []
 
@@ -99,7 +101,7 @@ extension Ticket: Codable {
 		try container.encode(email, forKey: .email)
 		try container.encode(status, forKey: .status)
 		try container.encode(message, forKey: .message)
-		try container.encode(createdAt, forKey: .created)
+		try container.encode(createDateString, forKey: .created)
 		try container.encode(messages, forKey: .messages)
 		try container.encode(attachmentUrl, forKey: .attachment_url)
 	}

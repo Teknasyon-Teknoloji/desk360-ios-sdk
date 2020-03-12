@@ -53,7 +53,7 @@ extension UIView {
 
 	func addViewUnderLine() {
 		let bottomLine = UIView()
-		bottomLine.frame = CGRect(origin: CGPoint(x: 0, y: UITextField.preferredHeight * 1.15 - 1), size: CGSize(width: UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2), height: 1))
+		bottomLine.frame = CGRect(origin: CGPoint(x: 0, y: UITextField.preferredHeight), size: CGSize(width: UIScreen.main.bounds.width - ((UIScreen.main.bounds.size.minDimension * 0.054) * 2), height: 1))
 		bottomLine.backgroundColor = Colors.createScreenFormInputBorderColor
 		bottomLine.tag = 10
 		self.addSubview(bottomLine)
@@ -175,9 +175,9 @@ extension UIView {
 	}
 
 	func upPlaceholderUIView(color: UIColor) {
-		guard Config.shared.model.createScreen?.formStyleId == .shadow else { return }
+		guard Config.shared.model?.createScreen?.formStyleId == .shadow else { return }
 		let views = self.subviews
-		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.labelTextFontWeight ?? 400))
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.createScreen?.labelTextFontSize ?? 11), weight: Font.weight(type: Config.shared.model?.createScreen?.labelTextFontWeight ?? 400))
 		for view in views where view.tag == 2 {
 			view.frame.origin.y = 2
 			if let currentView = view as? UILabel {
@@ -190,9 +190,9 @@ extension UIView {
 	}
 
 	func downPlaceholderUIView(color: UIColor) {
-		guard Config.shared.model.createScreen?.formStyleId == .shadow else { return }
+		guard Config.shared.model?.createScreen?.formStyleId == .shadow else { return }
 		let views = self.subviews
-		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model.createScreen?.formInputFontSize ?? 11), weight: Font.weight(type: Config.shared.model.createScreen?.formInputFontWeight ?? 400))
+		let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.createScreen?.formInputFontSize ?? 11), weight: Font.weight(type: Config.shared.model?.createScreen?.formInputFontWeight ?? 400))
 
 		for view in views where view.tag == 2 {
 			view.frame.origin.y = UIScreen.main.bounds.size.minDimension * 0.054

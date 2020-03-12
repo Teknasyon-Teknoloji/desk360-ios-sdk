@@ -49,6 +49,14 @@ public extension Desk360.Config {
 			return Desk360.Config.Images.createImage(resources: "Images/play")
 		}()
 
+		static var checkMarkPassive: UIImage = {
+			return Desk360.Config.Images.createImage(resources: "Images/checkMarkPassive")
+		}()
+
+		static var checkMarkActive: UIImage = {
+			return Desk360.Config.Images.createImage(resources: "Images/checkMarkActive")
+		}()
+
 		static var pauseIcon: UIImage = {
 			return Desk360.Config.Images.createImage(resources: "Images/pause")
 		}()

@@ -51,6 +51,10 @@ public final class Desk360 {
 
 	static var isRegister = false
 
+	static var applaunchChecker = false
+
+	static var didTapNotification = false
+
 	/// Whether internet is reachable or not.
 	static var isReachable: Bool {
 		return NetworkReachabilityManager()?.isReachable ?? false
@@ -92,10 +96,20 @@ public final class Desk360 {
         guard let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any] else { return }
         guard let data = remoteNotif["data"] as? [String: AnyObject] else { return }
 		guard let id = userInfoHandle(data) else { return }
+		Desk360.didTapNotification = true
+		Desk360.applaunchChecker = true
 		Desk360.messageId = id
     }
 
 	public static func applicationUserInfoChecker(_ userInfo: [AnyHashable: Any]?) {
+		print("userInfo:", userInfo)
+		guard !Desk360.applaunchChecker else {
+			Desk360.applaunchChecker = false
+			return
+		}
+		if #available(iOS 13.0, *), Desk360.didTapNotification {
+			return
+		}
 		guard Desk360.messageId == nil else { return }
 		guard let data = userInfo?["data"] as? [String: AnyObject] else { return }
 		guard let id = userInfoHandle(data) else { return }
@@ -131,8 +145,8 @@ public final class Desk360 {
 		guard let listingViewController = navigationController.children.first as? ListingViewController else { return }
 		let tickets = listingViewController.requests
 		let id = Desk360.messageId
+		Desk360.messageId = nil
 		for ticket in tickets where ticket.id == id {
-			Desk360.messageId = nil
 			let viewController = ConversationViewController(request: ticket)
 			viewController.hidesBottomBarWhenPushed = true
 			navigationController.pushViewController(viewController, animated: false)

@@ -10,6 +10,7 @@ import UIKit
 final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
 	var request: Ticket!
+	var message: String = ""
 
 	convenience init(request: Ticket) {
 		self.init()
@@ -17,6 +18,8 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	}
 
 	typealias ViewType = ConversationView
+
+	var isAddedMessage = false
 
 	override func loadView() {
 		view = ViewType.create()
@@ -65,11 +68,9 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		super.viewDidLoad()
 
 		registerForKeyboardEvents()
-		layoutableView.tableView.dataSource = self
-		layoutableView.tableView.delegate = self
 		layoutableView.conversationInputView.delegate = self
 
-		NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidChangeState(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+//		NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidChangeState(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
 		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
 	}
@@ -77,8 +78,11 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
+		setMessages()
 		previousLineCount = 0
 		currentLineCount = 0
+		layoutableView.tableView.dataSource = self
+		layoutableView.tableView.delegate = self
 
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
@@ -95,7 +99,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		layoutableView.setLoading(true)
+		layoutableView.setLoading(self.request.messages.isEmpty)
 		readRequest(request)
 	}
 
@@ -104,12 +108,16 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		layoutableView.conversationInputView.textView.resignFirstResponder()
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
+		setRead()
+
 	}
 
-	@objc
-	private func handleKeyboardDidChangeState(_ notification: Notification) {
-
-
+	func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+		if isAddedMessage && indexPath.row == request.messages.count - 1 {
+			cell.isSelected = false
+		} else {
+			cell.isSelected = true
+		}
 	}
 
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -140,6 +148,7 @@ extension ConversationViewController: InputViewDelegate {
 
 	func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String) {
 		layoutableView.conversationInputView.setLoading(true)
+		isAddedMessage = true
 		addMessage(text, to: request)
 	}
 
@@ -151,9 +160,16 @@ extension ConversationViewController {
 	/// This method use is to get one ticket from the use id
 	/// - Parameter request: this parameter is a ticket object we will use its id and we will use its properties
 	func readRequest(_ request: Ticket) {
+
+		guard Desk360.isReachable else {
+			networkError()
+			return
+		}
+		
 		Desk360.apiProvider.request(.ticketWithId(request.id)) { [weak self] result in
 
 			guard let self = self else { return }
+			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
@@ -167,7 +183,7 @@ extension ConversationViewController {
 				guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
 				guard let data = tickets.data else { return }
 				self.request = data
-
+				try? Stores.ticketWithMessageStore.save(self.request)
 				if let url = data.attachmentUrl {
 					self.attachment = url
 				}
@@ -175,7 +191,7 @@ extension ConversationViewController {
 				self.layoutableView.tableView.reloadData()
 				self.scrollToBottom(animated: false)
 			}
-			self.layoutableView.setLoading(false)
+
 		}
 	}
 
@@ -184,11 +200,24 @@ extension ConversationViewController {
 	///   - message: this parameter is a user message
 	///   - request: this parameter is a ticket object
 	func addMessage(_ message: String, to request: Ticket) {
+
+		self.message = message
+
+		guard Desk360.isReachable else {
+			networkError()
+			return
+		}
+
 		let id = (request.messages.last?.id ?? 0) + 1
 
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-		self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
+
+		layoutableView.conversationInputView.resignFirstResponder()
+		self.layoutableView.conversationInputView.reset()
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+			self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
+		}
 
 		Desk360.apiProvider.request(.ticketMessages(message, request.id)) { [weak self] result in
 			guard let self = self else { return }
@@ -203,6 +232,10 @@ extension ConversationViewController {
 				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
 				print(error.localizedDescription)
 			case .success:
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					self.isAddedMessage = false
+					self.showActiveCheckMark()
+				}
 				print("Add ticket new message")
 			}
 		}
@@ -216,22 +249,17 @@ private extension ConversationViewController {
 	/// This method is used to  a add a message in ticket
 	/// - Parameter message: this parameter is a user message
 	func appendMessage(message: Message) {
-		layoutableView.conversationInputView.resignFirstResponder()
 
-		request.messages.append(message)
+		self.request.messages.append(message)
+		try? Stores.ticketWithMessageStore.save(self.request)
 
-		layoutableView.tableView.beginUpdates()
-		let indexPath = IndexPath(row: request.messages.count - 1, section: 0)
-		layoutableView.tableView.insertRows(at: [indexPath], with: .top)
-		layoutableView.tableView.endUpdates()
+		self.layoutableView.tableView.beginUpdates()
+		let indexPath = IndexPath(row: self.request.messages.count - 1, section: 0)
+		self.layoutableView.tableView.insertRows(at: [indexPath], with: .top)
+		self.layoutableView.tableView.endUpdates()
 
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-			self.scrollToBottom(animated: true)
-		}
+		try? Stores.ticketsStore.save(self.request)
 
-		try? Stores.ticketsStore.save(request)
-
-		layoutableView.conversationInputView.reset()
 	}
 
 	/// This method is used to scroll to tableview bottom
@@ -246,8 +274,58 @@ private extension ConversationViewController {
 		}
 	}
 
-	
+	func showActiveCheckMark() {
+		let indexPath = IndexPath(row: request.messages.count - 1, section: 0)
+		guard let cell = layoutableView.tableView.cellForRow(at: indexPath) else { return }
+		layoutableView.tableView.reloadRows(at: [indexPath], with: .none)
+	}
 
+	func networkError() {
+		layoutableView.setLoading(false)
+
+		let cancel = "cancel.button".localize()
+		let tryAgain = "try.again.button".localize()
+
+		Alert.shared.showAlert(viewController: self, withType: .info, title: "Desk360", message: "connection.error.message".localize(), buttons: [cancel,tryAgain], dismissAfter: 0.1) { [weak self] value in
+			guard let self = self else { return }
+			if value == 2 {
+				self.addMessage(self.message, to: self.request)
+			}
+		}
+	}
+
+}
+
+// MARK: - Actions
+extension ConversationViewController {
+
+	func setMessages() {
+		let tickets = Stores.ticketWithMessageStore.allObjects()
+		let currentTicketWithMessage = tickets.filter({ $0.id == self.request.id })
+		guard currentTicketWithMessage.count > 0 else { return }
+		self.request.messages = currentTicketWithMessage.first?.messages ?? []
+		layoutableView.tableView.reloadData()
+		scrollToBottom(animated: false)
+	}
+
+	func setRead() {
+		let id = request.id
+		let tickets = Stores.ticketsStore.allObjects().sorted()
+
+		for ticket in tickets {
+			var currentTicket = ticket
+			if ticket.id == id {
+				if ticket.status == .unread {
+					currentTicket.status = .read
+				}
+				currentTicket.messages = self.request.messages
+				if message != "" {
+					currentTicket.message = message
+				}
+				try? Stores.ticketsStore.save(currentTicket)
+			}
+		}
+	}
 }
 
 // MARK: - Actions
@@ -260,6 +338,9 @@ extension ConversationViewController {
 
 	/// This method is used to pop action on navigationcontroller
 	@objc func didTapBackButton() {
+		layoutableView.conversationInputView.textView.resignFirstResponder()
+		layoutableView.conversationInputView.layoutIfNeeded()
+		layoutableView.conversationInputView.layoutSubviews()
 		navigationController?.popViewController(animated: true)
 	}
 
@@ -269,12 +350,12 @@ extension ConversationViewController {
 extension ConversationViewController {
 
 	func configure() {
-		let fontWeight = Font.weight(type: Config.shared.model.generalSettings?.navigationTitleFontWeight ?? 400)
-		let fontSize = CGFloat(Config.shared.model.generalSettings?.navigationTitleFontSize ?? 16)
+		let fontWeight = Font.weight(type: Config.shared.model?.generalSettings?.navigationTitleFontWeight ?? 400)
+		let fontSize = CGFloat(Config.shared.model?.generalSettings?.navigationTitleFontSize ?? 16)
 		let font = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
 		let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
 		NSAttributedString.Key.font: font, NSAttributedString.Key.shadow: NSShadow() ]
-		let navigationTitle = NSAttributedString(string: Config.shared.model.ticketDetail?.title ?? "", attributes: selectedattributes as [NSAttributedString.Key: Any])
+		let navigationTitle = NSAttributedString(string: Config.shared.model?.ticketDetail?.title ?? "", attributes: selectedattributes as [NSAttributedString.Key: Any])
 		let titleLabel = UILabel()
 		titleLabel.attributedText = navigationTitle
 		titleLabel.sizeToFit()
@@ -282,7 +363,7 @@ extension ConversationViewController {
 		titleLabel.textColor = Colors.navigationTextColor
 		navigationItem.titleView = titleLabel
 
-		navigationItem.title = Config.shared.model.ticketDetail?.title
+		navigationItem.title = Config.shared.model?.ticketDetail?.title
 		self.navigationController?.navigationBar.setColors(background: Colors.navigationBackgroundColor, text: Colors.navigationTextColor)
 		navigationController?.navigationBar.tintColor = Colors.navigationImageViewTintColor
 		self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)

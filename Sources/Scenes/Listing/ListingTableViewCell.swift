@@ -132,8 +132,8 @@ internal extension ListingTableViewCell {
 	}
 
 	func configureContainer() {
-		let type = Config.shared.model.ticketListingScreen?.ticketListType
-		let shadowIsHidden = !(Config.shared.model.ticketListingScreen?.ticketItemShadowIsHidden ?? false)
+		let type = Config.shared.model?.ticketListingScreen?.ticketListType
+		let shadowIsHidden = !(Config.shared.model?.ticketListingScreen?.ticketItemShadowIsHidden ?? false)
 
 		switch type {
 		case 1:
@@ -165,8 +165,8 @@ internal extension ListingTableViewCell {
 		messageLabel.text = request.message
 		dateLabel.text = DateFormat.raadable.dateFormatter.string(from: request.createdAt)
 
-		let messageFontSize = CGFloat(Config.shared.model.ticketListingScreen?.ticketSubjectFontSize ?? 16)
-		let dateFontSize = CGFloat(Config.shared.model.ticketListingScreen?.ticketDateFontSize ?? 11)
+		let messageFontSize = CGFloat(Config.shared.model?.ticketListingScreen?.ticketSubjectFontSize ?? 16)
+		let dateFontSize = CGFloat(Config.shared.model?.ticketListingScreen?.ticketDateFontSize ?? 11)
 		let iconColor = Colors.ticketListingScreenTicketItemIconColor
 		switch request.status {
 		case .expired:
