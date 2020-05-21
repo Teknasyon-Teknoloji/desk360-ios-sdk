@@ -16,7 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-		Desk360.start(appId: "123456")
+		Stores.setStoresInitialValues()
+//		Desk360.start(appId: "123456")
+		window = UIWindow()
+		window?.rootViewController = UINavigationController(rootViewController: DemoViewController())
+		window?.makeKeyAndVisible()
+
+
 
 		return true
 	}

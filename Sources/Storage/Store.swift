@@ -27,6 +27,8 @@ struct Stores {
 
 	static let configStore = SingleUserDefaultsStore<ConfigModel>(uniqueIdentifier: "config_model")!
 
+	static let registerCacheModel = SingleUserDefaultsStore<RegisterModel>(uniqueIdentifier: "register_cache_model")!
+
 	static func setStoresInitialValues() {
 
 		if registerExpiredAt.object == nil {
@@ -36,3 +38,4 @@ struct Stores {
 	}
 
 }
+

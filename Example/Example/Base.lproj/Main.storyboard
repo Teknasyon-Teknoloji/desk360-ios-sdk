@@ -21,9 +21,9 @@
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v9Q-eS-geD">
                                         <rect key="frame" x="0.0" y="0.0" width="374" height="30"/>
-                                        <state key="normal" title="show with "/>
+                                        <state key="normal" title="show with wrong appId"/>
                                         <connections>
-                                            <action selector="didTapShowWithNullDeviceId:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uUh-RH-exA"/>
+                                            <action selector="didTapShowWithWrongAppId:" destination="BYZ-38-t0r" eventType="touchUpInside" id="evY-yQ-5Xj"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1OE-iy-ea0">
@@ -35,7 +35,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jLR-gt-EhV">
                                         <rect key="frame" x="0.0" y="60" width="374" height="30"/>
-                                        <state key="normal" title="Push Support"/>
+                                        <state key="normal" title="Show"/>
                                         <connections>
                                             <action selector="didTapPushButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="UYZ-co-rXB"/>
                                         </connections>
@@ -49,7 +49,7 @@
                                     </button>
                                 </subviews>
                             </stackView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Test Environment" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oNH-L0-Yau">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Test Environment" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oNH-L0-Yau">
                                 <rect key="frame" x="111" y="134" width="262" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -57,22 +57,33 @@
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M3B-1s-DIg">
                                 <rect key="frame" x="308" y="129" width="49" height="31"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="environmentSwitchValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="Bel-JF-iQ0"/>
+                                </connections>
+                            </switch>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rp8-1u-wl9" userLabel="Language Type Switch Button">
+                                <rect key="frame" x="308" y="178" width="49" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                             </switch>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="RO1-Eu-8Z9" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="4Ij-Aq-W9C"/>
                             <constraint firstItem="RO1-Eu-8Z9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="5Jv-zO-LKf"/>
-                            <constraint firstItem="oNH-L0-Yau" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="119" id="MGe-eY-i6z"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="oNH-L0-Yau" secondAttribute="trailing" constant="33" id="QbD-vg-BdK"/>
+                            <constraint firstItem="oNH-L0-Yau" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="111" id="MGe-eY-i6z"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="oNH-L0-Yau" secondAttribute="trailing" constant="41" id="QbD-vg-BdK"/>
                             <constraint firstItem="RO1-Eu-8Z9" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Tj8-6L-ftY"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="RO1-Eu-8Z9" secondAttribute="trailing" constant="20" id="dU3-As-nqL"/>
-                            <constraint firstItem="oNH-L0-Yau" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="41" id="izH-TA-pB7"/>
+                            <constraint firstItem="oNH-L0-Yau" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="46" id="izH-TA-pB7"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="Ev2-xJ-HNz"/>
+                    <connections>
+                        <outlet property="environmentSwitchButton" destination="M3B-1s-DIg" id="xhv-JN-eGK"/>
+                        <outlet property="languageTypeSwitchButton" destination="rp8-1u-wl9" id="ILX-jy-EeI"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

@@ -2,7 +2,7 @@
 //  ListingViewController.swift
 //  Desk360
 //
-//  Created by Omar on 5/16/19.
+//  Created by samet on 18.05.19
 //
 
 import UIKit
@@ -34,7 +34,7 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 			}
 			self.setTicketWithMessageStore()
 			filterTickets = filterTickets.sorted()
-			//			layoutableView.emptyView.isHidden = !filterTickets.isEmpty
+			layoutableView.placeholderView.isHidden = !requests.isEmpty
 			layoutableView.tableView.reloadData()
 		}
 	}
@@ -64,7 +64,8 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 		navigationItem.leftBarButtonItem = NavigationItems.close(target: self, action: #selector(didTapCloseButton))
 		//		segmentcontrolButtonBarLayout()
 		initialView()
-
+		
+		try? Stores.registerCacheModel.save(Stores.registerModel.object)
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -145,6 +146,19 @@ extension ListingViewController {
 
 		configureLayoutableView()
 
+		let registerModel = Stores.registerCacheModel.object
+
+		guard registerModel?.appId == Desk360.appId && registerModel?.deviceId == Desk360.deviceId &&  Desk360Environment(rawValue: registerModel?.environment ?? ".test")  == Desk360.environment else {
+			Stores.ticketsStore.deleteAll()
+			Stores.tokenStore.delete()
+			try? Stores.registerExpiredAt.save(Date().addingTimeInterval(-36 * 3600))
+			requests = []
+//			layoutableView.placeholderView.isHidden = false
+			layoutableView.setLoading(true)
+			register()
+			return
+		}
+
 		guard let expiredAt = Stores.registerExpiredAt.object else {
 			register()
 			return
@@ -185,7 +199,6 @@ extension ListingViewController {
 			self.layoutableView.layoutIfNeeded()
 			self.refreshView()
 		}, completion: nil )
-
 	}
 
 	func setLoadingabletConfig() {
@@ -250,6 +263,7 @@ private extension ListingViewController {
 			guard let self = self else { return }
 			switch result {
 			case .failure:
+				try? Stores.registerExpiredAt.save(Date().addingTimeInterval(-48 * 3600))
 				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 			case .success(let response):
 				guard let register = try? response.map(DataResponse<RegisterRequest>.self) else { return }

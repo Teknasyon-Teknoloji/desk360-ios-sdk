@@ -28,7 +28,6 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 	var attachmentUrl: URL?
 
-
 	convenience init(checkLastClass: Bool) {
 		self.init()
 		self.checkLastClass = checkLastClass

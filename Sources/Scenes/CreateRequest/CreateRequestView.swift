@@ -1127,7 +1127,6 @@ extension CreateRequestView {
 		sendButton.tintColor = Colors.createScreenButtonTextColor
 		sendButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.createScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type: Config.shared.model?.createScreen?.buttonTextFontWeight ?? 400))
 		sendButton.setTitle(Config.shared.model?.createScreen?.buttonText, for: .normal)
-
 		sendButton.layer.shadowColor = UIColor.clear.cgColor
 		sendButton.setImage(UIImage(), for: .normal)
 		let type = Config.shared.model?.createScreen?.buttonStyleId

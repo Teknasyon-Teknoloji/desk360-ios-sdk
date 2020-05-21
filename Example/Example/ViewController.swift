@@ -11,10 +11,13 @@ import Desk360
 
 final class ViewController: UIViewController {
 
+	@IBOutlet weak var environmentSwitchButton: UISwitch!
+	@IBOutlet weak var languageTypeSwitchButton: UISwitch!
 	var jsonObject: [String: Any]? = nil
 	var deviceId: String?
 	var	environment: Desk360Environment = .test
-
+	var appId: String = ""
+	var language: String = ""
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -27,20 +30,26 @@ final class ViewController: UIViewController {
 			"app": "Demo App",
 			"device Id": UIDevice.current.identifierForVendor!.uuidString
 		]
+		appId = "oFkDNLOatwreoPZp43EWRhDdbGGBbgi8"
 
 		showDesk360()
 	}
 
-	@IBAction func didTapShowWithNullDeviceId(_ sender: Any) {
-
+	@IBAction func environmentSwitchValueChanged(_ sender: Any) {
+		environment = environmentSwitchButton.isOn ? .test : .production
+	}
+	@IBAction func didTapShowWithWrongAppId(_ sender: Any) {
+		showDesk360()
 	}
 
 	@IBAction func didTapPresentButton(_ sender: UIButton) {
+		appId = "oFkDNLOatwreoPZp43EWRhDdbGGBbgi8"
 		showDesk360()
 	}
 
 	@IBAction func didTapPushButton(_ sender: UIButton) {
-		Desk360.show(on: self, animated: true)
+//		Desk360.show(on: self, animated: true)
+		print(Stores.generateRandomString())
 	}
 
 }
@@ -58,13 +67,9 @@ extension ViewController {
 extension ViewController {
 
 	func showDesk360() {
-		#if DEBUG
-		let environment: Desk360Environment = .test
-		#else
-		let environment: Desk360Environment = .production
-		#endif
-		Desk360.start(appId: "oFkDNLOatwreoPZp43EWRhDdbGGBbgi8", environment: environment, language: "en", jsonInfo: jsonObject)
+		Desk360.start(appId: appId, environment: environment, language: "en", jsonInfo: jsonObject)
 		jsonObject = nil
+		appId = ""
 		Desk360.show(on: self, animated: true)
 	}
 

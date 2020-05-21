@@ -1,0 +1,412 @@
+[
+  {
+    "id": 1,
+    "name": "English",
+    "code": "en",
+    "country_code": "us",
+    "is_active": 1,
+    "is_review_active": 1,
+    "created_at": "2018-01-12 13:04:16",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 2,
+    "name": "Türkçe",
+    "code": "tr",
+    "country_code": "tr",
+    "is_active": 1,
+    "is_review_active": 1,
+    "created_at": "2018-01-12 13:04:16",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 3,
+    "name": "Arabic",
+    "code": "ar",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:28:58",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 4,
+    "name": "Chinese-Traditional",
+    "code": "zh",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:30:00",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 5,
+    "name": "Czech",
+    "code": "cs",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:31:36",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 6,
+    "name": "Danish",
+    "code": "da",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:31:47",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 7,
+    "name": "Dutch",
+    "code": "nl",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:31:56",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 8,
+    "name": "French",
+    "code": "fr",
+    "country_code": "fr",
+    "is_active": 1,
+    "is_review_active": 1,
+    "created_at": "2018-01-25 12:32:16",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 9,
+    "name": "German",
+    "code": "de",
+    "country_code": "de",
+    "is_active": 1,
+    "is_review_active": 1,
+    "created_at": "2018-01-25 12:32:39",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 10,
+    "name": "Hebrew",
+    "code": "he",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:48:53",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 11,
+    "name": "Hindi",
+    "code": "hi",
+    "country_code": "hi",
+    "is_active": 1,
+    "is_review_active": 1,
+    "created_at": "2018-01-25 12:49:06",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 12,
+    "name": "Hungarian",
+    "code": "hu",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:49:21",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 13,
+    "name": "Indonesian",
+    "code": "id",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:49:36",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 14,
+    "name": "Italian",
+    "code": "it",
+    "country_code": "it",
+    "is_active": 1,
+    "is_review_active": 1,
+    "created_at": "2018-01-25 12:49:49",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 15,
+    "name": "Japanese",
+    "code": "ja",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:50:00",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 16,
+    "name": "Korean",
+    "code": "ko",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:50:58",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 17,
+    "name": "Malay",
+    "code": "ms",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:51:27",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 18,
+    "name": "Norwegian",
+    "code": "no",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:51:48",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 19,
+    "name": "Polish",
+    "code": "pl",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:51:57",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 20,
+    "name": "Portuguese-Brazil",
+    "code": "pt-br",
+    "country_code": "pt",
+    "is_active": 1,
+    "is_review_active": 1,
+    "created_at": "2018-01-25 12:52:11",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 21,
+    "name": "Portuguese-Portugal",
+    "code": "pt-pt",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:52:24",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 22,
+    "name": "Romanian",
+    "code": "ro",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:52:34",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 23,
+    "name": "Russian",
+    "code": "ru",
+    "country_code": "ru",
+    "is_active": 1,
+    "is_review_active": 1,
+    "created_at": "2018-01-25 12:52:49",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 24,
+    "name": "Spanish",
+    "code": "es",
+    "country_code": "es",
+    "is_active": 1,
+    "is_review_active": 1,
+    "created_at": "2018-01-25 12:53:37",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 25,
+    "name": "Swedish",
+    "code": "sv",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:53:47",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 26,
+    "name": "Tagalog",
+    "code": "tl",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:53:58",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 27,
+    "name": "Chinese-Taiwan",
+    "code": "zh-tw",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:54:00",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 28,
+    "name": "Thai",
+    "code": "th",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:54:25",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 29,
+    "name": "Urdu",
+    "code": "ur",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2018-01-25 12:54:33",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 30,
+    "name": "Vietnamese",
+    "code": "vi",
+    "country_code": "vn",
+    "is_active": 1,
+    "is_review_active": 1,
+    "created_at": "2018-01-25 12:54:44",
+    "updated_at": "2019-07-04 14:26:55"
+  },
+  {
+    "id": 31,
+    "name": "Brazil",
+    "code": "br",
+    "country_code": "br",
+    "is_active": 0,
+    "is_review_active": 1,
+    "created_at": "2019-10-24 14:26:55",
+    "updated_at": "2019-10-24 14:26:55"
+  },
+  {
+    "id": 32,
+    "name": "Armenian",
+    "code": "hy",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2020-02-28 12:43:03",
+    "updated_at": "2020-02-28 12:43:03"
+  },
+  {
+    "id": 33,
+    "name": "Azerbaijani",
+    "code": "az",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2020-02-28 12:43:03",
+    "updated_at": "2020-02-28 12:43:03"
+  },
+  {
+    "id": 34,
+    "name": "Georgian",
+    "code": "ka",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2020-02-28 12:43:03",
+    "updated_at": "2020-02-28 12:43:03"
+  },
+  {
+    "id": 35,
+    "name": "Kazakh",
+    "code": "kk",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2020-02-28 12:43:03",
+    "updated_at": "2020-02-28 12:43:03"
+  },
+  {
+    "id": 36,
+    "name": "Kyrgyz",
+    "code": "ky",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2020-02-28 12:43:03",
+    "updated_at": "2020-02-28 12:43:03"
+  },
+  {
+    "id": 37,
+    "name": "Mongolian",
+    "code": "mn",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2020-02-28 12:43:03",
+    "updated_at": "2020-02-28 12:43:03"
+  },
+  {
+    "id": 38,
+    "name": "Nepali",
+    "code": "ne",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2020-02-28 12:43:03",
+    "updated_at": "2020-02-28 12:43:03"
+  },
+  {
+    "id": 39,
+    "name": "Tajik",
+    "code": "tg",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2020-02-28 12:43:03",
+    "updated_at": "2020-02-28 12:43:03"
+  },
+  {
+    "id": 40,
+    "name": "Uzbek",
+    "code": "uz",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2020-02-28 12:43:03",
+    "updated_at": "2020-02-28 12:43:03"
+  },
+  {
+    "id": 41,
+    "name": "Ukrainian",
+    "code": "uk",
+    "country_code": "NULL",
+    "is_active": 1,
+    "is_review_active": 0,
+    "created_at": "2020-02-28 12:43:03",
+    "updated_at": "2020-02-28 12:43:03"
+  }
+]
