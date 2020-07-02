@@ -151,6 +151,7 @@ extension ListingViewController {
 		guard registerModel?.appId == Desk360.appId && registerModel?.deviceId == Desk360.deviceId &&  Desk360Environment(rawValue: registerModel?.environment ?? ".test")  == Desk360.environment else {
 			Stores.ticketsStore.deleteAll()
 			Stores.tokenStore.delete()
+			Stores.registerCacheModel.delete()
 			try? Stores.registerExpiredAt.save(Date().addingTimeInterval(-36 * 3600))
 			requests = []
 //			layoutableView.placeholderView.isHidden = false
@@ -372,7 +373,6 @@ private extension ListingViewController {
 		}
 
 		filterTickets.sorted()
-		layoutableView.emptyView.isHidden = !filterTickets.isEmpty
 
 		self.layoutableView.tableView.reloadData()
 	}
