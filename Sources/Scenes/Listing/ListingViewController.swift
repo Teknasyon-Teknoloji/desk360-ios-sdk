@@ -373,6 +373,7 @@ private extension ListingViewController {
 		}
 
 		filterTickets.sorted()
+//		layoutableView.emptyView.isHidden = !filterTickets.isEmpty
 
 		self.layoutableView.tableView.reloadData()
 	}
