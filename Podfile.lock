@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (4.9.1)
-  - DeviceKit (3.0.0)
+  - DeviceKit (3.2.0)
   - Moya (13.0.1):
     - Moya/Core (= 13.0.1)
   - Moya/Core (13.0.1):
@@ -32,7 +32,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
-  DeviceKit: fc3c2bd361a8d68d8a91eb715e453aede57317e5
+  DeviceKit: d081659419cce07c0b5239dbc9fb39ed7413c7fe
   Moya: f4a4b80ff2f8a4ffc208dfb31cd91636622fee6e
   NVActivityIndicatorView: d24b7ebcf80af5dcd994adb650e2b6c93379270f
   PersistenceKit: 510fe7a29039f2820c5dda21ecc1b9d0d99cbdd5
