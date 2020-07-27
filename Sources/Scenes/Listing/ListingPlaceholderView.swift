@@ -156,7 +156,7 @@ extension ListingPlaceholderView {
 		createRequestButton.setImage(UIImage(), for: .normal)
 
 		let imageIshidden = Config.shared.model?.firstScreen?.buttonIconIsHidden ?? true
-		let buttonShadowIsHidden = Config.shared.model?.firstScreen?.buttonShadowIsHidden ?? true
+		let buttonShadowIsHidden = Config.shared.model?.firstScreen?.buttonShadowIsHidden ?? false
 
 		switch type {
 		case 1:
