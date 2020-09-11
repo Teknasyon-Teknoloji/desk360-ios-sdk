@@ -138,6 +138,15 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		return cell
 	}
 
+    func tableLoadingHeader(show: Bool) {
+        if show {
+            let aiv = UIActivityIndicatorView(style: .gray)
+            aiv.startAnimating()
+            layoutableView.tableView.tableHeaderView = aiv
+        } else {
+            layoutableView.tableView.tableHeaderView = nil
+        }
+    }
 }
 
 // MARK: - ConversationInputViewDelegate
@@ -165,10 +174,10 @@ extension ConversationViewController {
 			networkError()
 			return
 		}
-		
+        tableLoadingHeader(show: true)
 		Desk360.apiProvider.request(.ticketWithId(request.id)) { [weak self] result in
-
 			guard let self = self else { return }
+            self.tableLoadingHeader(show: false)
 			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let error):
@@ -177,8 +186,18 @@ extension ConversationViewController {
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
-				print(error.localizedDescription)
+                var errorcode = 0
+                switch error {
+                case .underlying(let err, let respose):
+                    if err != nil {
+                        errorcode = (err as NSError).code
+                    }
+                default:
+                    break
+                }
+                if errorcode >= 0 {
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                }
 			case .success(let response):
 				guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
 				guard let data = tickets.data else { return }
@@ -229,8 +248,18 @@ extension ConversationViewController {
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
-				print(error.localizedDescription)
+                var errorcode = 0
+                switch error {
+                case .underlying(let err, let respose):
+                    if err != nil {
+                        errorcode = (err as NSError).code
+                    }
+                default:
+                    break
+                }
+                if errorcode >= 0 {
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                }
 			case .success:
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 					self.isAddedMessage = false

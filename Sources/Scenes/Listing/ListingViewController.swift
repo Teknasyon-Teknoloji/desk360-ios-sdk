@@ -302,7 +302,18 @@ private extension ListingViewController {
                     Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
                     return
                 }
-                Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                var errorcode = 0
+                switch error {
+                case .underlying(let err, let respose):
+                    if err != nil {
+                        errorcode = (err as NSError).code
+                    }
+                default:
+                    break
+                }
+                if errorcode >= 0 {
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                }
             case .success(let response):
                 guard let tickets = try? response.map(DataResponse<[Ticket]>.self) else { return }
                 guard let data = tickets.data else { return }
@@ -355,9 +366,18 @@ private extension ListingViewController {
                     Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
                     return
                 }
-                Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
-                print(error.localizedDescription)
-                print("error.localizedDescription")
+                var errorcode = 0
+                switch error {
+                case .underlying(let err, let respose):
+                    if err != nil {
+                        errorcode = (err as NSError).code
+                    }
+                default:
+                    break
+                }
+                if errorcode >= 0 {
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                }
             case .success(let response):
                 self.isConfigFethecOnce = true
                 guard let config = try? response.map(DataResponse<ConfigModel>.self) else { return }
