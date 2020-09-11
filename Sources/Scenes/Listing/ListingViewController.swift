@@ -41,7 +41,8 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
     }
     
     var filterTickets: [Ticket] = []
-    
+    var isConfigFethecOnce: Bool = false
+
     override func loadView() {
         view = ViewType.create()
     }
@@ -168,6 +169,8 @@ extension ListingViewController {
             register()
             return
         }
+        
+        checkNotificationDeeplink()
         
         getAsyncRequest()
     }
@@ -309,7 +312,7 @@ private extension ListingViewController {
                 self.refreshView()
                 self.layoutableView.showPlaceholder(self.requests.isEmpty)
                 self.configureLayoutableView()
-                self.checkNotificationDeeplink()
+                //self.checkNotificationDeeplink()
             }
         }
         
@@ -331,12 +334,16 @@ private extension ListingViewController {
     
     func getConfig(showLoading: Bool) {
         
-        layoutableView.setLoading(showLoading)
+        if isConfigFethecOnce {
+            return
+        }
         
         guard Desk360.isReachable else {
             networkError()
             return
         }
+        
+        layoutableView.setLoading(showLoading)
         
         Desk360.apiProvider.request(.getConfig(language: Desk360.languageCode)) { [weak self] result in
             guard let self = self else { return }
@@ -352,7 +359,7 @@ private extension ListingViewController {
                 print(error.localizedDescription)
                 print("error.localizedDescription")
             case .success(let response):
-                
+                self.isConfigFethecOnce = true
                 guard let config = try? response.map(DataResponse<ConfigModel>.self) else { return }
                 guard let configData = config.data else { return }
                 Config.shared.updateConfig(configData)

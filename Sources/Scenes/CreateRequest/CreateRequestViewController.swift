@@ -28,6 +28,8 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 	var attachmentUrl: URL?
 
+    var newTicket: NewTicket?
+    
 	convenience init(checkLastClass: Bool) {
 		self.init()
 		self.checkLastClass = checkLastClass
@@ -413,8 +415,6 @@ private extension CreateRequestViewController {
 			return
 		}
 
-		cacheTicket()
-
 		let fields = layoutableView.fields
 
 		for field in fields {
@@ -450,16 +450,13 @@ private extension CreateRequestViewController {
 			let pushTokenData = pushTokenString.data(using: String.Encoding.utf8) ?? Data()
 			ticket.append(Moya.MultipartFormData(provider: .data(pushTokenData), name: "push_token"))
 		}
-
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-			self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
-		}
-
+        self.layoutableView.setLoading(true)
 		Desk360.apiProvider.request(.create(ticket: ticket)) { [weak self] result in
 			guard let self = self else { return }
 			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let error):
+                self.cacheTicket()
 				print(error.localizedServerDescription)
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
@@ -467,7 +464,15 @@ private extension CreateRequestViewController {
 					return
 				}
 				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
-			case .success:
+			case .success(let response):
+                guard let tickets = try? response.map(DataResponse<NewTicket>.self) else { return }
+                guard let data = tickets.data else { return }
+                self.newTicket = data
+                self.cacheTicket()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
+                }
+                
 				break
 			}
 		}
@@ -484,7 +489,7 @@ private extension CreateRequestViewController {
 
 		let currentMessage = Message(id: -1, message: message, isAnswer: false, createdAt: dateString)
 
-		let ticket = Ticket(id: -1, name: name, email: email, status: .open, createdAt: Date(), message: message, messages: [currentMessage], attachmentUrl: attachmentUrl, createDateString: dateString)
+        let ticket = Ticket(id: newTicket?.id ?? -1, name: name, email: email, status: .open, createdAt: Date(), message: message, messages: [currentMessage], attachmentUrl: attachmentUrl, createDateString: dateString)
 
 		try? Stores.ticketsStore.save(ticket)
 	}
