@@ -41,6 +41,8 @@ public final class Desk360 {
 
 	public static var messageId: Int?
 
+    static var list: ListingViewController?
+    
 	static var isActive: Bool = false
 
 	static var token: String? = ""
@@ -78,6 +80,11 @@ public final class Desk360 {
 		return version
 	}
 
+    static func fetchTicketList() {
+        guard list != nil else { return }
+        list?.fetchList()
+    }
+    
 	public static var shared: Desk360 {
 		guard let aDesk = desk else {
 			fatalError("Desk360 is not yet initialized, make sure to call Desk360.start(appId:) before using the SDK")

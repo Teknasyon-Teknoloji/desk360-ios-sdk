@@ -49,13 +49,12 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        Desk360.list = self
         self.navigationController?.navigationBar.setColors(background: .white, text: .white)
         layoutableView.placeholderView.createRequestButton.addTarget(self, action: #selector(didTapCreateRequestButton), for: .touchUpInside)
         layoutableView.segmentControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
         
         setLoadingabletConfig()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -73,7 +72,7 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         super.viewDidAppear(animated)
         let count = navigationController?.viewControllers.count ?? 0
         guard count > 1 else { return }
-        navigationController?.viewControllers.removeSubrange(0..<count-1)
+        //navigationController?.viewControllers.removeSubrange(0..<count-1)
     }
     
     override func viewDidLayoutSubviews() {
@@ -250,6 +249,10 @@ extension ListingViewController {
             navigationController?.dismiss(animated: true, completion: nil)
         }
     }
+    
+    func fetchList() {
+        fetchRequests(showLoading: false)
+    }
 }
 
 // MARK: - Networking
@@ -311,8 +314,9 @@ private extension ListingViewController {
                 default:
                     break
                 }
+                if errorcode == 3 {return}
                 if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "getTickets - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
                 }
             case .success(let response):
                 guard let tickets = try? response.map(DataResponse<[Ticket]>.self) else { return }
@@ -375,8 +379,9 @@ private extension ListingViewController {
                 default:
                     break
                 }
+                if errorcode == 3 {return}
                 if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "getConfig - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
                 }
             case .success(let response):
                 self.isConfigFethecOnce = true

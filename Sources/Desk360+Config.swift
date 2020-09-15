@@ -108,6 +108,14 @@ public extension Desk360.Config {
 		static var sendIcon: UIImage = {
 			return Desk360.Config.Images.createImage(resources: "Images/sendLight")
 		}()
+        
+        static var arrowDownIcon: UIImage = {
+            return Desk360.Config.Images.createImage(resources: "Images/arrowDown")
+        }()
+        
+        static var arrowUpIcon: UIImage = {
+            return Desk360.Config.Images.createImage(resources: "Images/arrowUp")
+        }()
 
 	}
 

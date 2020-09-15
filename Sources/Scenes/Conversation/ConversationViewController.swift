@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate {
 
 	var request: Ticket!
 	var message: String = ""
@@ -42,6 +42,9 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	/// This parameter is used to fix to problems created by the custom keyboard
 	var previousLineCount = 0
 	var currentLineCount = 0
+    var refreshIcon = UIImageView()
+    var aiv = UIActivityIndicatorView()
+    var isDragReleased = false
 
 	var safeAreaBottom: CGFloat = {
 		if #available(iOS 11.0, *) {
@@ -94,7 +97,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		configure()
 
 		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
-
+        
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -103,6 +106,10 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		readRequest(request)
 	}
 
+    func refreshAction() {
+        readRequest(request)
+    }
+    
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		layoutableView.conversationInputView.textView.resignFirstResponder()
@@ -138,15 +145,6 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		return cell
 	}
 
-    func tableLoadingHeader(show: Bool) {
-        if show {
-            let aiv = UIActivityIndicatorView(style: .gray)
-            aiv.startAnimating()
-            layoutableView.tableView.tableHeaderView = aiv
-        } else {
-            layoutableView.tableView.tableHeaderView = nil
-        }
-    }
 }
 
 // MARK: - ConversationInputViewDelegate
@@ -163,21 +161,22 @@ extension ConversationViewController: InputViewDelegate {
 
 }
 
+
 // MARK: - Networking
 extension ConversationViewController {
 
 	/// This method use is to get one ticket from the use id
 	/// - Parameter request: this parameter is a ticket object we will use its id and we will use its properties
-	func readRequest(_ request: Ticket) {
+    func readRequest(_ request: Ticket) {
 
 		guard Desk360.isReachable else {
 			networkError()
 			return
 		}
-        tableLoadingHeader(show: true)
+        showPDR()
 		Desk360.apiProvider.request(.ticketWithId(request.id)) { [weak self] result in
 			guard let self = self else { return }
-            self.tableLoadingHeader(show: false)
+            self.hidePDR()
 			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let error):
@@ -195,8 +194,9 @@ extension ConversationViewController {
                 default:
                     break
                 }
+                if errorcode == 3 {return}
                 if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "ticketWithId - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
                 }
 			case .success(let response):
 				guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
@@ -235,7 +235,8 @@ extension ConversationViewController {
 		layoutableView.conversationInputView.resignFirstResponder()
 		self.layoutableView.conversationInputView.reset()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-			self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
+            //guard let date = formatter.date(from: Date()) else { return }
+            self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
 		}
 
 		Desk360.apiProvider.request(.ticketMessages(message, request.id)) { [weak self] result in
@@ -257,15 +258,15 @@ extension ConversationViewController {
                 default:
                     break
                 }
+                if errorcode == 3 {return}
                 if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "ticketMessages - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
                 }
 			case .success:
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 					self.isAddedMessage = false
 					self.showActiveCheckMark()
 				}
-				print("Add ticket new message")
 			}
 		}
 	}
@@ -398,8 +399,102 @@ extension ConversationViewController {
 		self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
 		self.navigationController?.navigationBar.shadowImage = UIImage()
 		layoutableView.configure()
+        
+        aiv = UIActivityIndicatorView(style: .gray)
+        aiv.color = Colors.pdrColor
+        aiv.frame.size.height = 20
+        refreshIcon = UIImageView(image: Desk360.Config.Images.arrowDownIcon)
+        refreshIcon.tintColor = Colors.pdrColor
+        let view = UIView(frame: CGRect(x: (UIScreen.main.bounds.size.width / 2)-17, y: 0, width: 34, height: 20))
+        view.backgroundColor = layoutableView.tableView.backgroundColor
+        refreshIcon.frame = CGRect(x: (view.frame.size.width / 2)-7, y: 0, width: 14, height: 19)
+        refreshIcon.backgroundColor = layoutableView.tableView.backgroundColor
+        refreshIcon.isHidden = true
+        aiv.hidesWhenStopped = false
+        view.addSubview(refreshIcon)
+        aiv.addSubview(view)
+        layoutableView.tableView.tableHeaderView = aiv
+        
 	}
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if aiv.isAnimating == false {
+            hidePDR()
+        }
+    }
 
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if aiv.isAnimating == false {
+            hidePDR()
+        }
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        isDragReleased = false
+        refreshIcon.isHidden = false
+        if aiv.isAnimating {
+            return
+        }
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        isDragReleased = true
+        if aiv.isAnimating == false {
+            hidePDR()
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if aiv.isAnimating {
+            return
+        }
+        if scrollView.contentOffset.y >= 0 {
+            hidePDR()
+            return
+        }
+        
+        if scrollView.contentOffset.y < -23 { //arrow starting to show down direction
+            if isDragReleased {
+                return
+            }
+            
+            refreshIcon.isHidden = false
+            self.refreshIcon.superview!.isHidden = false
+            aiv.hidesWhenStopped = false
+            self.aiv.stopAnimating()
+        }
+        if scrollView.contentOffset.y < -65 { //arrow will turn up
+            var val = 0.0
+
+            UIView.animate(withDuration: 0.1, animations: {
+                self.aiv.startAnimating()
+                self.refreshIcon.transform = CGAffineTransform(rotationAngle: .pi)
+            
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.refreshIcon.isHidden = true
+                    self.refreshIcon.superview!.isHidden = true
+                    self.aiv.hidesWhenStopped = false
+                    self.refreshAction()
+                }
+            })
+            return
+        }
+    }
+    
+    func hidePDR() {
+        refreshIcon.isHidden = true
+        self.refreshIcon.superview!.isHidden = true
+        aiv.hidesWhenStopped = true
+        self.aiv.stopAnimating()
+        self.refreshIcon.transform = CGAffineTransform(rotationAngle: 0)
+    }
+    
+    func showPDR() {
+        refreshIcon.isHidden = true
+        self.refreshIcon.superview!.isHidden = true
+        aiv.hidesWhenStopped = false
+        self.aiv.startAnimating()
+    }
 }
 
 // MARK: - KeyboardObserving

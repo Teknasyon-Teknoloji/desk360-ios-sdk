@@ -204,5 +204,8 @@ struct Colors {
 	static var ticketSuccessScreenButttonBorderColor: UIColor {
 		return Config.shared.model?.successScreen?.butttonBorderColor ?? UIColor.init(hex: "FFFFFF")!
 	}
+    static var pdrColor: UIColor? {
+        return UIColor(hex: "#a3d0f5")
+    }
 
 }

@@ -146,9 +146,18 @@ internal extension ReceiverMessageTableViewCell {
 		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.chatReceiverFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.chatReceiverFontWeight ?? 400))
 		dateLabel.textColor = Colors.ticketDetailChatChatReceiverDateColor
 		roundCorner()
-		if let dateString = request.createdAt {
-			dateLabel.text = dateString
-		}
+        
+        if let dateString = request.createdAt {
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            if let date = formatter.date(from: dateString) {
+                let formattedDate = DateFormat.raadable.dateFormatter.string(from: date)
+                dateLabel.text = formattedDate
+            } else {
+                dateLabel.text = dateString
+            }
+        }
 
 		if stackView.arrangedSubviews.count > 1 {
 			stackView.removeArrangedSubview(stackView.arrangedSubviews[1])

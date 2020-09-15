@@ -96,9 +96,16 @@ internal extension SenderMessageTableViewCell {
 
 		roundCorner()
 
-		if let dateString = request.createdAt {
-			dateLabel.text = dateString
-		}
+        if let dateString = request.createdAt {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            if let date = formatter.date(from: dateString) {
+                let formattedDate = DateFormat.raadable.dateFormatter.string(from: date)
+                dateLabel.text = formattedDate
+            } else {
+                dateLabel.text = dateString
+            }
+        }
 	}
 
 	func roundCorner() {

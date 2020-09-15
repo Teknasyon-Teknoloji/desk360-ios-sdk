@@ -22,6 +22,7 @@ public struct Message {
 	/// Date string when the message was created.
 	public var createdAt: String?
 
+    //var createDateString: String?
 }
 
 extension Message: Codable {
@@ -45,6 +46,13 @@ extension Message: Codable {
 			message = try container.decode(String.self, forKey: .message)
 			isAnswer = try container.decode(Bool.self, forKey: .is_answer)
 			createdAt = (try? container.decodeIfPresent(String.self, forKey: .created)) ?? nil
+            
+//            createDateString = try container.decode(String.self, forKey: .created)
+//
+//            let formatter = DateFormatter()
+//            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+//            createdAt = formatter.date(from: createDateString ?? "") ?? Date()
+//
 		} catch let error as DecodingError {
 			print(error)
 			throw error
@@ -63,6 +71,7 @@ extension Message: Codable {
 			try container.encode(message, forKey: .message)
 			try container.encode(isAnswer, forKey: .is_answer)
 			try container.encodeIfPresent(createdAt, forKey: .created)
+            //try container.encode(createDateString, forKey: .created)
 		} catch let error as EncodingError {
 			print(error)
 			throw error

@@ -45,8 +45,9 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 		guard let check = checkLastClass, check else { return }
 		let count = navigationController?.viewControllers.count ?? 0
-		navigationController?.viewControllers.removeSubrange(count-2..<count-1)
-
+        if count >= 2 {
+            navigationController?.viewControllers.remove(at: 1)
+        }
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -372,8 +373,9 @@ private extension CreateRequestViewController {
                 default:
                     break
                 }
+                if errorcode == 3 {return}
                 if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "ticketTypeList - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
                 }
 			case .success(let response):
 				guard let ticketTypes = try? response.map(DataResponse<[TicketType]>.self) else { return }
@@ -482,8 +484,9 @@ private extension CreateRequestViewController {
                 default:
                     break
                 }
+                if errorcode == 3 {return}
                 if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "create - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
                 }
 			case .success(let response):
                 guard let tickets = try? response.map(DataResponse<NewTicket>.self) else { return }

@@ -27,8 +27,8 @@ final class CreateRequestPreviewController: UIViewController, Layouting, UIGestu
 		layoutableView.createRequestButton.addTarget(self, action: #selector(didTapSendRequestButton), for: .touchUpInside)
 
 		guard let check = checkLastClass, check else { return }
-		let count = navigationController?.viewControllers.count ?? 0
-		navigationController?.viewControllers.removeSubrange(count-2..<count-1)
+		//let count = navigationController?.viewControllers.count ?? 0
+		//navigationController?.viewControllers.removeSubrange(count-2..<count-1)
 
 //		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
 
