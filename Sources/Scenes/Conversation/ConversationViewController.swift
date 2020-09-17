@@ -185,19 +185,7 @@ extension ConversationViewController {
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-                var errorcode = 0
-                switch error {
-                case .underlying(let err, let respose):
-                    if err != nil {
-                        errorcode = (err as NSError).code
-                    }
-                default:
-                    break
-                }
-                if errorcode == 3 {return}
-                if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "ticketWithId - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
-                }
+
 			case .success(let response):
 				guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
 				guard let data = tickets.data else { return }
@@ -249,19 +237,6 @@ extension ConversationViewController {
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-                var errorcode = 0
-                switch error {
-                case .underlying(let err, let respose):
-                    if err != nil {
-                        errorcode = (err as NSError).code
-                    }
-                default:
-                    break
-                }
-                if errorcode == 3 {return}
-                if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "ticketMessages - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
-                }
 			case .success:
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 					self.isAddedMessage = false

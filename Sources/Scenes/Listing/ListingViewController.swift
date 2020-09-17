@@ -219,6 +219,12 @@ extension ListingViewController {
     
     func checkNotificationDeeplink() {
         guard let id = Desk360.messageId else { return }
+        if UIApplication.shared.applicationState != .active {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.checkNotificationDeeplink()
+            }
+            return
+        }
         Desk360.messageId = nil
         for request in requests where request.id == id {
             let viewController = ConversationViewController(request: request)
@@ -281,7 +287,6 @@ private extension ListingViewController {
                 
             }
         }
-        
     }
     
     func fetchRequests(showLoading: Bool) {
@@ -304,19 +309,6 @@ private extension ListingViewController {
                     Desk360.isRegister = false
                     Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
                     return
-                }
-                var errorcode = 0
-                switch error {
-                case .underlying(let err, let respose):
-                    if err != nil {
-                        errorcode = (err as NSError).code
-                    }
-                default:
-                    break
-                }
-                if errorcode == 3 {return}
-                if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "getTickets - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
                 }
             case .success(let response):
                 guard let tickets = try? response.map(DataResponse<[Ticket]>.self) else { return }
@@ -369,19 +361,6 @@ private extension ListingViewController {
                     Desk360.isRegister = false
                     Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
                     return
-                }
-                var errorcode = 0
-                switch error {
-                case .underlying(let err, let respose):
-                    if err != nil {
-                        errorcode = (err as NSError).code
-                    }
-                default:
-                    break
-                }
-                if errorcode == 3 {return}
-                if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "getConfig - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
                 }
             case .success(let response):
                 self.isConfigFethecOnce = true

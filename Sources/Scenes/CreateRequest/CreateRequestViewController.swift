@@ -364,19 +364,6 @@ private extension CreateRequestViewController {
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-                var errorcode = 0
-                switch error {
-                case .underlying(let err, let respose):
-                    if err != nil {
-                        errorcode = (err as NSError).code
-                    }
-                default:
-                    break
-                }
-                if errorcode == 3 {return}
-                if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "ticketTypeList - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
-                }
 			case .success(let response):
 				guard let ticketTypes = try? response.map(DataResponse<[TicketType]>.self) else { return }
 				guard let ticketsTypes = ticketTypes.data else { return }
@@ -475,19 +462,6 @@ private extension CreateRequestViewController {
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-                var errorcode = 0
-                switch error {
-                case .underlying(let err, let respose):
-                    if err != nil {
-                        errorcode = (err as NSError).code
-                    }
-                default:
-                    break
-                }
-                if errorcode == 3 {return}
-                if errorcode >= 0 {
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "create - Moya error Code: \(error.errorCode)\n\n NsError Code: \(errorcode)", dissmis: true)
-                }
 			case .success(let response):
                 guard let tickets = try? response.map(DataResponse<NewTicket>.self) else { return }
                 guard let data = tickets.data else { return }
