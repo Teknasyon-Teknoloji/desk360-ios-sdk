@@ -13,6 +13,9 @@ public struct Attachment {
     var videos: [AttachObject]?
     var files: [AttachObject]?
     var others: [AttachObject]?
+}
+
+extension Attachment: Codable {
     
     private enum CodingKeys: String, CodingKey {
         case images
@@ -56,56 +59,58 @@ public struct Attachment {
             throw error
         }
     }
+}
 
-    public struct AttachObject: Codable {
+public struct AttachObject {
 
-        var aws: Bool
-        var url: String
-        var name: String
-        var type: String
-        
-        private enum CodingKeys: String, CodingKey {
-            case aws
-            case url
-            case name
-            case type
+    var aws: Bool
+    var url: String
+    var name: String
+    var type: String
+}
+
+extension AttachObject: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case aws
+        case url
+        case name
+        case type
+    }
+
+    /// Creates a new instance by decoding from the given decoder.
+    ///
+    /// - Parameter decoder: The decoder to read data from.
+    /// - Throws: Decoding error.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        do {
+            aws = try container.decode(Bool.self, forKey: .aws)
+            url = try container.decode(String.self, forKey: .url)
+            name = try container.decode(String.self, forKey: .name)
+            type = try container.decode(String.self, forKey: .type)
+        } catch let error as DecodingError {
+            print(error)
+            throw error
         }
+    }
 
-        /// Creates a new instance by decoding from the given decoder.
-        ///
-        /// - Parameter decoder: The decoder to read data from.
-        /// - Throws: Decoding error.
-        public init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
+    /// Encodes this value into the given encoder.
+    ///
+    /// - Parameter encoder: The encoder to write data to.
+    /// - Throws: Encoding error.
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
 
-            do {
-                aws = try container.decode(Bool.self, forKey: .aws)
-                url = try container.decode(String.self, forKey: .url)
-                name = try container.decode(String.self, forKey: .name)
-                type = try container.decode(String.self, forKey: .type)
-            } catch let error as DecodingError {
-                print(error)
-                throw error
-            }
-        }
+        do {
+            try container.encode(aws, forKey: .aws)
+            try container.encode(url, forKey: .url)
+            try container.encode(name, forKey: .name)
+            try container.encode(type, forKey: .type)
 
-        /// Encodes this value into the given encoder.
-        ///
-        /// - Parameter encoder: The encoder to write data to.
-        /// - Throws: Encoding error.
-        public func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-
-            do {
-                try container.encode(aws, forKey: .aws)
-                try container.encode(url, forKey: .url)
-                try container.encode(name, forKey: .name)
-                try container.encode(type, forKey: .type)
-
-            } catch let error as EncodingError {
-                print(error)
-                throw error
-            }
+        } catch let error as EncodingError {
+            print(error)
+            throw error
         }
     }
 }
