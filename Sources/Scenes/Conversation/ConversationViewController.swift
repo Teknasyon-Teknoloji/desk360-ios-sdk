@@ -80,7 +80,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-
+        Desk360.conVC = self
 		setMessages()
 		previousLineCount = 0
 		currentLineCount = 0
@@ -112,6 +112,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
     
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
+        Desk360.conVC = nil
 		layoutableView.conversationInputView.textView.resignFirstResponder()
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
