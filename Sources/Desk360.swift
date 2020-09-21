@@ -43,6 +43,8 @@ public final class Desk360 {
 
     static var list: ListingViewController?
     
+    static var conVC: ConversationViewController?
+    
 	static var isActive: Bool = false
 
 	static var token: String? = ""
@@ -114,14 +116,13 @@ public final class Desk360 {
 			Desk360.applaunchChecker = false
 			return
 		}
-		if #available(iOS 13.0, *), Desk360.didTapNotification {
-			return
-		}
-		guard Desk360.messageId == nil else { return }
+		if #available(iOS 13.0, *), Desk360.didTapNotification { return }
+        Desk360.didTapNotification = false
+		if Desk360.messageId != nil { Desk360.messageId = nil }
 		guard let data = userInfo?["data"] as? [String: AnyObject] else { return }
 		guard let id = userInfoHandle(data) else { return }
 
-		guard let topViewController = topViewController else { return }
+		guard let topVC = topViewController else { return }
 		guard Desk360.isActive == false else {
 			Desk360.messageId = id
 			if let currentController = topViewController as? UINavigationController {
@@ -130,7 +131,7 @@ public final class Desk360 {
 			return
 		}
 		Desk360.messageId = id
-		showWithPushDeeplink(on: topViewController, animated: true)
+		showWithPushDeeplink(on: topVC, animated: true)
 	}
 
 	static func userInfoHandle(_ data: [String: AnyObject]) -> Int? {
@@ -144,21 +145,32 @@ public final class Desk360 {
 
 	static func checkIsActiveDesk360(_ navigationController: UINavigationController) {
 
-		guard navigationController.children.count <= 1 else {
-			navigationController.popToRootViewController(animated: false)
-			return
-		}
-
-		guard let listingViewController = navigationController.children.first as? ListingViewController else { return }
-		let tickets = listingViewController.requests
-		let id = Desk360.messageId
-		Desk360.messageId = nil
-		for ticket in tickets where ticket.id == id {
-			let viewController = ConversationViewController(request: ticket)
-			viewController.hidesBottomBarWhenPushed = true
-			navigationController.pushViewController(viewController, animated: false)
-		}
-
+        guard let listingViewController = navigationController.children.first as? ListingViewController else { return }
+        let tickets = listingViewController.requests
+        let id = Desk360.messageId
+        Desk360.messageId = nil
+        Desk360.didTapNotification = false
+        var ticket: Ticket?
+        for tic in tickets where tic.id == id {
+            ticket = tic
+        }
+        guard ticket != nil else { return }
+        if let vc = Desk360.conVC {
+            vc.readRequest(ticket!)
+            return
+        }
+        if let convc = navigationController.viewControllers.last as? ConversationViewController {
+            convc.readRequest(ticket!)
+            return
+        } else {
+            guard navigationController.children.count <= 1 else {
+                navigationController.popToRootViewController(animated: false)
+                return
+            }
+            let viewController = ConversationViewController(request: ticket!)
+            viewController.hidesBottomBarWhenPushed = true
+            navigationController.pushViewController(viewController, animated: false)
+        }
 	}
 
 	public static func showWithPushDeeplink(on viewController: UIViewController, animated: Bool = false) {

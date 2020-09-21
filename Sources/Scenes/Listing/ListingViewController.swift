@@ -226,6 +226,7 @@ extension ListingViewController {
             return
         }
         Desk360.messageId = nil
+        Desk360.didTapNotification = false
         for request in requests where request.id == id {
             let viewController = ConversationViewController(request: request)
             viewController.hidesBottomBarWhenPushed = true
@@ -244,6 +245,8 @@ extension ListingViewController {
     
     @objc func didTapCloseButton() {
         Desk360.isActive = false
+        Desk360.conVC = nil
+        Desk360.list = nil
         dismiss(animated: true, completion: nil)
     }
     
