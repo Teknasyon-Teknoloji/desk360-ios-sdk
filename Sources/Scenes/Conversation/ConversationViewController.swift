@@ -191,34 +191,29 @@ extension ConversationViewController {
 				}
 
 			case .success(let response):
-				guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
-				guard let data = tickets.data else { return }
-				self.request = data
+                guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
+                guard let data = tickets.data else { return }
+                self.request = data
+                let storedTickets = Stores.ticketWithMessageStore.allObjects() // fetch previously saved tickets from the local just before save new tickets
+                try? Stores.ticketWithMessageStore.save(self.request)// save new tickets to the local.
 
 				if let url = data.attachmentUrl {
 					self.attachment = url
 				}
 
-                guard let msg = self.request.messages.last else {
-                    self.layoutableView.tableView.reloadData()
-                    self.scrollToBottom(animated: false)
-                    try? Stores.ticketWithMessageStore.save(self.request)
-                    return
-                }
-                let storedTickets = Stores.ticketWithMessageStore.allObjects()
-                let currentTicketWithMessage = storedTickets.filter({ $0.id == self.request.id })
-                if currentTicketWithMessage.count > 0 {
-                    if let mesaj = currentTicketWithMessage[0].messages.last {
-                        if msg.id != mesaj.id {
-                            self.layoutableView.tableView.reloadData()
-                            self.scrollToBottom(animated: false)
+                if let msg = self.request.messages.last {
+                    let currentTicketWithMessage = storedTickets.filter({ $0.id == self.request.id })
+                    if currentTicketWithMessage.count > 0 {
+                        if let mesaj = currentTicketWithMessage[0].messages.last {
+                            if msg.id == mesaj.id {
+                                return //don't reload table to avoid performance issues
+                            }
                         }
                     }
-                } else {
-                    self.layoutableView.tableView.reloadData()
-                    self.scrollToBottom(animated: false)
                 }
-                try? Stores.ticketWithMessageStore.save(self.request)
+                
+                self.layoutableView.tableView.reloadData()
+                self.scrollToBottom(animated: false)
 			}
 		}
 	}
