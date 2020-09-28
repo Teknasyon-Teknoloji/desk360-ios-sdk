@@ -165,31 +165,9 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		imagePicker.allowsEditing = false
 		imagePicker.mediaTypes = ["public.image", "public.movie"]
 		imagePicker.sourceType = .photoLibrary
-
-		PHPhotoLibrary.requestAuthorization { [weak self] result in
-			if result == .authorized {
-				DispatchQueue.main.async {
-					self?.present(imagePicker, animated: true) {
-						self?.isConfigure = true
-					}
-				}
-			} else {
-				DispatchQueue.main.async {
-					self?.showAlert()
-				}
-			}
-		}
-	}
-
-	func showAlert() {
-
-		let alert = UIAlertController(title: "Desk360", message: Config.shared.model?.generalSettings?.galleryPermissionErrorMessage, preferredStyle: .alert)
-
-		let okayAction = UIAlertAction(title: Config.shared.model?.generalSettings?.galleryPermissionErrorButtonText ?? "ok.button".localize(), style: .default) { _ in }
-		alert.addAction(okayAction)
-
-		present(alert, animated: true, completion: nil)
-
+        present(imagePicker, animated: true) {
+            self.isConfigure = true
+        }
 	}
 
 	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {

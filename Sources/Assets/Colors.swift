@@ -207,5 +207,11 @@ struct Colors {
     static var pdrColor: UIColor? {
         return UIColor(hex: "#a3d0f5")
     }
+    static var receiverFileNameColor: UIColor? {
+        return UIColor(hex: "#525a7e")
+    }
+    static var senderFileNameColor: UIColor? {
+        return UIColor(hex: "#ffffff")
+    }
 
 }

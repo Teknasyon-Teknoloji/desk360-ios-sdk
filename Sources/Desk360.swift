@@ -112,6 +112,10 @@ public final class Desk360 {
 
 	public static func applicationUserInfoChecker(_ userInfo: [AnyHashable: Any]?) {
 		print("userInfo:", userInfo)
+        if Desk360.conVC != nil {
+            Desk360.conVC?.refreshAction()
+            return
+        }
 		guard !Desk360.applaunchChecker else {
 			Desk360.applaunchChecker = false
 			return

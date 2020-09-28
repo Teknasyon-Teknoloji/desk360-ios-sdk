@@ -63,7 +63,6 @@ extension Attachment: Codable {
 
 public struct AttachObject {
 
-    var aws: Bool
     var url: String
     var name: String
     var type: String
@@ -71,7 +70,6 @@ public struct AttachObject {
 
 extension AttachObject: Codable {
     private enum CodingKeys: String, CodingKey {
-        case aws
         case url
         case name
         case type
@@ -85,7 +83,6 @@ extension AttachObject: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         do {
-            aws = try container.decode(Bool.self, forKey: .aws)
             url = try container.decode(String.self, forKey: .url)
             name = try container.decode(String.self, forKey: .name)
             type = try container.decode(String.self, forKey: .type)
@@ -103,7 +100,6 @@ extension AttachObject: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         do {
-            try container.encode(aws, forKey: .aws)
             try container.encode(url, forKey: .url)
             try container.encode(name, forKey: .name)
             try container.encode(type, forKey: .type)

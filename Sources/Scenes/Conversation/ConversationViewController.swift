@@ -98,6 +98,9 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
         
+        layoutableView.conversationInputView.textView.isUserInteractionEnabled = false
+        layoutableView.conversationInputView.textView.isEditable = false
+        layoutableView.conversationInputView.textView.isSelectable = false
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -137,12 +140,12 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 		if message.isAnswer {
 			let cell = tableView.dequeueReusableCell(SenderMessageTableViewCell.self)
-			cell.configure(for: request.messages[indexPath.row])
+            cell.configure(for: request.messages[indexPath.row], table: tableView)
 			return cell
 		}
 
 		let cell = tableView.dequeueReusableCell(ReceiverMessageTableViewCell.self)
-		cell.configure(for: request.messages[indexPath.row], indexPath, attachment)
+        cell.configure(for: request.messages[indexPath.row], indexPath, attachment)
 		return cell
 	}
 
@@ -191,15 +194,32 @@ extension ConversationViewController {
 				guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
 				guard let data = tickets.data else { return }
 				self.request = data
-				try? Stores.ticketWithMessageStore.save(self.request)
+
 				if let url = data.attachmentUrl {
 					self.attachment = url
 				}
 
-				self.layoutableView.tableView.reloadData()
-				self.scrollToBottom(animated: false)
+                guard let msg = self.request.messages.last else {
+                    self.layoutableView.tableView.reloadData()
+                    self.scrollToBottom(animated: false)
+                    try? Stores.ticketWithMessageStore.save(self.request)
+                    return
+                }
+                let storedTickets = Stores.ticketWithMessageStore.allObjects()
+                let currentTicketWithMessage = storedTickets.filter({ $0.id == self.request.id })
+                if currentTicketWithMessage.count > 0 {
+                    if let mesaj = currentTicketWithMessage[0].messages.last {
+                        if msg.id != mesaj.id {
+                            self.layoutableView.tableView.reloadData()
+                            self.scrollToBottom(animated: false)
+                        }
+                    }
+                } else {
+                    self.layoutableView.tableView.reloadData()
+                    self.scrollToBottom(animated: false)
+                }
+                try? Stores.ticketWithMessageStore.save(self.request)
 			}
-
 		}
 	}
 
@@ -380,7 +400,6 @@ extension ConversationViewController {
         aiv.color = Colors.pdrColor
         aiv.frame.size.height = 20
         refreshIcon = UIImageView(image: Desk360.Config.Images.arrowDownIcon)
-        refreshIcon.tintColor = Colors.pdrColor
         let view = UIView(frame: CGRect(x: (UIScreen.main.bounds.size.width / 2)-17, y: 0, width: 34, height: 20))
         view.backgroundColor = layoutableView.tableView.backgroundColor
         refreshIcon.frame = CGRect(x: (view.frame.size.width / 2)-7, y: 0, width: 14, height: 19)
@@ -481,7 +500,9 @@ extension ConversationViewController: KeyboardObserving {
 	func keyboardWillHide(_ notification: KeyboardNotification?) {
 
 		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
-		scrollToBottom(animated: true)
+        if Desk360.conVC != nil {
+            scrollToBottom(animated: true)
+        }
 
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
@@ -502,7 +523,9 @@ extension ConversationViewController: KeyboardObserving {
 		}
 
 		layoutableView.remakeTableViewConstraint(bottomInset: keyboardEndFrame.size.height - safeArea)
-		scrollToBottom(animated: true)
+        if Desk360.conVC != nil {
+            scrollToBottom(animated: true)
+        }
 	}
 	func keyboardDidChangeFrame(_ notification: KeyboardNotification?) {}
 
