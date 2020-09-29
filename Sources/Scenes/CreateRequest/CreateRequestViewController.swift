@@ -466,7 +466,7 @@ private extension CreateRequestViewController {
 		let currentMessage = Message(id: -1, message: message, isAnswer: false, createdAt: dateString)
 
         let ticket = Ticket(id: newTicket?.id ?? -1, name: name, email: email, status: .open, createdAt: Date(), message: message, messages: [currentMessage], attachmentUrl: attachmentUrl, createDateString: dateString)
-
+        Desk360.list?.requests.append(ticket)
 		try? Stores.ticketsStore.save(ticket)
 	}
 

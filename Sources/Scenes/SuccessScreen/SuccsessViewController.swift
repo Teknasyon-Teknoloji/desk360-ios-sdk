@@ -23,7 +23,7 @@ final class SuccsessViewController: UIViewController, Layouting, UIGestureRecogn
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
+        Desk360.thanksVC = self
 		layoutableView.showListButton.addTarget(self, action: #selector(didTapSendRequestButton), for: .touchUpInside)
 
 		guard let check = checkLastClass, check else { return }
@@ -32,6 +32,11 @@ final class SuccsessViewController: UIViewController, Layouting, UIGestureRecogn
 
 	}
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        Desk360.thanksVC = nil
+    }
+    
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
@@ -63,6 +68,7 @@ final class SuccsessViewController: UIViewController, Layouting, UIGestureRecogn
 
 	@objc
 	func didTapBackButton() {
+        Desk360.thanksVC = nil
 		self.dismiss(animated: true, completion: nil)
 	}
 
@@ -71,8 +77,8 @@ final class SuccsessViewController: UIViewController, Layouting, UIGestureRecogn
 extension SuccsessViewController {
 
 	@objc func didTapSendRequestButton() {
-		//navigationController?.pushViewController(ListingViewController(), animated: true)
-        navigationController?.popToRootViewController(animated: true)
+        Desk360.thanksVC = nil
+        self.navigationController?.popToRootViewController(animated: true)
         Desk360.fetchTicketList()
 	}
 

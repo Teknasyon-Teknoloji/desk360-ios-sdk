@@ -45,6 +45,8 @@ public final class Desk360 {
     
     static var conVC: ConversationViewController?
     
+    static var thanksVC: SuccsessViewController?
+    
 	static var isActive: Bool = false
 
 	static var token: String? = ""
@@ -110,8 +112,19 @@ public final class Desk360 {
 		Desk360.messageId = id
     }
 
+    public static func willNotificationPresent() {
+        if Desk360.conVC != nil {
+            Desk360.conVC?.refreshAction()
+            return
+        }
+    }
+    
 	public static func applicationUserInfoChecker(_ userInfo: [AnyHashable: Any]?) {
-		print("userInfo:", userInfo)
+        
+        if Desk360.thanksVC != nil {
+            Desk360.thanksVC?.didTapSendRequestButton()
+        }
+        
         if Desk360.conVC != nil {
             Desk360.conVC?.refreshAction()
             return
