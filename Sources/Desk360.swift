@@ -126,8 +126,10 @@ public final class Desk360 {
         }
         
         if Desk360.conVC != nil {
-            Desk360.conVC?.refreshAction()
-            return
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                Desk360.conVC?.refreshAction()
+                return
+            }
         }
 		guard !Desk360.applaunchChecker else {
 			Desk360.applaunchChecker = false
