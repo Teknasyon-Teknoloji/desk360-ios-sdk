@@ -140,7 +140,12 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 		if message.isAnswer {
 			let cell = tableView.dequeueReusableCell(SenderMessageTableViewCell.self)
-            cell.clearCell()
+            if message.attachments?.images?.count == 0 &&
+            message.attachments?.videos?.count == 0 &&
+            message.attachments?.files?.count == 0 &&
+            message.attachments?.others?.count == 0 {
+                cell.clearCell()
+            }
             cell.configure(for: request.messages[indexPath.row], table: tableView)
 			return cell
 		}
