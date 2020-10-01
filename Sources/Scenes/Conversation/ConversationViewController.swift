@@ -290,9 +290,17 @@ private extension ConversationViewController {
 		guard row >= 0 else { return }
 
 		let lastIndexPath = IndexPath(row: row, section: 0)
+        if Desk360.conVC == nil { return }
 		DispatchQueue.main.async {
 			self.layoutableView.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: animated)
 		}
+        if let msg = self.request.messages.last {
+            if msg.isAnswer == false {
+                Desk360.conVC!.layoutableView.conversationInputView.textView.isUserInteractionEnabled = true
+                Desk360.conVC!.layoutableView.conversationInputView.textView.isEditable = true
+                Desk360.conVC!.layoutableView.conversationInputView.textView.isSelectable = true
+            }
+        }
 	}
 
 	func showActiveCheckMark() {
