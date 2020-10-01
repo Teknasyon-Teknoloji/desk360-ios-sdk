@@ -129,6 +129,16 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 		roundCorner()
 
 	}
+    
+    func clearCell() {
+        videoView.isHidden = true
+        previewImageView.isHidden = true
+        previewVideoView.isHidden = true
+        previewPdfView.isHidden = true
+        previewOtherFileView.isHidden = true
+        guard #available(iOS 11.0, *) else { return }
+        pdfView.isHidden = true
+    }
 }
 
 // MARK: - Configure
