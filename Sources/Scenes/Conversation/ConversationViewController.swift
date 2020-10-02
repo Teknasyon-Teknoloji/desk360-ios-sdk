@@ -97,10 +97,6 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		configure()
 
 		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
-        
-        layoutableView.conversationInputView.textView.isUserInteractionEnabled = false
-        layoutableView.conversationInputView.textView.isEditable = false
-        layoutableView.conversationInputView.textView.isSelectable = false
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -300,13 +296,6 @@ private extension ConversationViewController {
 		DispatchQueue.main.async {
 			self.layoutableView.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: animated)
 		}
-        if let msg = self.request.messages.last {
-            if msg.isAnswer == false {
-                Desk360.conVC!.layoutableView.conversationInputView.textView.isUserInteractionEnabled = true
-                Desk360.conVC!.layoutableView.conversationInputView.textView.isEditable = true
-                Desk360.conVC!.layoutableView.conversationInputView.textView.isSelectable = true
-            }
-        }
 	}
 
 	func showActiveCheckMark() {
