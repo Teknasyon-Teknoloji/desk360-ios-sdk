@@ -46,8 +46,8 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
         return view
     }()
     
-    lazy var videoView: VideoView = {
-        return VideoView()
+    lazy var videoView: PlayerView = {
+        return PlayerView()
     }()
 
     lazy var cellImageView: UIImageView = {
@@ -80,6 +80,8 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
         let view = UIView()
         return view
     }()
+    
+    var fileInfoView: UIView?
 
     @available(iOS 11.0, *)
     lazy var pdfView: PDFView = {
@@ -109,20 +111,18 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
     }
 
     func setupLayout() {
-        containerView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().inset(preferredSpacing / 2)
-            make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
+        self.containerView.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview().inset(self.preferredSpacing / 2)
+            make.width.equalTo(UIScreen.main.bounds.size.minDimension - (self.preferredSpacing * 2))
         }
-        stackView.snp.makeConstraints { $0.edges.equalToSuperview().inset(preferredSpacing / 2) }
-
-        dateLabel.snp.makeConstraints { make in
-            make.leading.equalTo(containerView.snp.leading).offset(preferredSpacing * 0.5)
-            make.top.equalTo(containerView.snp.bottom).offset(preferredSpacing * 0.25)
-            make.bottom.equalToSuperview().inset(preferredSpacing * 0.25)
-            make.height.equalTo(preferredSpacing)
+        self.stackView.snp.makeConstraints { $0.edges.equalToSuperview().inset(self.preferredSpacing / 2) }
+        self.dateLabel.snp.makeConstraints { make in
+            make.leading.equalTo(self.containerView.snp.leading).offset(self.preferredSpacing * 0.5)
+            make.top.equalTo(self.containerView.snp.bottom).offset(self.preferredSpacing * 0.25)
+            make.bottom.equalToSuperview().inset(self.preferredSpacing * 0.25)
+            make.height.equalTo(self.preferredSpacing)
         }
     }
-
     override func layoutSubviews() {
         super.layoutSubviews()
 
@@ -131,6 +131,8 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
     }
     
     func clearCell() {
+        fileInfoView?.removeFromSuperview()
+        fileInfoView = nil
         videoView.isHidden = true
         previewImageView.isHidden = true
         previewVideoView.isHidden = true
@@ -144,7 +146,17 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
 // MARK: - Configure
 internal extension SenderMessageTableViewCell {
 
-    func configure(for request: Message, table: UITableView) {
+    func killBackgroundThread() {
+        if Desk360.conVC == nil {
+            self.workItem?.cancel()
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.killBackgroundThread()
+            }
+        }
+    }
+
+    func configure(for request: Message, table: UITableView, hasAttach: Bool = false) {
         if Desk360.conVC == nil { return }
         self.table = table
         containerView.backgroundColor = Colors.ticketDetailChatSenderBackgroundColor
@@ -152,8 +164,6 @@ internal extension SenderMessageTableViewCell {
         messageTextView.textColor = Colors.ticketDetailChatSenderTextColor
         messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.chatSenderFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.chatSenderFontWeight ?? 400))
         dateLabel.textColor = Colors.ticketDetailChatSenderDateColor
-
-        roundCorner()
 
         if let dateString = request.createdAt {
             let formatter = DateFormatter()
@@ -165,9 +175,8 @@ internal extension SenderMessageTableViewCell {
                 dateLabel.text = dateString
             }
         }
-        
-        self.layoutIfNeeded()
-        self.setNeedsLayout()
+
+        if hasAttach == false { return }
 
         if let images = request.attachments?.images {
             let val = images.filter({$0 != nil })
@@ -229,9 +238,11 @@ internal extension SenderMessageTableViewCell {
                 }
             }
         }
+
     }
 
     func checkFile(_ url: URL, fileName: String) {
+
         if Desk360.conVC == nil { return }
         guard let path = url.pathComponents.last else { return }
         let words = path.split(separator: ".")
@@ -249,18 +260,20 @@ internal extension SenderMessageTableViewCell {
     }
     
     func addVideoView(_ url: URL, fileExt: String, fileName: String) {
+
         if Desk360.conVC == nil { return }
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
-        self.stackView.layoutIfNeeded()
-        self.previewVideoView.layoutIfNeeded()
-        self.videoView.layoutIfNeeded()
         
-        self.table?.beginUpdates()
+        previewImageView.isHidden = true
+        previewPdfView.isHidden = true
+        previewOtherFileView.isHidden = true
+        videoView.isHidden = false
+        self.previewVideoView.isHidden = false
+        if #available(iOS 11.0, *) { pdfView.isHidden = true }
+        
         self.stackView.addArrangedSubview(self.previewVideoView)
-        self.previewVideoView.snp.remakeConstraints { remake in
-            remake.leading.trailing.equalToSuperview()
-            remake.height.equalTo(self.previewVideoView.snp.width)
+        self.previewVideoView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(self.previewVideoView.snp.width)
         }
 
         self.previewVideoView.addSubview(self.videoView)
@@ -273,41 +286,43 @@ internal extension SenderMessageTableViewCell {
 
         self.playButton.addTarget(self, action: #selector(self.didTapPlayButton), for: .touchUpInside)
         self.playButton.tintColor = Colors.ticketDetailWriteMessageButtonIconColor
-        self.previewVideoView.isHidden = false
-        self.videoView.snp.makeConstraints { remake in
-            remake.leading.trailing.equalToSuperview()
-            remake.top.equalToSuperview()
-            remake.bottom.equalToSuperview().inset(32)
+        
+        self.videoView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview().inset(32)
         }
 
-        let options = BackgroundVideoPlayer.PlaybackOptions(url: url)
-        self.videoView.prepareForPlaying(options: options)
+        let avPlayer = AVPlayer(url: url);
+        videoView.playerLayer.player = avPlayer;
+        
         self.addFileInfoView(supView: self.previewVideoView, fullFileName: fileName, fileExt: fileExt, url: url.absoluteString)
         if Desk360.conVC == nil { return }
-        self.table?.endUpdates()
-
     }
 
     func addImageView(_ url: URL, fileExt: String, fileName: String) {
-        if Desk360.conVC == nil { return }
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
-        self.stackView.layoutIfNeeded()
-        self.previewImageView.layoutIfNeeded()
-        self.cellImageView.layoutIfNeeded()
 
-        self.imageFromUrl(url: url)
+        if Desk360.conVC == nil { return }
         
-        self.table?.beginUpdates()
+        videoView.isHidden = true
+        previewVideoView.isHidden = true
+        previewPdfView.isHidden = true
+        previewOtherFileView.isHidden = true
+        if #available(iOS 11.0, *) { pdfView.isHidden = true }
+        
+        if cellImageView.image == nil {
+            self.imageFromUrl(url: url)
+        }
+        
         self.stackView.addArrangedSubview(self.previewImageView)
-        self.previewImageView.snp.remakeConstraints { remake in
+        self.previewImageView.snp.makeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
             remake.height.equalTo(self.previewImageView.snp.width)
         }
         self.previewImageView.addSubview(self.cellImageView)
         
         self.previewImageView.isHidden = false
-        self.cellImageView.snp.remakeConstraints { remake in
+        self.cellImageView.snp.makeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
             remake.top.equalToSuperview()
             remake.bottom.equalToSuperview().inset(32)
@@ -316,28 +331,25 @@ internal extension SenderMessageTableViewCell {
         self.cellImageView.clipsToBounds = true
         self.addFileInfoView(supView: self.previewImageView, fullFileName: fileName, fileExt: fileExt, url: url.absoluteString)
         if Desk360.conVC == nil { return }
-        self.table?.endUpdates()
     }
 
     func addPdf(_ url: URL, fileName: String) {
         guard #available(iOS 11.0, *) else { return }
 
         if Desk360.conVC == nil { return }
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
-        self.stackView.layoutIfNeeded()
-        self.previewPdfView.layoutIfNeeded()
-        self.pdfView.layoutIfNeeded()
-
-        self.table?.beginUpdates()
+        videoView.isHidden = true
+        previewImageView.isHidden = true
+        previewVideoView.isHidden = true
+        previewOtherFileView.isHidden = true
+        
         self.stackView.addArrangedSubview(self.previewPdfView)
-        self.previewPdfView.snp.remakeConstraints { remake in
+        self.previewPdfView.snp.makeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
             remake.height.equalTo(self.previewPdfView.snp.width)
         }
         self.previewPdfView.addSubview(self.pdfView)
         
-        self.pdfView.snp.remakeConstraints { remake in
+        self.pdfView.snp.makeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
             remake.top.equalToSuperview()
             remake.bottom.equalToSuperview().inset(32)
@@ -351,20 +363,18 @@ internal extension SenderMessageTableViewCell {
         self.addFileInfoView(supView: self.previewPdfView, fullFileName: fileName, fileExt: "pdf", url: url.absoluteString)
         
         if Desk360.conVC == nil { return }
-        self.table?.endUpdates()
     }
     
     func addOtherView(_ url: URL, fileExt: String, fileName: String) {
-        
         if Desk360.conVC == nil { return }
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
-        self.stackView.layoutIfNeeded()
-        self.previewOtherFileView.layoutIfNeeded()
-        
-        self.table?.beginUpdates()
+        videoView.isHidden = true
+        previewImageView.isHidden = true
+        previewVideoView.isHidden = true
+        previewPdfView.isHidden = true
+        if #available(iOS 11.0, *) { pdfView.isHidden = true }
+
         self.stackView.addArrangedSubview(self.previewOtherFileView)
-        self.previewOtherFileView.snp.remakeConstraints { remake in
+        self.previewOtherFileView.snp.makeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
             remake.height.equalTo(40)
         }
@@ -372,43 +382,39 @@ internal extension SenderMessageTableViewCell {
         self.addFileInfoView(supView: self.previewOtherFileView, fullFileName: fileName, fileExt: fileExt, url: url.absoluteString, isOther: true)
 
         if Desk360.conVC == nil { return }
-        self.table?.endUpdates()
     }
     
     func addFileInfoView(supView: UIView, fullFileName: String, fileExt: String, url: String, isOther: Bool = false)/* -> UIView */{
-
         if Desk360.conVC == nil { return }
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
-        self.table?.beginUpdates()
-        let view = UIView()
-        view.layoutIfNeeded()
-        supView.addSubview(view)
+        fileInfoView?.removeFromSuperview()
+        fileInfoView = nil
+        fileInfoView = UIView()
+        supView.addSubview(fileInfoView!)
         let fileImageView = UIImageView(frame: CGRect(x: 0, y: 2, width: 22, height: 25))
         if isOther {
-            view.snp.remakeConstraints{ remake in
+            fileInfoView?.snp.makeConstraints{ remake in
                 remake.trailing.leading.equalToSuperview()
                 remake.bottom.equalToSuperview().inset(5)
                 remake.top.equalToSuperview().inset(5)
             }
             fileImageView.image = Desk360.Config.Images.createImageOriginal(resources: "Images/fileext")
         } else {
-            view.snp.remakeConstraints{ remake in
+            fileInfoView?.snp.makeConstraints{ remake in
                 remake.trailing.leading.equalToSuperview()
                 remake.height.equalTo(30)
                 remake.bottom.equalToSuperview().inset(-2)
             }
             fileImageView.image = Desk360.Config.Images.createImageOriginal(resources: "Images/\(fileExt)")
         }
-        view.addSubview(fileImageView)
+        fileInfoView?.addSubview(fileImageView)
         let fileNameLabel = UILabel(frame: CGRect(x: 36, y: 5, width: 200, height: 20))
         fileNameLabel.text = fullFileName
         fileNameLabel.font = Desk360.Config.Conversation.MessageCell.fileNameFont
         fileNameLabel.textColor = Colors.senderFileNameColor
-        view.addSubview(fileNameLabel)
+        fileInfoView?.addSubview(fileNameLabel)
         let downloadButton = UIButton()
-        view.addSubview(downloadButton)
-        downloadButton.snp.remakeConstraints{ remake in
+        fileInfoView!.addSubview(downloadButton)
+        downloadButton.snp.makeConstraints{ remake in
             remake.trailing.equalToSuperview()
             remake.width.height.equalTo(30)
             remake.centerY.equalToSuperview()
@@ -420,7 +426,6 @@ internal extension SenderMessageTableViewCell {
         downloadButton.addTarget(self, action: #selector(self.downloadFile(sender:)), for: .touchUpInside)
 
         if Desk360.conVC == nil { return }
-        self.table?.endUpdates()
     }
     
     @objc func downloadFile(sender: UIButton) {
@@ -453,7 +458,7 @@ internal extension SenderMessageTableViewCell {
                 }
                 return
             }
-            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(tempFileExt) //FileManager.default.temporaryDirectory.appendingPathComponent(response?.suggestedFilename ?? tempFileExt)
+            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(tempFileExt)
             do {
                 try data.write(to: tempURL)
             } catch let fileErr {
@@ -477,40 +482,7 @@ internal extension SenderMessageTableViewCell {
         }
         videoView.player?.play()
     }
-
-    func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?) -> Void)) {
-        DispatchQueue.global().async { //1
-            let asset = AVAsset(url: url) //2
-            let avAssetImageGenerator = AVAssetImageGenerator(asset: asset) //3
-            avAssetImageGenerator.appliesPreferredTrackTransform = true //4
-            let thumnailTime = CMTimeMake(value: 50, timescale: 5) //5
-            do {
-                let cgThumbImage = try avAssetImageGenerator.copyCGImage(at: thumnailTime, actualTime: nil) //6
-                let thumbImage = UIImage(cgImage: cgThumbImage) //7
-                DispatchQueue.main.async { //8
-                    completion(thumbImage) //9
-                }
-            } catch {
-                print(error.localizedDescription) //10
-                DispatchQueue.main.async {
-                    completion(nil) //11
-                }
-            }
-        }
-    }
-
-    func videoFromUrl(url: URL) {
-        let request = URLRequest(url: url as URL)
-        let task = URLSession.shared.dataTask(with: request) { (data, _, _) in
-            if let imageData = data {
-                DispatchQueue.main.async {
-                    self.cellImageView.image = UIImage(data: imageData)
-                }
-            }
-        }
-        task.resume()
-    }
-
+    
     func imageFromUrl(url: URL) {
         let request = URLRequest(url: url as URL)
         let task = URLSession.shared.dataTask(with: request) { (data, _, _) in
@@ -555,7 +527,7 @@ internal extension SenderMessageTableViewCell {
 
     func addSubLayerChatBubble() {
 
-        stackView.snp.remakeConstraints { remake in
+        stackView.snp.makeConstraints { remake in
             remake.leading.equalToSuperview().inset(preferredSpacing)
             remake.top.trailing.bottom.equalToSuperview().inset(preferredSpacing / 2)
         }

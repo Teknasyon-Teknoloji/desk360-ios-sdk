@@ -136,13 +136,15 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 		if message.isAnswer {
 			let cell = tableView.dequeueReusableCell(SenderMessageTableViewCell.self)
+            var hasAttach = true
             if message.attachments?.images?.count == 0 &&
             message.attachments?.videos?.count == 0 &&
             message.attachments?.files?.count == 0 &&
             message.attachments?.others?.count == 0 {
                 cell.clearCell()
+                hasAttach = false
             }
-            cell.configure(for: request.messages[indexPath.row], table: tableView)
+            cell.configure(for: request.messages[indexPath.row], table: tableView, hasAttach: hasAttach)
 			return cell
 		}
 
