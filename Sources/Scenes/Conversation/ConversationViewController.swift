@@ -63,7 +63,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	}()
 
 	func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
-		scrollToBottom(animated: true)
+		scrollToBottom(animated: false)
 		return false
 	}
 
@@ -141,10 +141,10 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
             message.attachments?.videos?.count == 0 &&
             message.attachments?.files?.count == 0 &&
             message.attachments?.others?.count == 0 {
-                cell.clearCell()
                 hasAttach = false
             }
-            cell.configure(for: request.messages[indexPath.row], table: tableView, hasAttach: hasAttach)
+            cell.clearCell()
+            cell.configure(for: request.messages[indexPath.row], hasAttach: hasAttach)
 			return cell
 		}
 
@@ -292,9 +292,8 @@ private extension ConversationViewController {
 	func scrollToBottom(animated: Bool) {
 		let row = request.messages.count - 1
 		guard row >= 0 else { return }
-
-		let lastIndexPath = IndexPath(row: row, section: 0)
         if Desk360.conVC == nil { return }
+		let lastIndexPath = IndexPath(row: row, section: 0)
 		DispatchQueue.main.async {
 			self.layoutableView.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: animated)
 		}
@@ -501,7 +500,7 @@ extension ConversationViewController: KeyboardObserving {
 
 		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
         if Desk360.conVC != nil {
-            scrollToBottom(animated: true)
+            scrollToBottom(animated: false)
         }
 
 		layoutableView.conversationInputView.layoutIfNeeded()
@@ -524,7 +523,7 @@ extension ConversationViewController: KeyboardObserving {
 
 		layoutableView.remakeTableViewConstraint(bottomInset: keyboardEndFrame.size.height - safeArea)
         if Desk360.conVC != nil {
-            scrollToBottom(animated: true)
+            scrollToBottom(animated: false)
         }
 	}
 	func keyboardDidChangeFrame(_ notification: KeyboardNotification?) {}
