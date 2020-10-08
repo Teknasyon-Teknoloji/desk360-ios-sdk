@@ -214,4 +214,8 @@ struct Colors {
         return UIColor(hex: "#ffffff")
     }
 
+    static var unreadIconColor: UIColor? {
+        return UIColor(hex: "#58b0fa")
+    }
+
 }

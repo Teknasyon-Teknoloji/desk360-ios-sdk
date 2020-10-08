@@ -245,7 +245,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 			return
 		}
 
-		guard let message = layoutableView.messageTextView.messageTextView.trimmedText, message.count > 0 else {
+		guard let message = layoutableView.messageTextView.messageTextView.trimmedText, message.count > 2 else {
 			layoutableView.messageTextViewErrorLabel.isHidden = false
 			layoutableView.messageTextView.messageTextView.shake()
 			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: layoutableView.messageTextView.messageTextView.frame.origin.y + layoutableView.preferredSpacing * 0.25 + layoutableView.messageTextView.frame.size.height), animated: true)

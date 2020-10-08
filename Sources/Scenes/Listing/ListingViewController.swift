@@ -20,6 +20,10 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
     
     weak var delegate: ListingViewControllerDelegate?
     
+    var refreshIcon = UIImageView()
+    var aiv = UIActivityIndicatorView()
+    var isDragReleased = false
+
     convenience init(tickets: [Ticket]) {
         self.init()
         self.requests = tickets
@@ -66,6 +70,8 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         initialView()
         
         try? Stores.registerCacheModel.save(Stores.registerModel.object)
+        
+        checkForUnreadMessageIcon()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -124,11 +130,7 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 // MARK: - Desk360 Start
 extension ListingViewController {
     
-    func initialView() {
-        requests = Stores.ticketsStore.allObjects().sorted()
-		
-        configureLayoutableView()
-		
+    func filterTicketsForSegment() {
         if layoutableView.segmentControl.selectedSegmentIndex == 0 {
             filterTickets = requests.filter({ $0.status != .expired })
         } else {
@@ -136,6 +138,14 @@ extension ListingViewController {
         }
         
         filterTickets = filterTickets.sorted()
+    }
+    
+    func initialView() {
+        requests = Stores.ticketsStore.allObjects().sorted()
+		
+        configureLayoutableView()
+		
+        filterTicketsForSegment()
         
         layoutableView.tableView.dataSource = self
         layoutableView.tableView.delegate = self
@@ -177,6 +187,14 @@ extension ListingViewController {
 
 // MARK: - Helpers
 extension ListingViewController {
+    
+    func checkForUnreadMessageIcon() {
+        let undreadCount = filterTickets.filter({$0.status == .unread}).count
+        layoutableView.notifLabel.isHidden = undreadCount <= 0
+        guard undreadCount > 0 else { return }
+        layoutableView.notifLabel.isHidden = false
+        layoutableView.notifLabel.text = "\(undreadCount)"
+    }
     
     func getAsyncRequest() {
         
@@ -320,8 +338,10 @@ private extension ListingViewController {
                 Stores.ticketsStore.delete(withId: -1)
                 self.requests = Stores.ticketsStore.allObjects().sorted()
                 self.refreshView()
+                self.filterTicketsForSegment()
                 self.layoutableView.showPlaceholder(self.requests.isEmpty)
                 self.configureLayoutableView()
+                self.checkForUnreadMessageIcon()
                 //self.checkNotificationDeeplink()
             }
         }
@@ -437,6 +457,20 @@ extension ListingViewController {
         
         layoutableView.configure()
         
+        aiv = UIActivityIndicatorView(style: .gray)
+        aiv.color = Colors.pdrColor
+        aiv.frame.size.height = 20
+        refreshIcon = UIImageView(image: Desk360.Config.Images.arrowDownIcon)
+        let view = UIView(frame: CGRect(x: (UIScreen.main.bounds.size.width / 2)-17, y: 0, width: 34, height: 20))
+        view.backgroundColor = layoutableView.tableView.backgroundColor
+        refreshIcon.frame = CGRect(x: (view.frame.size.width / 2)-7, y: 0, width: 14, height: 19)
+        refreshIcon.backgroundColor = layoutableView.tableView.backgroundColor
+        refreshIcon.isHidden = true
+        aiv.hidesWhenStopped = false
+        view.addSubview(refreshIcon)
+        aiv.addSubview(view)
+        layoutableView.tableView.tableHeaderView = aiv
+        
         guard Config.shared.model?.generalSettings?.navigationShadow ?? false else { return }
         
         self.navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
@@ -445,4 +479,84 @@ extension ListingViewController {
         self.navigationController?.navigationBar.layer.shadowOpacity = 1.0
         self.navigationController?.navigationBar.layer.masksToBounds = false
     }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if aiv.isAnimating == false {
+            hidePDR()
+        }
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if aiv.isAnimating == false {
+            hidePDR()
+        }
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        isDragReleased = false
+        refreshIcon.isHidden = false
+        if aiv.isAnimating {
+            return
+        }
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        isDragReleased = true
+        if aiv.isAnimating == false {
+            hidePDR()
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if aiv.isAnimating {
+            return
+        }
+        if scrollView.contentOffset.y >= 0 {
+            hidePDR()
+            return
+        }
+        
+        if scrollView.contentOffset.y < -23 { //arrow starting to show down direction
+            if isDragReleased {
+                return
+            }
+            
+            refreshIcon.isHidden = false
+            self.refreshIcon.superview!.isHidden = false
+            aiv.hidesWhenStopped = false
+            self.aiv.stopAnimating()
+        }
+        if scrollView.contentOffset.y < -65 { //arrow will turn up
+            var val = 0.0
+
+            UIView.animate(withDuration: 0.1, animations: {
+                self.aiv.startAnimating()
+                self.refreshIcon.transform = CGAffineTransform(rotationAngle: .pi)
+            
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.refreshIcon.isHidden = true
+                    self.refreshIcon.superview!.isHidden = true
+                    self.aiv.hidesWhenStopped = false
+                    self.fetchRequests(showLoading: false)
+                }
+            })
+            return
+        }
+    }
+    
+    func hidePDR() {
+        refreshIcon.isHidden = true
+        self.refreshIcon.superview!.isHidden = true
+        aiv.hidesWhenStopped = true
+        self.aiv.stopAnimating()
+        self.refreshIcon.transform = CGAffineTransform(rotationAngle: 0)
+    }
+    
+    func showPDR() {
+        refreshIcon.isHidden = true
+        self.refreshIcon.superview!.isHidden = true
+        aiv.hidesWhenStopped = false
+        self.aiv.startAnimating()
+    }
+
 }
