@@ -147,8 +147,8 @@ public final class Desk360 {
                 if req.id == id {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         Desk360.conVC?.refreshAction()
-                        return
                     }
+                    return
                 }
             }
         }
