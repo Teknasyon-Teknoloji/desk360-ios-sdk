@@ -102,6 +102,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
   
       Desk360.applicationLaunchChecker(launchOptions)
+      if #available(iOS 10.0, *) {
+          let center = UNUserNotificationCenter.current()
+          center.delegate = self
+      }
       return true
       
     }
@@ -111,10 +115,19 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: - UNUserNotificationCenterDelegate
 extension AppDelegate: UNUserNotificationCenterDelegate {
 
+  func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+      completionHandler([.alert])
+      Desk360.willNotificationPresent(notification.request.content.userInfo)
+  }
+
   func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
       Desk360.applicationUserInfoChecker(userInfo)
   }
   
+  @available(iOS 10.0, *)
+  public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+      Desk360.applicationUserInfoChecker(response.notification.request.content.userInfo)
+  }
 }
 ```
 
