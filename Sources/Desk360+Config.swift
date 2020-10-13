@@ -38,6 +38,12 @@ public extension Desk360.Config {
 			guard let image = UIImage(contentsOfFile: path) else { return UIImage()}
 			return image.withRenderingMode(.alwaysTemplate)
 		}
+        
+        static func createImageOriginal(resources: String) -> UIImage {
+            guard let path = Desk360.Config.bundle?.path(forResource: resources, ofType: "png") else { return UIImage() }
+            guard let image = UIImage(contentsOfFile: path) else { return UIImage()}
+            return image.withRenderingMode(.alwaysOriginal)
+        }
 
 		static var desk360Logo: UIImage = {
 			guard let path = Desk360.Config.bundle?.path(forResource: "Images/desk360Logo", ofType: "png") else { return UIImage() }
@@ -108,7 +114,21 @@ public extension Desk360.Config {
 		static var sendIcon: UIImage = {
 			return Desk360.Config.Images.createImage(resources: "Images/sendLight")
 		}()
+        
+        static var arrowDownIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/arrowDown")
+        }()
+        
+        static var arrowUpIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/arrowUp")
+        }()
 
+        static var senderDownloadFile: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/filedownloadsender")
+        }()
+        static var receiverDownloadFile: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/filedownloadreceiver")
+        }()
 	}
 
 	struct Requests {
@@ -242,6 +262,9 @@ public extension Desk360.Config.Conversation {
 
 		/// Corner radius.
 		static var cornerRadius: CGFloat = 19
+        
+        /// Message filename font.
+        static var fileNameFont: UIFont = Desk360.Config.Conversation.font.withSize(14)
 	}
 
 }

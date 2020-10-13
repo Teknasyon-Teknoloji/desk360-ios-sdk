@@ -28,6 +28,8 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 	var attachmentUrl: URL?
 
+    var newTicket: NewTicket?
+    
 	convenience init(checkLastClass: Bool) {
 		self.init()
 		self.checkLastClass = checkLastClass
@@ -43,8 +45,9 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 
 		guard let check = checkLastClass, check else { return }
 		let count = navigationController?.viewControllers.count ?? 0
-		navigationController?.viewControllers.removeSubrange(count-2..<count-1)
-
+        if count >= 2 {
+            navigationController?.viewControllers.remove(at: 1)
+        }
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -162,31 +165,9 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		imagePicker.allowsEditing = false
 		imagePicker.mediaTypes = ["public.image", "public.movie"]
 		imagePicker.sourceType = .photoLibrary
-
-		PHPhotoLibrary.requestAuthorization { [weak self] result in
-			if result == .authorized {
-				DispatchQueue.main.async {
-					self?.present(imagePicker, animated: true) {
-						self?.isConfigure = true
-					}
-				}
-			} else {
-				DispatchQueue.main.async {
-					self?.showAlert()
-				}
-			}
-		}
-	}
-
-	func showAlert() {
-
-		let alert = UIAlertController(title: "Desk360", message: Config.shared.model?.generalSettings?.galleryPermissionErrorMessage, preferredStyle: .alert)
-
-		let okayAction = UIAlertAction(title: Config.shared.model?.generalSettings?.galleryPermissionErrorButtonText ?? "ok.button".localize(), style: .default) { _ in }
-		alert.addAction(okayAction)
-
-		present(alert, animated: true, completion: nil)
-
+        present(imagePicker, animated: true) {
+            self.isConfigure = true
+        }
 	}
 
 	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
@@ -264,7 +245,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 			return
 		}
 
-		guard let message = layoutableView.messageTextView.messageTextView.trimmedText, message.count > 0 else {
+		guard let message = layoutableView.messageTextView.messageTextView.trimmedText, message.count > 2 else {
 			layoutableView.messageTextViewErrorLabel.isHidden = false
 			layoutableView.messageTextView.messageTextView.shake()
 			layoutableView.scrollView.setContentOffset(CGPoint(x: 0, y: layoutableView.messageTextView.messageTextView.frame.origin.y + layoutableView.preferredSpacing * 0.25 + layoutableView.messageTextView.frame.size.height), animated: true)
@@ -361,8 +342,6 @@ private extension CreateRequestViewController {
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
-				print(error.localizedDescription)
 			case .success(let response):
 				guard let ticketTypes = try? response.map(DataResponse<[TicketType]>.self) else { return }
 				guard let ticketsTypes = ticketTypes.data else { return }
@@ -413,8 +392,6 @@ private extension CreateRequestViewController {
 			return
 		}
 
-		cacheTicket()
-
 		let fields = layoutableView.fields
 
 		for field in fields {
@@ -450,24 +427,28 @@ private extension CreateRequestViewController {
 			let pushTokenData = pushTokenString.data(using: String.Encoding.utf8) ?? Data()
 			ticket.append(Moya.MultipartFormData(provider: .data(pushTokenData), name: "push_token"))
 		}
-
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-			self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
-		}
-
+        self.layoutableView.setLoading(true)
 		Desk360.apiProvider.request(.create(ticket: ticket)) { [weak self] result in
 			guard let self = self else { return }
 			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let error):
+                self.cacheTicket()
 				print(error.localizedServerDescription)
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
-			case .success:
+			case .success(let response):
+                guard let tickets = try? response.map(DataResponse<NewTicket>.self) else { return }
+                guard let data = tickets.data else { return }
+                self.newTicket = data
+                self.cacheTicket()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
+                }
+                
 				break
 			}
 		}
@@ -484,8 +465,8 @@ private extension CreateRequestViewController {
 
 		let currentMessage = Message(id: -1, message: message, isAnswer: false, createdAt: dateString)
 
-		let ticket = Ticket(id: -1, name: name, email: email, status: .open, createdAt: Date(), message: message, messages: [currentMessage], attachmentUrl: attachmentUrl, createDateString: dateString)
-
+        let ticket = Ticket(id: newTicket?.id ?? -1, name: name, email: email, status: .open, createdAt: Date(), message: message, messages: [currentMessage], attachmentUrl: attachmentUrl, createDateString: dateString)
+        Desk360.list?.requests.append(ticket)
 		try? Stores.ticketsStore.save(ticket)
 	}
 

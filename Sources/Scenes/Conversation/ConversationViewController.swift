@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate {
 
 	var request: Ticket!
 	var message: String = ""
@@ -42,6 +42,9 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	/// This parameter is used to fix to problems created by the custom keyboard
 	var previousLineCount = 0
 	var currentLineCount = 0
+    var refreshIcon = UIImageView()
+    var aiv = UIActivityIndicatorView()
+    var isDragReleased = false
 
 	var safeAreaBottom: CGFloat = {
 		if #available(iOS 11.0, *) {
@@ -60,7 +63,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	}()
 
 	func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
-		scrollToBottom(animated: true)
+		scrollToBottom(animated: false)
 		return false
 	}
 
@@ -77,7 +80,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-
+        Desk360.conVC = self
 		setMessages()
 		previousLineCount = 0
 		currentLineCount = 0
@@ -94,7 +97,6 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		configure()
 
 		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
-
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -103,8 +105,13 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		readRequest(request)
 	}
 
+    func refreshAction() {
+        readRequest(request)
+    }
+    
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
+        Desk360.conVC = nil
 		layoutableView.conversationInputView.textView.resignFirstResponder()
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
@@ -129,12 +136,20 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 		if message.isAnswer {
 			let cell = tableView.dequeueReusableCell(SenderMessageTableViewCell.self)
-			cell.configure(for: request.messages[indexPath.row])
+            var hasAttach = true
+            if message.attachments?.images?.count == 0 &&
+            message.attachments?.videos?.count == 0 &&
+            message.attachments?.files?.count == 0 &&
+            message.attachments?.others?.count == 0 {
+                hasAttach = false
+            }
+            cell.clearCell()
+            cell.configure(for: request.messages[indexPath.row], hasAttach: hasAttach)
 			return cell
 		}
 
 		let cell = tableView.dequeueReusableCell(ReceiverMessageTableViewCell.self)
-		cell.configure(for: request.messages[indexPath.row], indexPath, attachment)
+        cell.configure(for: request.messages[indexPath.row], indexPath, attachment)
 		return cell
 	}
 
@@ -154,21 +169,22 @@ extension ConversationViewController: InputViewDelegate {
 
 }
 
+
 // MARK: - Networking
 extension ConversationViewController {
 
 	/// This method use is to get one ticket from the use id
 	/// - Parameter request: this parameter is a ticket object we will use its id and we will use its properties
-	func readRequest(_ request: Ticket) {
+    func readRequest(_ request: Ticket) {
 
 		guard Desk360.isReachable else {
 			networkError()
 			return
 		}
-		
+        showPDR()
 		Desk360.apiProvider.request(.ticketWithId(request.id)) { [weak self] result in
-
 			guard let self = self else { return }
+            self.hidePDR()
 			self.layoutableView.setLoading(false)
 			switch result {
 			case .failure(let error):
@@ -177,21 +193,32 @@ extension ConversationViewController {
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
-				print(error.localizedDescription)
+
 			case .success(let response):
-				guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
-				guard let data = tickets.data else { return }
-				self.request = data
-				try? Stores.ticketWithMessageStore.save(self.request)
+                guard let tickets = try? response.map(DataResponse<Ticket>.self) else { return }
+                guard let data = tickets.data else { return }
+                self.request = data
+                let storedTickets = Stores.ticketWithMessageStore.allObjects() // fetch previously saved tickets from the local just before save new tickets
+                try? Stores.ticketWithMessageStore.save(self.request)// save new tickets to the local.
+
 				if let url = data.attachmentUrl {
 					self.attachment = url
 				}
 
-				self.layoutableView.tableView.reloadData()
-				self.scrollToBottom(animated: false)
+                if let msg = self.request.messages.last {
+                    let currentTicketWithMessage = storedTickets.filter({ $0.id == self.request.id })
+                    if currentTicketWithMessage.count > 0 {
+                        if let mesaj = currentTicketWithMessage[0].messages.last {
+                            if msg.id == mesaj.id {
+                                return //don't reload table to avoid performance issues
+                            }
+                        }
+                    }
+                }
+                
+                self.layoutableView.tableView.reloadData()
+                self.scrollToBottom(animated: false)
 			}
-
 		}
 	}
 
@@ -216,7 +243,8 @@ extension ConversationViewController {
 		layoutableView.conversationInputView.resignFirstResponder()
 		self.layoutableView.conversationInputView.reset()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-			self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
+            //guard let date = formatter.date(from: Date()) else { return }
+            self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
 		}
 
 		Desk360.apiProvider.request(.ticketMessages(message, request.id)) { [weak self] result in
@@ -229,14 +257,11 @@ extension ConversationViewController {
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-				Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: false)
-				print(error.localizedDescription)
 			case .success:
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 					self.isAddedMessage = false
 					self.showActiveCheckMark()
 				}
-				print("Add ticket new message")
 			}
 		}
 	}
@@ -267,7 +292,7 @@ private extension ConversationViewController {
 	func scrollToBottom(animated: Bool) {
 		let row = request.messages.count - 1
 		guard row >= 0 else { return }
-
+        if Desk360.conVC == nil { return }
 		let lastIndexPath = IndexPath(row: row, section: 0)
 		DispatchQueue.main.async {
 			self.layoutableView.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: animated)
@@ -369,8 +394,101 @@ extension ConversationViewController {
 		self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
 		self.navigationController?.navigationBar.shadowImage = UIImage()
 		layoutableView.configure()
+        
+        aiv = UIActivityIndicatorView(style: .gray)
+        aiv.color = Colors.pdrColor
+        aiv.frame.size.height = 20
+        refreshIcon = UIImageView(image: Desk360.Config.Images.arrowDownIcon)
+        let view = UIView(frame: CGRect(x: (UIScreen.main.bounds.size.width / 2)-17, y: 0, width: 34, height: 20))
+        view.backgroundColor = layoutableView.tableView.backgroundColor
+        refreshIcon.frame = CGRect(x: (view.frame.size.width / 2)-7, y: 0, width: 14, height: 19)
+        refreshIcon.backgroundColor = layoutableView.tableView.backgroundColor
+        refreshIcon.isHidden = true
+        aiv.hidesWhenStopped = false
+        view.addSubview(refreshIcon)
+        aiv.addSubview(view)
+        layoutableView.tableView.tableHeaderView = aiv
+        
 	}
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if aiv.isAnimating == false {
+            hidePDR()
+        }
+    }
 
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if aiv.isAnimating == false {
+            hidePDR()
+        }
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        isDragReleased = false
+        refreshIcon.isHidden = false
+        if aiv.isAnimating {
+            return
+        }
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        isDragReleased = true
+        if aiv.isAnimating == false {
+            hidePDR()
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if aiv.isAnimating {
+            return
+        }
+        if scrollView.contentOffset.y >= 0 {
+            hidePDR()
+            return
+        }
+        
+        if scrollView.contentOffset.y < -23 { //arrow starting to show down direction
+            if isDragReleased {
+                return
+            }
+            
+            refreshIcon.isHidden = false
+            self.refreshIcon.superview!.isHidden = false
+            aiv.hidesWhenStopped = false
+            self.aiv.stopAnimating()
+        }
+        if scrollView.contentOffset.y < -65 { //arrow will turn up
+            var val = 0.0
+
+            UIView.animate(withDuration: 0.1, animations: {
+                self.aiv.startAnimating()
+                self.refreshIcon.transform = CGAffineTransform(rotationAngle: .pi)
+            
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.refreshIcon.isHidden = true
+                    self.refreshIcon.superview!.isHidden = true
+                    self.aiv.hidesWhenStopped = false
+                    self.refreshAction()
+                }
+            })
+            return
+        }
+    }
+    
+    func hidePDR() {
+        refreshIcon.isHidden = true
+        self.refreshIcon.superview!.isHidden = true
+        aiv.hidesWhenStopped = true
+        self.aiv.stopAnimating()
+        self.refreshIcon.transform = CGAffineTransform(rotationAngle: 0)
+    }
+    
+    func showPDR() {
+        refreshIcon.isHidden = true
+        self.refreshIcon.superview!.isHidden = true
+        aiv.hidesWhenStopped = false
+        self.aiv.startAnimating()
+    }
 }
 
 // MARK: - KeyboardObserving
@@ -381,7 +499,9 @@ extension ConversationViewController: KeyboardObserving {
 	func keyboardWillHide(_ notification: KeyboardNotification?) {
 
 		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
-		scrollToBottom(animated: true)
+        if Desk360.conVC != nil {
+            scrollToBottom(animated: false)
+        }
 
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
@@ -402,7 +522,9 @@ extension ConversationViewController: KeyboardObserving {
 		}
 
 		layoutableView.remakeTableViewConstraint(bottomInset: keyboardEndFrame.size.height - safeArea)
-		scrollToBottom(animated: true)
+        if Desk360.conVC != nil {
+            scrollToBottom(animated: false)
+        }
 	}
 	func keyboardDidChangeFrame(_ notification: KeyboardNotification?) {}
 

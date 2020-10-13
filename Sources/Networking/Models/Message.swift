@@ -22,6 +22,9 @@ public struct Message {
 	/// Date string when the message was created.
 	public var createdAt: String?
 
+    /// message attachments.
+    public var attachments: Attachment?
+
 }
 
 extension Message: Codable {
@@ -31,6 +34,7 @@ extension Message: Codable {
 		case message
 		case is_answer
 		case created
+        case attachments
 	}
 
 	/// Creates a new instance by decoding from the given decoder.
@@ -45,6 +49,7 @@ extension Message: Codable {
 			message = try container.decode(String.self, forKey: .message)
 			isAnswer = try container.decode(Bool.self, forKey: .is_answer)
 			createdAt = (try? container.decodeIfPresent(String.self, forKey: .created)) ?? nil
+            attachments = try? container.decodeIfPresent(Attachment.self, forKey: .attachments)
 		} catch let error as DecodingError {
 			print(error)
 			throw error
@@ -63,6 +68,7 @@ extension Message: Codable {
 			try container.encode(message, forKey: .message)
 			try container.encode(isAnswer, forKey: .is_answer)
 			try container.encodeIfPresent(createdAt, forKey: .created)
+            try container.encodeIfPresent(attachments, forKey: .attachments)
 		} catch let error as EncodingError {
 			print(error)
 			throw error
@@ -73,8 +79,12 @@ extension Message: Codable {
 
 // MARK: - Identifiable
 extension Message: Identifiable, Equatable {
+    public static func == (lhs: Message, rhs: Message) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
 
-	/// Id Type.
-	public static var idKey = \Message.id
+    /// Id Type.
+    public static var idKey = \Message.id
 
 }

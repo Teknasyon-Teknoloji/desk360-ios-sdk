@@ -36,6 +36,17 @@ class ListingView: UIView, Layoutable, Loadingable {
 		view.backgroundColor = .white
 		return view
 	}()
+    
+    lazy var notifLabel: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = Colors.unreadIconColor
+        label.layer.cornerRadius = 10
+        label.layer.masksToBounds = true
+        label.textAlignment = .center
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 11)
+        return label
+    }()
 
 	lazy var segmentControl: UISegmentedControl = {
 		var segmentControl = UISegmentedControl(items: items)
@@ -116,12 +127,13 @@ class ListingView: UIView, Layoutable, Loadingable {
 
 	func setupViews() {
 		backgroundColor = .white
-		addSubview(segmentControl)
-		addSubview(buttonBar)
 		addSubview(tableView)
 		addSubview(emptyView)
 		addSubview(desk360BottomView)
 		addSubview(placeholderView)
+        addSubview(segmentControl)
+        addSubview(buttonBar)
+        addSubview(notifLabel)
 	}
 
 	func setupLayout() {
@@ -149,7 +161,7 @@ class ListingView: UIView, Layoutable, Loadingable {
  		}
 
 		tableView.snp.makeConstraints { make in
-			make.top.equalTo(segmentControl.snp.bottom)
+            make.top.equalTo(segmentControl.snp.bottom).offset(-20)
 			make.leading.trailing.equalToSuperview()
 			make.bottom.equalTo(desk360BottomView.snp.top)
 		}
@@ -175,6 +187,13 @@ class ListingView: UIView, Layoutable, Loadingable {
 			make.leading.trailing.top.equalToSuperview()
 			make.bottom.equalTo(desk360BottomView.snp.top)
 		}
+        
+        notifLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(segmentControl).multipliedBy(0.5).inset(20)
+            make.top.equalTo(segmentControl).offset(10)
+            make.height.equalTo(20)
+            make.width.equalTo(20)
+        }
 	}
 
 	func showPlaceholder(_ show: Bool) {

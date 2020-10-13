@@ -41,6 +41,12 @@ public final class Desk360 {
 
 	public static var messageId: Int?
 
+    static var list: ListingViewController?
+    
+    static var conVC: ConversationViewController?
+    
+    static var thanksVC: SuccsessViewController?
+    
 	static var isActive: Bool = false
 
 	static var token: String? = ""
@@ -78,6 +84,11 @@ public final class Desk360 {
 		return version
 	}
 
+    static func fetchTicketList() {
+        guard list != nil else { return }
+        list?.fetchList()
+    }
+    
 	public static var shared: Desk360 {
 		guard let aDesk = desk else {
 			fatalError("Desk360 is not yet initialized, make sure to call Desk360.start(appId:) before using the SDK")
@@ -101,29 +112,64 @@ public final class Desk360 {
 		Desk360.messageId = id
     }
 
+    public static func willNotificationPresent(_ userInfo: [AnyHashable: Any]?) {
+
+        if Desk360.conVC != nil {
+            guard let data = userInfo?["data"] as? [String: AnyObject] else { return }
+            guard let id = userInfoHandle(data) else { return }
+            if let req = Desk360.conVC?.request {
+                if req.id == id {
+                    Desk360.conVC?.refreshAction()
+                    return
+                }
+            }
+        }
+        if Desk360.list != nil {
+            Desk360.list?.fetchList()
+            return
+        }
+    }
+    
 	public static func applicationUserInfoChecker(_ userInfo: [AnyHashable: Any]?) {
-		print("userInfo:", userInfo)
+        
 		guard !Desk360.applaunchChecker else {
 			Desk360.applaunchChecker = false
 			return
 		}
-		if #available(iOS 13.0, *), Desk360.didTapNotification {
-			return
-		}
-		guard Desk360.messageId == nil else { return }
+		if #available(iOS 13.0, *), Desk360.didTapNotification { return }
+        Desk360.didTapNotification = false
+		if Desk360.messageId != nil { Desk360.messageId = nil }
 		guard let data = userInfo?["data"] as? [String: AnyObject] else { return }
 		guard let id = userInfoHandle(data) else { return }
-
-		guard let topViewController = topViewController else { return }
+        
+        if Desk360.conVC != nil {
+            if let req = Desk360.conVC?.request {
+                if req.id == id {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        Desk360.conVC?.refreshAction()
+                    }
+                    return
+                }
+            }
+        }
+        
 		guard Desk360.isActive == false else {
 			Desk360.messageId = id
-			if let currentController = topViewController as? UINavigationController {
-				checkIsActiveDesk360(currentController)
-			}
+            
+            guard let list = Desk360.list else { return }
+            list.navigationController?.popToRootViewController(animated: true)
+            guard let ticket = list.requests.first(where: {$0.id == id}) else { return }
+            let viewController = ConversationViewController(request: ticket)
+            viewController.hidesBottomBarWhenPushed = true
+            list.navigationController?.pushViewController(viewController, animated: false)
+            Desk360.messageId = nil
+            Desk360.didTapNotification = false
+            
 			return
 		}
 		Desk360.messageId = id
-		showWithPushDeeplink(on: topViewController, animated: true)
+        guard let topVC = topViewController else { return }
+		showWithPushDeeplink(on: topVC, animated: true)
 	}
 
 	static func userInfoHandle(_ data: [String: AnyObject]) -> Int? {
@@ -137,21 +183,32 @@ public final class Desk360 {
 
 	static func checkIsActiveDesk360(_ navigationController: UINavigationController) {
 
-		guard navigationController.children.count <= 1 else {
-			navigationController.popToRootViewController(animated: false)
-			return
-		}
-
-		guard let listingViewController = navigationController.children.first as? ListingViewController else { return }
-		let tickets = listingViewController.requests
-		let id = Desk360.messageId
-		Desk360.messageId = nil
-		for ticket in tickets where ticket.id == id {
-			let viewController = ConversationViewController(request: ticket)
-			viewController.hidesBottomBarWhenPushed = true
-			navigationController.pushViewController(viewController, animated: false)
-		}
-
+        guard let listingViewController = navigationController.children.first as? ListingViewController else { return }
+        let tickets = listingViewController.requests
+        let id = Desk360.messageId
+        Desk360.messageId = nil
+        Desk360.didTapNotification = false
+        var ticket: Ticket?
+        for tic in tickets where tic.id == id {
+            ticket = tic
+        }
+        guard ticket != nil else { return }
+        if let vc = Desk360.conVC {
+            vc.readRequest(ticket!)
+            return
+        }
+        if let convc = navigationController.viewControllers.last as? ConversationViewController {
+            convc.readRequest(ticket!)
+            return
+        } else {
+            guard navigationController.children.count <= 1 else {
+                navigationController.popToRootViewController(animated: false)
+                return
+            }
+            let viewController = ConversationViewController(request: ticket!)
+            viewController.hidesBottomBarWhenPushed = true
+            navigationController.pushViewController(viewController, animated: false)
+        }
 	}
 
 	public static func showWithPushDeeplink(on viewController: UIViewController, animated: Bool = false) {

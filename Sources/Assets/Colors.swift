@@ -204,5 +204,18 @@ struct Colors {
 	static var ticketSuccessScreenButttonBorderColor: UIColor {
 		return Config.shared.model?.successScreen?.butttonBorderColor ?? UIColor.init(hex: "FFFFFF")!
 	}
+    static var pdrColor: UIColor? {
+        return UIColor(hex: "#a3d0f5")
+    }
+    static var receiverFileNameColor: UIColor? {
+        return UIColor(hex: "#525a7e")
+    }
+    static var senderFileNameColor: UIColor? {
+        return UIColor(hex: "#ffffff")
+    }
+
+    static var unreadIconColor: UIColor? {
+        return UIColor(hex: "#58b0fa")
+    }
 
 }
