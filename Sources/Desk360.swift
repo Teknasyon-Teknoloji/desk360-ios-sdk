@@ -157,7 +157,7 @@ public final class Desk360 {
 			Desk360.messageId = id
             
             guard let list = Desk360.list else { return }
-            list.navigationController?.popToRootViewController(animated: true)
+            list.navigationController?.popToRootViewController(animated: false)
             guard let ticket = list.requests.first(where: {$0.id == id}) else { return }
             let viewController = ConversationViewController(request: ticket)
             viewController.hidesBottomBarWhenPushed = true
