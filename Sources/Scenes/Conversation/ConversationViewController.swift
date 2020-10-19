@@ -421,7 +421,8 @@ extension ConversationViewController {
                 try? Stores.ticketWithMessageStore.save(self.request)// save new tickets to the local.
 
 				if let url = data.attachmentUrl {
-					self.attachment = url
+                    self.attachment = url //attachments will be allways at first row of tableview.
+                    self.layoutableView.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
 				}
 
                 if let msg = self.request.messages.last {
