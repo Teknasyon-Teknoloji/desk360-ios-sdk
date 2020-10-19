@@ -115,6 +115,14 @@ public extension Desk360.Config {
 			return Desk360.Config.Images.createImage(resources: "Images/sendLight")
 		}()
         
+        static var attachIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/attach")
+        }()
+        
+        static var attachRemoveIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/attachRemove")
+        }()
+        
         static var arrowDownIcon: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/arrowDown")
         }()
@@ -246,7 +254,7 @@ public extension Desk360.Config.Conversation {
 		static var height: CGFloat = 75
 
 		/// Bar maximum allowe height. _dafault is 200.0_
-		static var maxHeight: CGFloat = 200.0
+		static var maxHeight: CGFloat = 230.0
 
 	}
 
