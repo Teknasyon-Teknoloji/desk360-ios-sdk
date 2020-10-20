@@ -85,6 +85,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	}
 
 	@objc func addFile() {
+        layoutableView.endEditing(true)
 		let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
 		let showImagePicker = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentImagesText ?? "Images", style: .default) { _ in
@@ -213,7 +214,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	}
 
 	@objc private func didTapSendRequestButton() {
-
+        layoutableView.endEditing(true)
 		checkChangeFrame()
 		guard let name = layoutableView.nameTextField.trimmedText, name.count > 2 else {
 			layoutableView.nameErrorLabel.isHidden = false
@@ -314,7 +315,7 @@ extension CreateRequestViewController: KeyboardObserving {
 	}
 
 	func keyboardWillHide(_ notification: KeyboardNotification?) {
-		layoutableView.keyboardWillHide(notification)
+        layoutableView.keyboardWillHide(notification)
 	}
 
 	func keyboardDidHide(_ notification: KeyboardNotification?) {

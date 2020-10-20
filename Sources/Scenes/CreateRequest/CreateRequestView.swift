@@ -1236,7 +1236,7 @@ extension CreateRequestView: KeyboardHandling {
 	/// - Parameter notification: `KeyboardNotification`
 	public func keyboardWillHide(_ notification: KeyboardNotification?) {
 		self.scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
-		self.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+		self.scrollView.setContentOffset(CGPoint(x: 0, y: self.scrollView.contentOffset.y), animated: true)
 	}
 
 	/// Called right before the keyboard is about to change its frame.

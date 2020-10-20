@@ -155,6 +155,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 			return cell
 		}
 		let cell = tableView.dequeueReusableCell(ReceiverMessageTableViewCell.self)
+        cell.clearCell()
         cell.configure(for: request.messages[indexPath.row], indexPath, attachment, hasAttach: hasAttach)
 		return cell
 	}

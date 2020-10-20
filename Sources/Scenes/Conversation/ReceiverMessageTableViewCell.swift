@@ -298,7 +298,7 @@ internal extension ReceiverMessageTableViewCell {
         self.stackView.addArrangedSubview(self.previewVideoView)
         self.previewVideoView.snp.remakeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
-            remake.height.equalTo(self.previewVideoView.snp.width).multipliedBy(inx).offset(34 * inx)
+            remake.height.equalTo(self.previewVideoView.snp.width).multipliedBy(inx)
         }
 
         let videoView = PlayerView()
@@ -326,7 +326,7 @@ internal extension ReceiverMessageTableViewCell {
             if inx == 1 {
                 make.top.equalToSuperview()
             } else {
-                make.top.equalTo(previewVideoView.viewWithTag(inx - 1)!.snp.bottom).offset(34)
+                make.top.equalTo(previewVideoView.viewWithTag(inx - 1)!.snp.bottom)
             }
         }
 
@@ -355,7 +355,7 @@ internal extension ReceiverMessageTableViewCell {
         self.stackView.addArrangedSubview(self.previewImageView)
         self.previewImageView.snp.remakeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
-            remake.height.equalTo(self.previewImageView.snp.width).multipliedBy(inx).offset(34 * inx)
+            remake.height.equalTo(self.previewImageView.snp.width).multipliedBy(inx)
         }
         let imgView = UIImageView()
         imgView.tag = inx
@@ -368,7 +368,7 @@ internal extension ReceiverMessageTableViewCell {
             if inx == 1 {
                 remake.top.equalToSuperview()
             } else {
-                remake.top.equalTo(previewImageView.viewWithTag(inx - 1)!.snp.bottom).offset(34)
+                remake.top.equalTo(previewImageView.viewWithTag(inx - 1)!.snp.bottom)
             }
         }
         imageFromUrl(url: url) { (image) in
@@ -389,7 +389,7 @@ internal extension ReceiverMessageTableViewCell {
         self.stackView.addArrangedSubview(self.previewPdfView)
         self.previewPdfView.snp.remakeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
-            remake.height.equalTo(self.previewPdfView.snp.width).multipliedBy(inx).offset(34 * inx)
+            remake.height.equalTo(self.previewPdfView.snp.width).multipliedBy(inx)
         }
         
         let pdfView = PDFView()
@@ -401,7 +401,7 @@ internal extension ReceiverMessageTableViewCell {
             if inx == 1 {
                 remake.top.equalToSuperview()
             } else {
-                remake.top.equalTo(previewPdfView.viewWithTag(inx - 1)!.snp.bottom).offset(34)
+                remake.top.equalTo(previewPdfView.viewWithTag(inx - 1)!.snp.bottom)
             }
         }
         
