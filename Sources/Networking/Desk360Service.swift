@@ -14,7 +14,7 @@ enum Service {
 	case getTickets
 	case ticketTypeList
 	case ticketWithId(Ticket.ID)
-	case ticketMessages(String, Ticket.ID)
+    case ticketMessages(Ticket.ID, attach: [MultipartFormData])
 }
 
 extension Service: TargetType, AccessTokenAuthorizable {
@@ -49,7 +49,7 @@ extension Service: TargetType, AccessTokenAuthorizable {
 			return "tickets/types/list"
 		case .ticketWithId(let ticketId):
 			return "tickets/\(ticketId)"
-		case .ticketMessages(_, let ticketId):
+		case .ticketMessages(let ticketId, let attachments):
 			return "tickets/\(ticketId)/messages"
 		}
 	}
@@ -77,13 +77,18 @@ extension Service: TargetType, AccessTokenAuthorizable {
 			return .uploadMultipart(ticket)
 		case .ticketTypeList, .ticketWithId, .getTickets:
 			return .requestPlain
-		case .ticketMessages(let message, let ticketId):
-			return Task.requestCompositeParameters(bodyParameters: ["message": message], bodyEncoding: JSONEncoding.default, urlParameters: ["ticket_id": ticketId])
+		case .ticketMessages(let ticketId, let attachments):
+            return .uploadMultipart(attachments)
 		}
 	}
 
 	var headers: [String: String]? {
-		return nil
+        switch self {
+        case .ticketMessages:
+            return ["Content-Type": "multipart/form-data"]
+        default:
+            return nil
+        }
 	}
 
 }

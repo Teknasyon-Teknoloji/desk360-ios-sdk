@@ -7,6 +7,7 @@
 
 import UIKit
 import Photos
+import Moya
 
 final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIDocumentBrowserViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIDocumentPickerDelegate {
 
@@ -241,7 +242,7 @@ extension ConversationViewController: InputViewDelegate {
 //        layoutableView.attachmentCancelButton.isHidden = false
 //        layoutableView.attachmentCancelButton.isEnabled = true
 
-        files.append(fileData(name: name, data: pdfData, url: url.absoluteString))
+        files.append(fileData(name: name, data: pdfData, url: url.absoluteString, type: "pdf"))
         controller.dismiss(animated: true)
         manageAttachView()
     }
@@ -279,7 +280,7 @@ extension ConversationViewController: InputViewDelegate {
                 }
                 return
             }
-            files.append(fileData(name: name, data: Data(referencing: data), url: imgUrl.absoluteString))
+            files.append(fileData(name: name, data: Data(referencing: data), url: imgUrl.absoluteString, type: "image/jpeg"))
         } else {
             if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
 //                attachmentUrl = videoUrl
@@ -290,9 +291,17 @@ extension ConversationViewController: InputViewDelegate {
                     }
                     return
                 }
-                files.append(fileData(name: name, data: Data(referencing: data), url: videoUrl.absoluteString))
+                files.append(fileData(name: name, data: Data(referencing: data), url: videoUrl.absoluteString, type: "video"))
             }
         }
+        
+        let abc = files.map({($0.data as NSData).length})
+        let dataSize = abc.reduce(0, +)
+        guard dataSize < 5242880 else {
+            Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model?.generalSettings?.fileSizeErrorText ?? "")
+            return
+        }
+        
         picker.dismiss(animated: true)
         self.manageAttachView()
     }
@@ -310,6 +319,7 @@ extension ConversationViewController: InputViewDelegate {
         var maxWidth: CGFloat = 0
         var hStack = getAStackView()
         hStack.frame = CGRect(x: 0, y: 0, width: self.layoutableView.conversationInputView.stackView.frame.size.width, height:20)
+        layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
         var i = 0
         var yPoint: CGFloat = 0
         for file in files {
@@ -340,6 +350,7 @@ extension ConversationViewController: InputViewDelegate {
                 hStack = getAStackView()
                 hStack.frame = CGRect(x: 0, y: yPoint, width: self.layoutableView.conversationInputView.stackView.frame.size.width, height:20)
                 self.layoutableView.conversationInputView.stackView.addSubview(hStack)
+                layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
                 maxWidth = lbl.frame.width + 32
             }
 
@@ -469,7 +480,13 @@ extension ConversationViewController {
             self.files.removeAll()
             self.manageAttachView()
 		}
-		Desk360.apiProvider.request(.ticketMessages(message, request.id)) { [weak self] result in
+        var attach = [MultipartFormData]()
+        if files.count > 0 {
+            attach = files.map({ Moya.MultipartFormData(provider: .data($0.data), name: "attachments[]", fileName: $0.name.lowercased(), mimeType: $0.type ) })
+        }
+        let fieldData = MultipartFormData(provider: .data(message.data(using: .utf8)!), name: "message")
+        attach.insert(fieldData, at: 0)
+        Desk360.apiProvider.request(.ticketMessages(request.id, attach: attach)) { [weak self] result in
 			guard let self = self else { return }
 			self.layoutableView.conversationInputView.setLoading(false)
 			switch result {
@@ -479,7 +496,7 @@ extension ConversationViewController {
 					Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
 					return
 				}
-			case .success:
+			case .success(let data):
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 					self.isAddedMessage = false
 					self.showActiveCheckMark()
@@ -773,10 +790,15 @@ extension ConversationViewController: KeyboardObserving {
 
 		layoutableView.conversationInputView.layoutIfNeeded()
 		layoutableView.conversationInputView.layoutSubviews()
+        layoutableView.isKeyboardShown = false
 	}
 
-	func keyboardDidHide(_ notification: KeyboardNotification?) {}
-	func keyboardDidShow(_ notification: KeyboardNotification?) {}
+	func keyboardDidHide(_ notification: KeyboardNotification?) {
+        layoutableView.isKeyboardShown = false
+    }
+	func keyboardDidShow(_ notification: KeyboardNotification?) {
+        layoutableView.isKeyboardShown = true
+    }
 	func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {
 
 		guard let keyboardEndFrame = notification?.endFrame else { return }
@@ -789,7 +811,8 @@ extension ConversationViewController: KeyboardObserving {
 			safeArea = safeAreaBottom
 		}
 
-		layoutableView.remakeTableViewConstraint(bottomInset: keyboardEndFrame.size.height - safeArea)
+//		layoutableView.remakeTableViewConstraint(bottomInset: keyboardEndFrame.size.height - safeArea)
+        layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height + (keyboardEndFrame.size.height - safeArea))
         if Desk360.conVC != nil {
             scrollToBottom(animated: false)
         }
@@ -802,4 +825,5 @@ struct fileData {
     var name: String
     var data: Data
     var url: String
+    var type: String
 }
