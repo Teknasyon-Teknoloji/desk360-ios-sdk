@@ -9,6 +9,7 @@ import UIKit
 import Moya
 import Alamofire
 import Foundation
+import Photos
 
 private var desk: Desk360?
 
@@ -257,7 +258,7 @@ public final class Desk360 {
 
 		let registerModel = RegisterModel(appId: appId, deviceId: id, environment: currentEnvironment, language: currentLanguage)
 		try? Stores.registerModel.save(registerModel)
-
+        
 		Stores.setStoresInitialValues()
 		print("Desk360 SDK was initialized successfully!")
 	}
@@ -270,4 +271,7 @@ public final class Desk360 {
 		viewController.present(desk360Navcontroller, animated: true, completion: nil)
 	}
 
+    static func isUrlLocal( _ url: URL) -> Bool {
+        return !url.absoluteString.hasPrefix("https://")
+    }
 }

@@ -150,15 +150,15 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 internal extension ReceiverMessageTableViewCell {
 
 	func configure(for request: Message, _ indexPath: IndexPath, _ attachment: URL? = nil, hasAttach: Bool = false) {
+        if Desk360.conVC == nil { return }
+        
 		containerView.backgroundColor = Colors.ticketDetailChatReceiverBackgroundColor
 		messageTextView.text = request.message
 		messageTextView.textColor = Colors.ticketDetailChatReceiverTextColor
 		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.chatReceiverFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.chatReceiverFontWeight ?? 400))
 		dateLabel.textColor = Colors.ticketDetailChatChatReceiverDateColor
-		roundCorner()
         
         if let dateString = request.createdAt {
-            
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
             if let date = formatter.date(from: dateString) {
@@ -177,9 +177,13 @@ internal extension ReceiverMessageTableViewCell {
 		if #available(iOS 11.0, *) {
 			pdfView.isHidden = true
 		}
-		guard indexPath.row == 0 else { return }
-		if let attachmentUrl = attachment{
-            checkFile(attachmentUrl, fileName: "", i: -1, fileInx: -1)
+
+        if hasAttach == false { //hasAttach flag is holds is there attachments sent from messages not ticket creation.
+            if let attachmentUrl = attachment { // function's attachment parameter is holds, ticket creation attachment.
+                guard indexPath.row == 0 else { return } //ticket attachments will allways at zero row, so if not we can return.
+                checkFile(attachmentUrl, fileName: "", i: 1, fileInx: 1)
+                return
+            }
         }
         if hasAttach == false { return }
         
@@ -230,29 +234,15 @@ internal extension ReceiverMessageTableViewCell {
         }
 	}
 
-	func addImageView(_ url: URL) {
-
-		guard let path = url.pathComponents.last else { return }
-		let words = path.split(separator: ".")
-		guard let word = words.last else { return }
-		if word == "pdf" {
-			addPdf(url)
-		} else if word == "png" || word == "jpeg" {
-			addImageView(url, fileExt: "", fileName: "", inx: -1, fileInx: -1)
-		} else {
-			addVideoView(url, fileExt: "", fileName: "", inx: -1, fileInx: -1)
-		}
-	}
-
     func checkFile(_ url: URL, fileName: String, i: Int = 1, fileInx: Int) {
 
         if Desk360.conVC == nil { return }
         guard let path = url.pathComponents.last else { return }
         let words = path.split(separator: ".")
-        guard var word = words.last else { return }
+        guard var word = words.last?.lowercased() else { return }
         if word == "pdf" {
             self.addPdf(url, fileName: fileName, inx: i, fileInx: fileInx)
-        } else if word == "png" || word == "jpeg" {
+        } else if word == "png" || word == "jpeg" || word == "jpg" {
             self.addImageView(url, fileExt: String(word), fileName: fileName, inx: i, fileInx: fileInx)
         } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" {
             if word == "mkv" || word == "wmv" || word == "3gp" { word = "mp4" }
@@ -261,34 +251,6 @@ internal extension ReceiverMessageTableViewCell {
     }
     
     func addVideoView(_ url: URL, fileExt: String, fileName: String, inx: Int, fileInx: Int) {
-        if inx == -1 {
-            stackView.addArrangedSubview(previewVideoView)
-
-            previewVideoView.snp.remakeConstraints { remake in
-                remake.leading.trailing.equalToSuperview()
-                remake.height.equalTo(previewVideoView.snp.width)
-            }
-
-            previewVideoView.addSubview(videoView)
-            previewVideoView.addSubview(playButton)
-
-            playButton.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-                make.width.height.equalTo(preferredSpacing * 2)
-            }
-
-            playButton.addTarget(self, action: #selector(didTapPlayButton), for: .touchUpInside)
-            playButton.tintColor = Colors.ticketDetailWriteMessageButtonIconColor
-            previewVideoView.isHidden = false
-            videoView.snp.makeConstraints { remake in
-                remake.leading.trailing.equalToSuperview()
-                remake.height.equalTo(previewVideoView.snp.width)
-            }
-
-            let options = BackgroundVideoPlayer.PlaybackOptions(url: url)
-            videoView.prepareForPlaying(options: options)
-            return
-        }
         if Desk360.conVC == nil { return }
 
         self.previewVideoView.isHidden = false
@@ -298,7 +260,7 @@ internal extension ReceiverMessageTableViewCell {
         self.stackView.addArrangedSubview(self.previewVideoView)
         self.previewVideoView.snp.remakeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
-            remake.height.equalTo(self.previewVideoView.snp.width).multipliedBy(inx)
+            remake.height.equalTo(self.previewVideoView.snp.width).multipliedBy(inx).offset(4 * inx)
         }
 
         let videoView = PlayerView()
@@ -326,7 +288,7 @@ internal extension ReceiverMessageTableViewCell {
             if inx == 1 {
                 make.top.equalToSuperview()
             } else {
-                make.top.equalTo(previewVideoView.viewWithTag(inx - 1)!.snp.bottom)
+                make.top.equalTo(previewVideoView.viewWithTag(inx - 1)!.snp.bottom).offset(4)
             }
         }
 
@@ -335,18 +297,7 @@ internal extension ReceiverMessageTableViewCell {
 	}
 
     func addImageView(_ url: URL, fileExt: String, fileName: String, inx: Int, fileInx: Int) {
-//        if inx == -1 {
-//            imageFromUrl(url: url)
-//
-//            stackView.addArrangedSubview(previewImageView)
-//            previewImageView.isHidden = false
-//            previewImageView.snp.remakeConstraints { remake in
-//                remake.leading.trailing.equalToSuperview()
-//                remake.height.equalTo(previewImageView.snp.width)
-//            }
-//            previewImageView.contentMode = .scaleAspectFit
-//            return
-//        }
+
         if Desk360.conVC == nil { return }
 
         if inx == 1 {
@@ -355,7 +306,7 @@ internal extension ReceiverMessageTableViewCell {
         self.stackView.addArrangedSubview(self.previewImageView)
         self.previewImageView.snp.remakeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
-            remake.height.equalTo(self.previewImageView.snp.width).multipliedBy(inx)
+            remake.height.equalTo(self.previewImageView.snp.width).multipliedBy(inx).offset(4 * inx)
         }
         let imgView = UIImageView()
         imgView.tag = inx
@@ -368,7 +319,7 @@ internal extension ReceiverMessageTableViewCell {
             if inx == 1 {
                 remake.top.equalToSuperview()
             } else {
-                remake.top.equalTo(previewImageView.viewWithTag(inx - 1)!.snp.bottom)
+                remake.top.equalTo(previewImageView.viewWithTag(inx - 1)!.snp.bottom).offset(4)
             }
         }
         imageFromUrl(url: url) { (image) in
@@ -389,7 +340,7 @@ internal extension ReceiverMessageTableViewCell {
         self.stackView.addArrangedSubview(self.previewPdfView)
         self.previewPdfView.snp.remakeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
-            remake.height.equalTo(self.previewPdfView.snp.width).multipliedBy(inx)
+            remake.height.equalTo(self.previewPdfView.snp.width).multipliedBy(inx).offset(4 * inx)
         }
         
         let pdfView = PDFView()
@@ -401,7 +352,7 @@ internal extension ReceiverMessageTableViewCell {
             if inx == 1 {
                 remake.top.equalToSuperview()
             } else {
-                remake.top.equalTo(previewPdfView.viewWithTag(inx - 1)!.snp.bottom)
+                remake.top.equalTo(previewPdfView.viewWithTag(inx - 1)!.snp.bottom).offset(4)
             }
         }
         
@@ -457,6 +408,13 @@ internal extension ReceiverMessageTableViewCell {
 	}
 
     func imageFromUrl(url: URL, completion: @escaping ((_ image: UIImage?) -> Void))  {
+        if Desk360.isUrlLocal(url) {
+            if let data = try? Data(contentsOf: url) {
+                let img = UIImage(data: data)
+                completion(img)
+                return
+            }
+        }
         let request = URLRequest(url: url as URL)
         let task = URLSession.shared.dataTask(with: request) { (data, _, _) in
             if let imageData = data {

@@ -22,12 +22,9 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 			self.frame = oldValue
 		}
 	}
-
+    
 	/// This parameter is used to detect third party keyboard actions.
 	var isCustomKeyboardActive = false
-    
-    /// This parameter is holds keyboard is shown or not
-    var isKeyboardShown = false
     
 	lazy var tableView: UITableView = {
 		let view = UITableView()
@@ -38,7 +35,6 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 
 		view.rowHeight = UITableView.automaticDimension
 		view.estimatedRowHeight = 200.0
-
 		return view
 	}()
 
@@ -63,19 +59,11 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 
 	/// This method is used to adapt to keyboard actions
 	/// - Parameter bottomInset: this parameter is used to detect keyboard height
-	func remakeTableViewConstraint(bottomInset: CGFloat) {
-        var val: CGFloat = 0
-        if conversationInputView.frame.size.height > Desk360.Config.Conversation.Input.height {
-            val = conversationInputView.frame.size.height
-        }
-        if isKeyboardShown {
-            
-        }
+    func remakeTableViewConstraint(bottomInset: CGFloat) {
 		tableView.snp.remakeConstraints { remakeConstraints in
 			remakeConstraints.leading.top.trailing.equalToSuperview()
 			remakeConstraints.bottom.equalToSuperview().inset(bottomInset)
 		}
-
 	}
 
 }

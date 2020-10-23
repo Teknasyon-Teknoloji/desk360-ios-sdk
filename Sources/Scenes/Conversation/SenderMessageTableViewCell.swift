@@ -193,10 +193,10 @@ internal extension SenderMessageTableViewCell {
         if Desk360.conVC == nil { return }
         guard let path = url.pathComponents.last else { return }
         let words = path.split(separator: ".")
-        guard var word = words.last else { return }
+        guard var word = words.last?.lowercased() else { return }
         if word == "pdf" {
             self.addPdf(url, fileName: fileName, inx: i, fileInx: fileInx)
-        } else if word == "png" || word == "jpeg" {
+        } else if word == "png" || word == "jpeg" || word == "jpg" {
             self.addImageView(url, fileExt: String(word), fileName: fileName, inx: i, fileInx: fileInx)
         } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" {
             if word == "mkv" || word == "wmv" || word == "3gp" { word = "mp4" }
