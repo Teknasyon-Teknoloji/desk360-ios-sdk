@@ -102,7 +102,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		super.viewDidAppear(animated)
 		layoutableView.setLoading(self.request.messages.isEmpty)
 		readRequest(request)
-        layoutableView.conversationInputView.resetAttachView()
+//        layoutableView.conversationInputView.resetAttachView()
 	}
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -139,12 +139,12 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let message = request.messages[indexPath.row]
 
-        var hasAttach = true
-        if message.attachments?.images?.count == 0 &&
-        message.attachments?.videos?.count == 0 &&
-        message.attachments?.files?.count == 0 &&
-        message.attachments?.others?.count == 0 {
-            hasAttach = false
+        var hasAttach = false
+        if message.attachments?.images?.count ?? 0 > 0 ||
+        message.attachments?.videos?.count ?? 0 > 0 ||
+        message.attachments?.files?.count ?? 0 > 0 ||
+        message.attachments?.others?.count ?? 0 > 0 {
+            hasAttach = true
         }
         
 		if message.isAnswer {
@@ -179,7 +179,7 @@ extension ConversationViewController: InputViewDelegate {
         view.sendButton.isHidden = true
         view.isHidden = true
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.modalPresentationStyle = .currentContext
+        alert.modalPresentationStyle = .fullScreen
         let showImagePicker = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentImagesText ?? "Images", style: .default) { _ in
             self.didTapImagePicker{
                 view.attachButton.isHidden = false
@@ -214,7 +214,6 @@ extension ConversationViewController: InputViewDelegate {
 
         let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.adobe.pdf"], in: .import)
         documentPicker.delegate = self
-        documentPicker.modalPresentationStyle = .fullScreen
         self.present(documentPicker, animated: true) {
             self.isConfigure = true
             completion()
@@ -252,7 +251,6 @@ extension ConversationViewController: InputViewDelegate {
     @objc func didTapImagePicker(completion: @escaping (() -> Void)) {
         let imagePicker: UIImagePickerController = UIImagePickerController()
         imagePicker.delegate = self
-        imagePicker.modalPresentationStyle = .fullScreen
         imagePicker.allowsEditing = false
         imagePicker.mediaTypes = ["public.image", "public.movie"]
         imagePicker.sourceType = .photoLibrary
@@ -368,7 +366,7 @@ extension ConversationViewController: InputViewDelegate {
 
             let btn = UIButton(frame: CGRect(x: lbl.frame.size.width + 4, y: 0, width: 24, height: 20))
             btn.addTarget(self, action: #selector(removeAttach(_:)), for: .touchUpInside)
-            btn.accessibilityIdentifier = file.name
+            btn.accessibilityIdentifier = file.url
             btn.setImage(Desk360.Config.Images.attachRemoveIcon, for: .normal)
             btn.backgroundColor = .clear
             view.addSubview(btn)
@@ -397,21 +395,21 @@ extension ConversationViewController: InputViewDelegate {
     @objc func removeAttach(_ sender: UIButton) {
         var i = 0
         for file in files {
-            if file.name == sender.accessibilityIdentifier {
+            if file.url == sender.accessibilityIdentifier {
                 files.remove(at: i)
                 manageAttachView()
-                let text = self.layoutableView.conversationInputView.textView.text
-                if text != "" {
-                    DispatchQueue.main.async {
-                        self.layoutableView.conversationInputView.textView.text = "\(text)."
-                        self.layoutableView.conversationInputView.textViewDidChange(self.layoutableView.conversationInputView.textView)
-                        self.layoutableView.conversationInputView.textView.text = text
-                        self.layoutableView.conversationInputView.textViewDidChange(self.layoutableView.conversationInputView.textView)
-                    }
-                }
                 break
             }
             i = i + 1
+        }
+        let text = self.layoutableView.conversationInputView.textView.text
+        if text != "" {
+            DispatchQueue.main.async {
+                self.layoutableView.conversationInputView.textView.text = "\(text)."
+                self.layoutableView.conversationInputView.textViewDidChange(self.layoutableView.conversationInputView.textView)
+                self.layoutableView.conversationInputView.textView.text = text
+                self.layoutableView.conversationInputView.textViewDidChange(self.layoutableView.conversationInputView.textView)
+            }
         }
     }
 }
@@ -459,7 +457,9 @@ extension ConversationViewController {
                                     if self.request != nil {
                                         DispatchQueue.main.async {
                                             //attachments will be allways at first row of tableview.
-                                            self.layoutableView.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+                                            let indexPath = IndexPath(row: 0, section: 0)
+                                            guard self.layoutableView.tableView.isValid(indexPath: indexPath) else { return }
+                                            self.layoutableView.tableView.reloadRows(at: [indexPath], with: .none)
                                         }
                                     }
                                 }
@@ -496,14 +496,16 @@ extension ConversationViewController {
 
 		layoutableView.conversationInputView.resignFirstResponder()
 		self.layoutableView.conversationInputView.reset()
+        let attachFiles = self.files
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
             self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
             self.files.removeAll()
             self.manageAttachView()
 		}
         var attach = [MultipartFormData]()
-        if files.count > 0 {
-            attach = files.map({ Moya.MultipartFormData(provider: .data($0.data), name: "attachments[]", fileName: $0.name.lowercased(), mimeType: $0.type ) })
+        if attachFiles.count > 0 {
+            attach = attachFiles.map({ Moya.MultipartFormData(provider: .data($0.data), name: "attachments[]", fileName: $0.name.lowercased(), mimeType: $0.type ) })
+            layoutableView.conversationInputView.setLoading(true)
         }
         let fieldData = MultipartFormData(provider: .data(message.data(using: .utf8)!), name: "message")
         attach.insert(fieldData, at: 0)
@@ -545,7 +547,7 @@ private extension ConversationViewController {
             return .file
         } else if word == "png" || word == "jpeg" || word == "jpg" || word == "svg" || word == "bmp" || word == "heic" {
             return .image
-        } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" {
+        } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" || word == "qt" {
             return .video
         } else {
             return .unknown
@@ -598,6 +600,7 @@ private extension ConversationViewController {
 		guard row >= 0 else { return }
         if Desk360.conVC == nil { return }
 		let lastIndexPath = IndexPath(row: row, section: 0)
+        guard layoutableView.tableView.isValid(indexPath: lastIndexPath) else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
 			self.layoutableView.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: animated)
 		})
@@ -606,6 +609,7 @@ private extension ConversationViewController {
 	func showActiveCheckMark() {
 		let indexPath = IndexPath(row: request.messages.count - 1, section: 0)
 		guard let cell = layoutableView.tableView.cellForRow(at: indexPath) else { return }
+        guard layoutableView.tableView.isValid(indexPath: indexPath) else { return }
 		layoutableView.tableView.reloadRows(at: [indexPath], with: .none)
 	}
 
@@ -622,6 +626,17 @@ private extension ConversationViewController {
 			}
 		}
 	}
+
+}
+
+extension UITableView {
+
+    func isValid(indexPath: IndexPath) -> Bool {
+        guard indexPath.section < numberOfSections,
+              indexPath.row < numberOfRows(inSection: indexPath.section)
+            else { return false }
+        return true
+    }
 
 }
 

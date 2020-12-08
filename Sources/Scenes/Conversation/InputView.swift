@@ -134,15 +134,14 @@ final class InputView: UIView, Layoutable {
                 make.width.equalTo(30)
             }
             make.height.equalTo(30)
-            make.centerY.equalTo(sendButton).priority(.required)
+            make.centerY.equalTo(sendButton)
             make.leading.equalTo(12)
         }
         
 		textView.snp.makeConstraints { make in
-			//make.centerY.equalToSuperview().priority(.required)
-            make.top.equalToSuperview().inset(preferredSpacing * 0.5)
+            make.top.equalToSuperview().inset(preferredSpacing * 0.5).priority(.required)
             make.leading.equalTo(attachButton.snp.trailing).inset(-4)
-            make.bottom.equalTo(stackView.snp.top).inset(-4) //Superview().inset(preferredSpacing * 0.5)
+            make.bottom.equalTo(stackView.snp.top).inset(-4).priority(.required)
 		}
 
         stackView.snp.makeConstraints { make in
@@ -150,12 +149,11 @@ final class InputView: UIView, Layoutable {
             make.bottom.equalTo(buttonBar.snp.top).offset(-2)
             make.leading.equalTo(attachButton.snp.trailing).inset(-4)
             make.trailing.equalTo(textView.snp.trailing)
-            //make.height.equalTo(0)
+            make.height.equalTo(0).priority(.required)
         }
 
 		buttonBar.snp.makeConstraints { make in
-			make.bottom.equalToSuperview().inset(4)//(textView.textContainerInset.bottom).offset(-preferredSpacing * 0.5)
-            //make.top.equalTo(stackView.snp.bottom)
+			make.bottom.equalToSuperview().inset(4)
 			make.leading.equalToSuperview().inset(textView.textContainerInset.left)
 			make.trailing.equalTo(sendButton.snp.leading).offset(-preferredSpacing * 0.25)
 			make.height.equalTo(1)
@@ -169,7 +167,6 @@ final class InputView: UIView, Layoutable {
 			make.bottom.equalToSuperview().inset(preferredSpacing / 2)
 			make.width.greaterThanOrEqualTo(preferredSpacing * 2)
 			make.height.equalTo(Desk360.Config.Conversation.Input.height - (preferredSpacing))
-//			make.centerY.equalToSuperview()
 		}
 
 		activityIndicator.snp.makeConstraints { $0.center.equalTo(sendButton) }
@@ -189,7 +186,7 @@ final class InputView: UIView, Layoutable {
             }
 			self.frame = self.initialFrame
 			self.textView.isScrollEnabled = false
-			self.placeholderLabel.isHidden = false
+            self.placeholderLabel.isHidden = self.textView.trimmedText != nil || self.textView.isFirstResponder
 			self.sendButton.isEnabled = false
 			self.translatesAutoresizingMaskIntoConstraints = false
 			self.invalidateIntrinsicContentSize()
@@ -200,22 +197,27 @@ final class InputView: UIView, Layoutable {
     func resetAttachView() {
         reset(isClearText: false)
         self.hasAttachView = false
-        self.textView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview().priority(.required)
-            make.leading.equalTo(self.attachButton.snp.trailing).inset(-4)
-            make.top.equalToSuperview().inset(self.preferredSpacing * 0.5)
-            make.bottom.equalToSuperview().inset(self.preferredSpacing * 0.5)
+        textView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(preferredSpacing * 0.5).priority(.required)
+            make.leading.equalTo(attachButton.snp.trailing).inset(-4)
+            make.bottom.equalTo(stackView.snp.top).inset(-4).priority(.required)
         }
-        self.buttonBar.snp.makeConstraints { make in
+        stackView.snp.makeConstraints { make in
+            make.top.equalTo(textView.snp.bottom)
+            make.bottom.equalTo(buttonBar.snp.top).offset(-2)
+            make.leading.equalTo(attachButton.snp.trailing).inset(-4)
+            make.trailing.equalTo(textView.snp.trailing)
+            make.height.equalTo(0).priority(.required)
+        }
+        buttonBar.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(4)
-            make.leading.equalToSuperview().inset(self.textView.textContainerInset.left)
-            make.trailing.equalTo(self.sendButton.snp.leading).offset(-self.preferredSpacing * 0.25)
+            make.leading.equalToSuperview().inset(textView.textContainerInset.left)
+            make.trailing.equalTo(sendButton.snp.leading).offset(-preferredSpacing * 0.25)
             make.height.equalTo(1)
         }
     }
     
     func setFrame(height: CGFloat) {
-        guard frame.size.height <= Desk360.Config.Conversation.Input.maxHeight else { return }
         hasAttachView = height > 0
         DispatchQueue.main.async {
             self.frame = CGRect(x: self.frame.origin.x, y: self.frame.origin.y, width: self.frame.size.width, height: self.frame.size.height + height)
@@ -223,16 +225,16 @@ final class InputView: UIView, Layoutable {
             self.invalidateIntrinsicContentSize()
             self.layoutIfNeeded()
             self.textView.snp.remakeConstraints { make in
-                make.top.equalToSuperview().inset(self.preferredSpacing * 0.5)
+                make.top.equalToSuperview().inset(self.preferredSpacing * 0.5).priority(.required)
                 make.leading.equalTo(self.attachButton.snp.trailing).inset(-4)
-                make.bottom.equalTo(self.stackView.snp.top).inset(-4)
+                make.bottom.equalTo(self.stackView.snp.top).inset(-4).priority(.required)
             }
             self.stackView.snp.remakeConstraints { make in
                 make.top.equalTo(self.textView.snp.bottom)
                 make.bottom.equalTo(self.buttonBar.snp.top).offset(-2)
                 make.leading.equalTo(self.attachButton.snp.trailing).inset(-4)
                 make.trailing.equalTo(self.textView.snp.trailing)
-                make.height.equalTo(height)
+                make.height.equalTo(height).priority(.required)
             }
             self.buttonBar.snp.remakeConstraints { make in
                 make.bottom.equalToSuperview().inset(4)
@@ -282,7 +284,9 @@ extension InputView: UITextViewDelegate {
 		height = max(height, Desk360.Config.Conversation.Input.height)
 
 		textView.isScrollEnabled = height > Desk360.Config.Conversation.Input.maxHeight
-		guard height <= Desk360.Config.Conversation.Input.maxHeight else { return }
+        if height > Desk360.Config.Conversation.Input.maxHeight {
+            height = Desk360.Config.Conversation.Input.maxHeight
+        }
         if hasAttachView {
             height = height + stackView.frame.size.height
         }

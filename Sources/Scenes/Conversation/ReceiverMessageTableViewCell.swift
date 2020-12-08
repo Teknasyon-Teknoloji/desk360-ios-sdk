@@ -118,7 +118,10 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
 		}
 		
-		stackView.snp.makeConstraints { $0.edges.equalToSuperview().inset(preferredSpacing / 2) }
+		stackView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview().inset(preferredSpacing / 2)
+            $0.bottom.equalTo(checkMark.snp.top).offset(-4)
+        }
 
 		checkMark.snp.makeConstraints { make in
 			make.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
@@ -180,7 +183,7 @@ internal extension ReceiverMessageTableViewCell {
 
         if hasAttach == false { //hasAttach flag is holds is there attachments sent from messages not ticket creation.
             if let attachmentUrl = attachment { // function's attachment parameter is holds, ticket creation attachment.
-                guard indexPath.row == 0 else { return } //ticket attachments will allways at zero row, so if not we can return.
+                guard indexPath.row == 0 else { return } //ticket attachments will allways at zero row, so, now we can return.
                 checkFile(attachmentUrl, fileName: "", i: 1, fileInx: 1)
                 return
             }
@@ -244,7 +247,7 @@ internal extension ReceiverMessageTableViewCell {
             self.addPdf(url, fileName: fileName, inx: i, fileInx: fileInx)
         } else if word == "png" || word == "jpeg" || word == "jpg" {
             self.addImageView(url, fileExt: String(word), fileName: fileName, inx: i, fileInx: fileInx)
-        } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" {
+        } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" || word == "qt" {
             if word == "mkv" || word == "wmv" || word == "3gp" { word = "mp4" }
             self.addVideoView(url, fileExt: String(word), fileName: fileName, inx: i, fileInx: fileInx)
         }

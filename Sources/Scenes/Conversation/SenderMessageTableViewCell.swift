@@ -198,7 +198,7 @@ internal extension SenderMessageTableViewCell {
             self.addPdf(url, fileName: fileName, inx: i, fileInx: fileInx)
         } else if word == "png" || word == "jpeg" || word == "jpg" {
             self.addImageView(url, fileExt: String(word), fileName: fileName, inx: i, fileInx: fileInx)
-        } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" {
+        } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" || word == "qt" {
             if word == "mkv" || word == "wmv" || word == "3gp" { word = "mp4" }
             self.addVideoView(url, fileExt: String(word), fileName: fileName, inx: i, fileInx: fileInx)
         } else {
@@ -207,7 +207,6 @@ internal extension SenderMessageTableViewCell {
     }
     
     func addVideoView(_ url: URL, fileExt: String, fileName: String, inx: Int, fileInx: Int) {
-
         if Desk360.conVC == nil { return }
 
         self.previewVideoView.isHidden = false

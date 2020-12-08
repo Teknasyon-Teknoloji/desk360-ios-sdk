@@ -137,6 +137,14 @@ public extension Desk360.Config {
         static var receiverDownloadFile: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/filedownloadreceiver")
         }()
+        
+        static var agreementCheckIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/agreementCheck")
+        }()
+        
+        static var agreementUnCheckIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/agreementUnCheck")
+        }()
 	}
 
 	struct Requests {
@@ -254,7 +262,7 @@ public extension Desk360.Config.Conversation {
 		static var height: CGFloat = 75
 
 		/// Bar maximum allowe height. _dafault is 200.0_
-		static var maxHeight: CGFloat = 230.0
+		static var maxHeight: CGFloat = 200.0
 
 	}
 

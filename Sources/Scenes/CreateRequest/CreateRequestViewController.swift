@@ -39,6 +39,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		super.viewDidLoad()
 
 		layoutableView.sendButton.addTarget(self, action: #selector(didTapSendRequestButton), for: .touchUpInside)
+        layoutableView.agreementButton.addTarget(self, action: #selector(didTapAgreementButton), for: .touchUpInside)
 		layoutableView.attachmentButton.addTarget(self, action: #selector(addFile), for: .touchUpInside)
 		layoutableView.attachmentCancelButton.addTarget(self, action: #selector(deleteFile), for: .touchUpInside)
 		registerForKeyboardEvents()
@@ -67,7 +68,11 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-			self.layoutableView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.bottomScrollView.frame.size.width, height: self.layoutableView.bottomDescriptionLabel.frame.size.height + self.layoutableView.preferredSpacing * 0.5)
+            var agreementHeight: CGFloat = 0
+            if Config.shared.model?.createScreen?.agreementIsHidden == true { //showing. wrong naming at BE side. true means showing
+                agreementHeight = self.layoutableView.agreementView.frame.size.height
+            }
+			self.layoutableView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.bottomScrollView.frame.size.width, height: self.layoutableView.bottomDescriptionLabel.frame.size.height + agreementHeight + self.layoutableView.preferredSpacing * 0.5)
 		}
 	}
 
@@ -212,6 +217,16 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		layoutableView.attachmentCancelButton.isEnabled = true
 		picker.dismiss(animated: true)
 	}
+    
+    @objc private func didTapAgreementButton(sender: UIButton) {
+        sender.isSelected = !sender.isSelected
+        layoutableView.sendButton.isEnabled = sender.isSelected
+        if layoutableView.sendButton.isEnabled == false {
+            layoutableView.sendButton.setTitleColor(.gray, for: .normal)
+        } else {
+            layoutableView.sendButton.setTitleColor(.white, for: .normal)
+        }
+    }
 
 	@objc private func didTapSendRequestButton() {
         layoutableView.endEditing(true)
@@ -423,6 +438,15 @@ private extension CreateRequestViewController {
 				ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
 			}
 		}
+
+        if Config.shared.model?.createScreen?.agreementIsHidden == true {
+            if layoutableView.agreementButton.isSelected {
+                let agreementData = "1".data(using: String.Encoding.utf8) ?? Data()
+                if agreementData != nil {
+                    ticket.append(Moya.MultipartFormData(provider: .data(agreementData), name: "confirm"))
+                }
+            }
+        }
 
 		if let pushTokenString = Desk360.pushToken {
 			let pushTokenData = pushTokenString.data(using: String.Encoding.utf8) ?? Data()
