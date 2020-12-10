@@ -340,6 +340,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
             make.leading.equalTo(agreementButton.snp.trailing).offset(8)
             make.trailing.equalToSuperview()
             make.height.equalToSuperview()
+            make.top.equalTo(6)
         }
 
 		attachmentButton.snp.makeConstraints { make in
@@ -1004,7 +1005,7 @@ extension CreateRequestView {
                 .underlineStyle: NSUnderlineStyle.single.rawValue
             ]
         }
-        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: NSMakeRange(0, str.count))
+        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 15), range: NSMakeRange(0, str.count))
         agreementTextView.attributedText = attributedString
 
 		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model?.generalSettings?.bottomNoteFontWeight ?? 400))
