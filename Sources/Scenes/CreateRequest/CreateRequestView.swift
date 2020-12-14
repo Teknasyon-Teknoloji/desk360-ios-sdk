@@ -235,7 +235,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 		bottomScrollView.addSubview(bottomDescriptionLabel)
         
-        bottomScrollView.addSubview(agreementView)
+        scrollView.addSubview(agreementView)
         agreementView.addSubview(agreementButton)
         agreementView.addSubview(agreementTextView)
 	}
@@ -269,13 +269,8 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		}
 
 		sendButton.snp.makeConstraints { make in
-            //agreement is hidden and bottom not is showing
-            if Config.shared.model?.createScreen?.agreementIsHidden == false { // not showing. wrong naming at BE side. false means not showing
-                make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 1) //bottom note will be under of send buttons 1.5
-            } else { // both will showing
-                make.top.equalTo(bottomScrollView.snp.bottom).offset(preferredSpacing * 0.5) //yeni
-            }
-			make.height.equalTo(UIButton.preferredHeight)
+            make.top.equalTo(agreementView.snp.bottom).offset(preferredSpacing * 0.4)
+            make.height.equalTo(UIButton.preferredHeight)
 			make.centerX.equalToSuperview()
 			make.width.equalTo(stackView)
 			make.bottom.equalToSuperview().inset(preferredSpacing)
@@ -295,39 +290,27 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 		scrollView.snp.makeConstraints { make in
 			make.leading.trailing.top.equalToSuperview()
-//			make.bottom.equalTo(bottomScrollView.snp.top) //eneski
             make.bottom.equalTo(desk360BottomView.snp.top) //yeni
 		}
         
 		bottomScrollView.snp.makeConstraints { make in
-			//make.bottom.equalTo(desk360BottomView.snp.top) //eneski
-            if Config.shared.model?.createScreen?.agreementIsHidden == false { //not showing. wrong naming at BE side. false means not showing
-                make.top.equalTo(sendButton.snp.bottom).offset((preferredSpacing * 0)) //eski 2.5
-                make.height.equalTo(preferredSpacing * 2.5)
-            } else {
-                make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing / 2) //yeni
-                make.height.equalTo(96)
-            }
+            make.top.equalTo(sendButton.snp.bottom).offset((preferredSpacing * 0)) //eski 2.5
+            make.height.equalTo(preferredSpacing * 2)
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size))
 			make.centerX.equalToSuperview()
 		}
 
 		bottomDescriptionLabel.snp.makeConstraints { make in
-            if Config.shared.model?.createScreen?.agreementIsHidden == false { //not showing. wrong naming at BE side. false means not showing
-                make.top.equalToSuperview().inset(preferredSpacing * 0.25)
-            } else {
-                make.top.equalTo(agreementView.snp.bottom)
-                make.height.equalToSuperview().dividedBy(2.2)
-            }
+            make.top.bottom.equalToSuperview().inset(preferredSpacing * 0.25)
             make.centerX.equalToSuperview()
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) - (preferredSpacing * 3))
 		}
         
         agreementView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 0.3)
             make.centerX.equalToSuperview()
             make.width.equalTo(sendButton)
-            make.height.equalToSuperview().dividedBy(1.8)
+            make.height.equalTo(preferredSpacing * 2)
         }
         
         agreementButton.snp.makeConstraints { make in
@@ -340,7 +323,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
             make.leading.equalTo(agreementButton.snp.trailing).offset(8)
             make.trailing.equalToSuperview()
             make.height.equalToSuperview()
-            make.top.equalTo(6)
+            make.top.equalTo(1)
         }
 
 		attachmentButton.snp.makeConstraints { make in
@@ -990,9 +973,8 @@ extension CreateRequestView {
 		configureUnderLine(field: nameTextField)
 		configureUnderLine(field: emailTextField)
 		bottomDescriptionLabel.text = Config.shared.model?.createScreen?.bottomNoteText
-		bottomScrollView.isHidden = !(Config.shared.model?.createScreen?.bottomNoteIsHidden ?? false)
+        bottomDescriptionLabel.isHidden = !(Config.shared.model?.createScreen?.bottomNoteIsHidden ?? false)
 		bottomDescriptionLabel.textColor = Colors.bottomNoteColor
-        agreementView.isHidden = !(Config.shared.model?.createScreen?.agreementIsHidden ?? false)
         agreementButton.isHidden = !(Config.shared.model?.createScreen?.agreementIsHidden ?? false)
         agreementTextView.isHidden = !(Config.shared.model?.createScreen?.agreementIsHidden ?? false)
         let str = Config.shared.model?.createScreen?.agreementText ?? ""
@@ -1269,12 +1251,7 @@ extension CreateRequestView {
 		sendButton.layer.cornerRadius = 0
 
 		sendButton.snp.remakeConstraints { make in
-			//make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 1.5)
-            if Config.shared.model?.createScreen?.agreementIsHidden == false { //not showing. wrong naming at BE side. false means not showing
-                make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 1.5) //bottom note will be under of send buttons
-            } else {
-                make.top.equalTo(bottomScrollView.snp.bottom).offset(preferredSpacing * 1.5) //yeni
-            }
+            make.top.equalTo(agreementView.snp.bottom).offset(preferredSpacing * 0.4)
 			make.height.equalTo(UIButton.preferredHeight)
 			make.centerX.equalToSuperview()
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) + 2)
@@ -1284,14 +1261,8 @@ extension CreateRequestView {
 
 	func setupButtonDefaultLayout() {
 		sendButton.snp.remakeConstraints { make in
-			//make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 1.5) //eski
-            //make.top.equalTo(bottomScrollView.snp.bottom).offset(preferredSpacing * 1.5) //yeni
-            if Config.shared.model?.createScreen?.agreementIsHidden == false { //not showing. wrong naming at BE side. false means not showing
-                make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 1) //bottom note will be under of send buttons 1.5
-            } else { //both will showing
-                make.top.equalTo(bottomScrollView.snp.bottom).offset(preferredSpacing * 0.5) //yeni
-            }
-			make.height.equalTo(UIButton.preferredHeight)
+            make.top.equalTo(agreementView.snp.bottom).offset(preferredSpacing * 0.4)
+            make.height.equalTo(UIButton.preferredHeight)
 			make.centerX.equalToSuperview()
 			make.width.equalTo(stackView)
 			make.bottom.equalToSuperview().inset(preferredSpacing)

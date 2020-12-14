@@ -68,11 +68,9 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            var agreementHeight: CGFloat = 0
-            if Config.shared.model?.createScreen?.agreementIsHidden == true { //showing. wrong naming at BE side. true means showing
-                agreementHeight = self.layoutableView.agreementView.frame.size.height
-            }
-			self.layoutableView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.bottomScrollView.frame.size.width, height: self.layoutableView.bottomDescriptionLabel.frame.size.height + agreementHeight + self.layoutableView.preferredSpacing * 0.5)
+            self.layoutableView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.bottomScrollView.frame.size.width, height: self.layoutableView.bottomDescriptionLabel.frame.size.height + self.layoutableView.preferredSpacing * 0.5)
+            let cs = self.layoutableView.scrollView.contentSize
+            self.layoutableView.scrollView.contentSize = CGSize(width: cs.width, height: cs.height + 10)
 		}
 	}
 
