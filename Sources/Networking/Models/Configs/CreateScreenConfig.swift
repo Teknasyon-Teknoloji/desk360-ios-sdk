@@ -65,6 +65,12 @@ public struct CreateScreenConfigModel {
 
 	var bottomNoteText: String?
 
+    var agreementIsHidden: Bool? //form_confirm_is_hidden
+    
+    var agreementText: String? //form_confirm_text
+    
+    var agreementUrl: String? //form_confirm_link
+    
 	var ticketTypes: [TicketType]?
 
 }
@@ -99,6 +105,9 @@ extension CreateScreenConfigModel: Codable {
 		case added_file_is_hidden
 		case bottom_note_is_hidden
 		case bottom_note_text
+        case form_confirm_is_hidden //agreementIsHidden
+        case form_confirm_text //agreementText
+        case form_confirm_link //agreementUrl
 		case custom_fields
 		case types
 	}
@@ -164,7 +173,10 @@ extension CreateScreenConfigModel: Codable {
 			addedFileIsHidden = try (container.decodeIfPresent(Bool.self, forKey: .added_file_is_hidden))
 			bottomNoteIsHidden = try (container.decodeIfPresent(Bool.self, forKey: .bottom_note_is_hidden))
 			bottomNoteText = try (container.decodeIfPresent(String.self, forKey: .bottom_note_text))
-			ticketTypes = try (container.decodeIfPresent([TicketType].self, forKey: .types))
+            agreementIsHidden = try (container.decodeIfPresent(Bool.self, forKey: .form_confirm_is_hidden))
+            agreementText = try (container.decodeIfPresent(String.self, forKey: .form_confirm_text))
+            agreementUrl = try (container.decodeIfPresent(String.self, forKey: .form_confirm_link))
+            ticketTypes = try (container.decodeIfPresent([TicketType].self, forKey: .types))
 
 		} catch let error as DecodingError {
 			print(error)
@@ -206,7 +218,10 @@ extension CreateScreenConfigModel: Codable {
 			try container.encodeIfPresent(buttonShadowIsHidden, forKey: .button_shadow_is_hidden)
 			try container.encodeIfPresent(bottomNoteIsHidden, forKey: .bottom_note_is_hidden)
 			try container.encodeIfPresent(bottomNoteText, forKey: .bottom_note_text)
-			try container.encodeIfPresent(ticketTypes, forKey: .types)
+            try container.encodeIfPresent(agreementIsHidden, forKey: .form_confirm_is_hidden)
+            try container.encodeIfPresent(agreementText, forKey: .form_confirm_text)
+            try container.encodeIfPresent(agreementUrl, forKey: .form_confirm_link)
+            try container.encodeIfPresent(ticketTypes, forKey: .types)
 
 		} catch let error as EncodingError {
 			print(error)

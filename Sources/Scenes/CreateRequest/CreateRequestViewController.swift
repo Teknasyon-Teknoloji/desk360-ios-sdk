@@ -39,6 +39,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		super.viewDidLoad()
 
 		layoutableView.sendButton.addTarget(self, action: #selector(didTapSendRequestButton), for: .touchUpInside)
+        layoutableView.agreementButton.addTarget(self, action: #selector(didTapAgreementButton), for: .touchUpInside)
 		layoutableView.attachmentButton.addTarget(self, action: #selector(addFile), for: .touchUpInside)
 		layoutableView.attachmentCancelButton.addTarget(self, action: #selector(deleteFile), for: .touchUpInside)
 		registerForKeyboardEvents()
@@ -67,7 +68,9 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-			self.layoutableView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.bottomScrollView.frame.size.width, height: self.layoutableView.bottomDescriptionLabel.frame.size.height + self.layoutableView.preferredSpacing * 0.5)
+            self.layoutableView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.bottomScrollView.frame.size.width, height: self.layoutableView.bottomDescriptionLabel.frame.size.height + self.layoutableView.preferredSpacing * 0.5)
+            let cs = self.layoutableView.scrollView.contentSize
+            self.layoutableView.scrollView.contentSize = CGSize(width: cs.width, height: cs.height + 10)
 		}
 	}
 
@@ -85,6 +88,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	}
 
 	@objc func addFile() {
+        layoutableView.endEditing(true)
 		let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
 		let showImagePicker = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentImagesText ?? "Images", style: .default) { _ in
@@ -211,9 +215,19 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		layoutableView.attachmentCancelButton.isEnabled = true
 		picker.dismiss(animated: true)
 	}
+    
+    @objc private func didTapAgreementButton(sender: UIButton) {
+        sender.isSelected = !sender.isSelected
+        layoutableView.sendButton.isEnabled = sender.isSelected
+        if layoutableView.sendButton.isEnabled == false {
+            layoutableView.sendButton.setTitleColor(.gray, for: .normal)
+        } else {
+            layoutableView.sendButton.setTitleColor(.white, for: .normal)
+        }
+    }
 
 	@objc private func didTapSendRequestButton() {
-
+        layoutableView.endEditing(true)
 		checkChangeFrame()
 		guard let name = layoutableView.nameTextField.trimmedText, name.count > 2 else {
 			layoutableView.nameErrorLabel.isHidden = false
@@ -314,7 +328,7 @@ extension CreateRequestViewController: KeyboardObserving {
 	}
 
 	func keyboardWillHide(_ notification: KeyboardNotification?) {
-		layoutableView.keyboardWillHide(notification)
+        layoutableView.keyboardWillHide(notification)
 	}
 
 	func keyboardDidHide(_ notification: KeyboardNotification?) {
@@ -422,6 +436,15 @@ private extension CreateRequestViewController {
 				ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
 			}
 		}
+
+        if Config.shared.model?.createScreen?.agreementIsHidden == true {
+            if layoutableView.agreementButton.isSelected {
+                let agreementData = "1".data(using: String.Encoding.utf8) ?? Data()
+                if agreementData != nil {
+                    ticket.append(Moya.MultipartFormData(provider: .data(agreementData), name: "confirm"))
+                }
+            }
+        }
 
 		if let pushTokenString = Desk360.pushToken {
 			let pushTokenData = pushTokenString.data(using: String.Encoding.utf8) ?? Data()

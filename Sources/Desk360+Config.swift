@@ -115,6 +115,14 @@ public extension Desk360.Config {
 			return Desk360.Config.Images.createImage(resources: "Images/sendLight")
 		}()
         
+        static var attachIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/attach")
+        }()
+        
+        static var attachRemoveIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/attachRemove")
+        }()
+        
         static var arrowDownIcon: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/arrowDown")
         }()
@@ -128,6 +136,14 @@ public extension Desk360.Config {
         }()
         static var receiverDownloadFile: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/filedownloadreceiver")
+        }()
+        
+        static var agreementCheckIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/agreementCheck")
+        }()
+        
+        static var agreementUnCheckIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/agreementUnCheck")
         }()
 	}
 

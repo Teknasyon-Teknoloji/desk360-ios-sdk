@@ -22,10 +22,10 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 			self.frame = oldValue
 		}
 	}
-
+    
 	/// This parameter is used to detect third party keyboard actions.
 	var isCustomKeyboardActive = false
-
+    
 	lazy var tableView: UITableView = {
 		let view = UITableView()
 		view.separatorStyle = .none
@@ -35,7 +35,6 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 
 		view.rowHeight = UITableView.automaticDimension
 		view.estimatedRowHeight = 200.0
-
 		return view
 	}()
 
@@ -60,13 +59,11 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 
 	/// This method is used to adapt to keyboard actions
 	/// - Parameter bottomInset: this parameter is used to detect keyboard height
-	func remakeTableViewConstraint(bottomInset: CGFloat) {
-
+    func remakeTableViewConstraint(bottomInset: CGFloat) {
 		tableView.snp.remakeConstraints { remakeConstraints in
 			remakeConstraints.leading.top.trailing.equalToSuperview()
 			remakeConstraints.bottom.equalToSuperview().inset(bottomInset)
 		}
-
 	}
 
 }

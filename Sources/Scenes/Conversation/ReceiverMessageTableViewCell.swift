@@ -66,8 +66,8 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 		return view
 	}()
 
-	lazy var previewImageView: UIImageView = {
-		let imageView = UIImageView()
+	lazy var previewImageView: UIView = {
+		let imageView = UIView()
 		return imageView
 	}()
 
@@ -82,6 +82,11 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 		let view = UIView()
 		return view
 	}()
+
+    lazy var previewPdfView: UIView = {
+        let view = UIView()
+        return view
+    }()
 
 	@available(iOS 11.0, *)
 	lazy var pdfView: PDFView = {
@@ -113,7 +118,10 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
 		}
 		
-		stackView.snp.makeConstraints { $0.edges.equalToSuperview().inset(preferredSpacing / 2) }
+		stackView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview().inset(preferredSpacing / 2)
+            $0.bottom.equalTo(checkMark.snp.top).offset(-4)
+        }
 
 		checkMark.snp.makeConstraints { make in
 			make.trailing.equalToSuperview().inset(preferredSpacing * 0.5)
@@ -133,22 +141,27 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 		roundCorner()
 
 	}
-
+    
+    func clearCell() {
+        previewImageView.isHidden = true
+        previewVideoView.isHidden = true
+        previewPdfView.isHidden = true
+    }
 }
 
 // MARK: - Configure
 internal extension ReceiverMessageTableViewCell {
 
-	func configure(for request: Message, _ indexPath: IndexPath, _ attachment: URL? = nil) {
+	func configure(for request: Message, _ indexPath: IndexPath, _ attachment: URL? = nil, hasAttach: Bool = false) {
+        if Desk360.conVC == nil { return }
+        
 		containerView.backgroundColor = Colors.ticketDetailChatReceiverBackgroundColor
 		messageTextView.text = request.message
 		messageTextView.textColor = Colors.ticketDetailChatReceiverTextColor
 		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.chatReceiverFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.chatReceiverFontWeight ?? 400))
 		dateLabel.textColor = Colors.ticketDetailChatChatReceiverDateColor
-		roundCorner()
         
         if let dateString = request.createdAt {
-            
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
             if let date = formatter.date(from: dateString) {
@@ -167,76 +180,213 @@ internal extension ReceiverMessageTableViewCell {
 		if #available(iOS 11.0, *) {
 			pdfView.isHidden = true
 		}
-		guard indexPath.row == 0 else { return }
-		guard let attachmentUrl = attachment else { return }
-		checkFile(attachmentUrl)
 
+        if hasAttach == false { //hasAttach flag is holds is there attachments sent from messages not ticket creation.
+            if let attachmentUrl = attachment { // function's attachment parameter is holds, ticket creation attachment.
+                guard indexPath.row == 0 else { return } //ticket attachments will allways at zero row, so, now we can return.
+                checkFile(attachmentUrl, fileName: "", i: 1, fileInx: 1)
+                return
+            }
+        }
+        if hasAttach == false { return }
+        
+        var fileInx = 1
+        if let images = request.attachments?.images {
+            let val = images.filter({$0 != nil })
+            var i = 1
+            if val.count > 0 { fileInx = fileInx + 1 }
+            for image in val {
+                if let url = URL(string: image.url) {
+                    self.checkFile(url, fileName: image.name, i: i, fileInx: fileInx)
+                }
+                i = i + 1
+            }
+        }
+        if let videos = request.attachments?.videos {
+            let val = videos.filter({$0 != nil })
+            var i = 1
+            if val.count > 0 { fileInx = fileInx + 1 }
+            for video in val {
+                if let url = URL(string: video.url) {
+                    self.checkFile(url, fileName: video.name, i: i, fileInx: fileInx)
+                }
+                i = i + 1
+            }
+        }
+        if let files = request.attachments?.files {
+            let val = files.filter({$0 != nil })
+            var i = 1
+            if val.count > 0 { fileInx = fileInx + 1 }
+            for file in val {
+                if let url = URL(string: file.url) {
+                    self.checkFile(url, fileName: file.name, i: i, fileInx: fileInx)
+                }
+                i = i + 1
+            }
+        }
+        if let otherFiles = request.attachments?.others {
+            let val = otherFiles.filter({$0 != nil })
+            var i = 1
+            if val.count > 0 { fileInx = fileInx + 1 }
+            for otherFile in val {
+                if let url = URL(string: otherFile.url) {
+                    self.checkFile(url, fileName: otherFile.name, i: i, fileInx: fileInx)
+                }
+                i = i + 1
+            }
+        }
 	}
 
-	func checkFile(_ url: URL) {
+    func checkFile(_ url: URL, fileName: String, i: Int = 1, fileInx: Int) {
 
-		guard let path = url.pathComponents.last else { return }
-		let words = path.split(separator: ".")
-		guard let word = words.last else { return }
-		if word == "pdf" {
-			addPdf(url)
-		} else if word == "png" || word == "jpeg" {
-			addImageView(url)
-		} else {
-			addVideoView(url)
-		}
+        if Desk360.conVC == nil { return }
+        guard let path = url.pathComponents.last else { return }
+        let words = path.split(separator: ".")
+        guard var word = words.last?.lowercased() else { return }
+        if word == "pdf" {
+            self.addPdf(url, fileName: fileName, inx: i, fileInx: fileInx)
+        } else if word == "png" || word == "jpeg" || word == "jpg" {
+            self.addImageView(url, fileExt: String(word), fileName: fileName, inx: i, fileInx: fileInx)
+        } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" || word == "qt" {
+            if word == "mkv" || word == "wmv" || word == "3gp" { word = "mp4" }
+            self.addVideoView(url, fileExt: String(word), fileName: fileName, inx: i, fileInx: fileInx)
+        }
+    }
+    
+    func addVideoView(_ url: URL, fileExt: String, fileName: String, inx: Int, fileInx: Int) {
+        if Desk360.conVC == nil { return }
 
+        self.previewVideoView.isHidden = false
+        if inx == 1 {
+            previewVideoView.subviews.map({$0.removeFromSuperview()})
+        }
+        self.stackView.addArrangedSubview(self.previewVideoView)
+        self.previewVideoView.snp.remakeConstraints { remake in
+            remake.leading.trailing.equalToSuperview()
+            remake.height.equalTo(self.previewVideoView.snp.width).multipliedBy(inx).offset(4 * inx)
+        }
+
+        let videoView = PlayerView()
+        videoView.tag = inx
+        self.previewVideoView.addSubview(videoView)
+        
+        let playButton = UIButton()
+        playButton.titleLabel?.tag = inx
+        playButton.setImage(Desk360.Config.Images.playIcon, for: .normal)
+        playButton.setImage(Desk360.Config.Images.pauseIcon, for: .selected)
+
+        self.previewVideoView.addSubview(playButton)
+
+        playButton.snp.makeConstraints { make in
+            make.center.equalTo(videoView)
+            make.width.height.equalTo(self.preferredSpacing * 2)
+        }
+
+        playButton.addTarget(self, action: #selector(self.didTapPlayButton(sender:)), for: .touchUpInside)
+        playButton.tintColor = Colors.ticketDetailWriteMessageButtonIconColor
+        
+        videoView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(previewVideoView.snp.width)
+            if inx == 1 {
+                make.top.equalToSuperview()
+            } else {
+                make.top.equalTo(previewVideoView.viewWithTag(inx - 1)!.snp.bottom).offset(4)
+            }
+        }
+
+        let avPlayer = AVPlayer(url: url);
+        videoView.playerLayer.player = avPlayer;
 	}
 
-	func addVideoView(_ url: URL) {
+    func addImageView(_ url: URL, fileExt: String, fileName: String, inx: Int, fileInx: Int) {
 
-		stackView.addArrangedSubview(previewVideoView)
+        if Desk360.conVC == nil { return }
 
-		previewVideoView.snp.remakeConstraints { remake in
-			remake.leading.trailing.equalToSuperview()
-			remake.height.equalTo(previewVideoView.snp.width)
-		}
-
-		previewVideoView.addSubview(videoView)
-		previewVideoView.addSubview(playButton)
-
-		playButton.snp.makeConstraints { make in
-			make.center.equalToSuperview()
-			make.width.height.equalTo(preferredSpacing * 2)
-		}
-
-		playButton.addTarget(self, action: #selector(didTapPlayButton), for: .touchUpInside)
-		playButton.tintColor = Colors.ticketDetailWriteMessageButtonIconColor
-		previewVideoView.isHidden = false
-		videoView.snp.makeConstraints { remake in
-			remake.leading.trailing.equalToSuperview()
-			remake.height.equalTo(previewVideoView.snp.width)
-		}
-
-		let options = BackgroundVideoPlayer.PlaybackOptions(url: url)
-		videoView.prepareForPlaying(options: options)
+        if inx == 1 {
+            previewImageView.subviews.map({$0.removeFromSuperview()})
+        }
+        self.stackView.addArrangedSubview(self.previewImageView)
+        self.previewImageView.snp.remakeConstraints { remake in
+            remake.leading.trailing.equalToSuperview()
+            remake.height.equalTo(self.previewImageView.snp.width).multipliedBy(inx).offset(4 * inx)
+        }
+        let imgView = UIImageView()
+        imgView.tag = inx
+        imgView.clipsToBounds = true
+        imgView.contentMode = .scaleAspectFill
+        previewImageView.addSubview(imgView)
+        imgView.snp.makeConstraints { remake in
+            remake.leading.trailing.equalToSuperview()
+            remake.height.equalTo(previewImageView.snp.width)
+            if inx == 1 {
+                remake.top.equalToSuperview()
+            } else {
+                remake.top.equalTo(previewImageView.viewWithTag(inx - 1)!.snp.bottom).offset(4)
+            }
+        }
+        imageFromUrl(url: url) { (image) in
+            imgView.image = image
+        }
+        
+        self.previewImageView.isHidden = false
 	}
+    
+    func addPdf(_ url: URL, fileName: String, inx: Int, fileInx: Int) {
+        guard #available(iOS 11.0, *) else { return }
 
-	func addImageView(_ url: URL) {
-
-		imageFromUrl(url: url)
-
-		stackView.addArrangedSubview(previewImageView)
-		previewImageView.isHidden = false
-		previewImageView.snp.remakeConstraints { remake in
-			remake.leading.trailing.equalToSuperview()
-			remake.height.equalTo(previewImageView.snp.width)
-		}
-		previewImageView.contentMode = .scaleAspectFit
-	}
-
-	@objc func didTapPlayButton() {
-		playButton.isSelected = !playButton.isSelected
-		guard playButton.isSelected else {
-			videoView.player?.pause()
-			return
-		}
-		videoView.player?.play()
+        if Desk360.conVC == nil { return }
+        
+        if inx == 1 {
+            previewPdfView.subviews.map({$0.removeFromSuperview()})
+        }
+        self.stackView.addArrangedSubview(self.previewPdfView)
+        self.previewPdfView.snp.remakeConstraints { remake in
+            remake.leading.trailing.equalToSuperview()
+            remake.height.equalTo(self.previewPdfView.snp.width).multipliedBy(inx).offset(4 * inx)
+        }
+        
+        let pdfView = PDFView()
+        pdfView.tag = inx
+        previewPdfView.addSubview(pdfView)
+        pdfView.snp.makeConstraints { remake in
+            remake.leading.trailing.equalToSuperview()
+            remake.height.equalTo(previewPdfView.snp.width)
+            if inx == 1 {
+                remake.top.equalToSuperview()
+            } else {
+                remake.top.equalTo(previewPdfView.viewWithTag(inx - 1)!.snp.bottom).offset(4)
+            }
+        }
+        
+        self.previewPdfView.isHidden = false
+        pdfView.translatesAutoresizingMaskIntoConstraints = false
+        guard let document = PDFDocument(url: url) else { return }
+        pdfView.document = document
+    }
+    
+    @objc func didTapPlayButton(sender: UIButton) {
+        if sender == nil {
+            playButton.isSelected = !playButton.isSelected
+            guard playButton.isSelected else {
+                videoView.player?.pause()
+                return
+            }
+            videoView.player?.play()
+            return
+        }
+        if Desk360.conVC == nil { return }
+        sender.isSelected = !sender.isSelected
+        let v = sender.superview?.viewWithTag(sender.titleLabel?.tag ?? 0) as! PlayerView
+        guard sender.isSelected else {
+            if v != nil {
+                v.player?.pause()
+            }
+            return
+        }
+        if v != nil {
+            v.player?.play()
+        }
 	}
 
 	func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?) -> Void)) {
@@ -260,30 +410,25 @@ internal extension ReceiverMessageTableViewCell {
 		}
 	}
 
-	func videoFromUrl(url: URL) {
-		let request = URLRequest(url: url as URL)
-		let task = URLSession.shared.dataTask(with: request) { (data, _, _) in
-			if let imageData = data {
-				DispatchQueue.main.async {
-					self.previewImageView.image = UIImage(data: imageData)
-				}
-			}
-		}
-		task.resume()
-	}
-
-	func imageFromUrl(url: URL) {
-		let request = URLRequest(url: url as URL)
-		let task = URLSession.shared.dataTask(with: request) { (data, _, _) in
-			if let imageData = data {
-				DispatchQueue.main.async {
-					self.previewImageView.image = UIImage(data: imageData)
-				}
-			}
-		}
-		task.resume()
-	}
-
+    func imageFromUrl(url: URL, completion: @escaping ((_ image: UIImage?) -> Void))  {
+        if Desk360.isUrlLocal(url) {
+            if let data = try? Data(contentsOf: url) {
+                let img = UIImage(data: data)
+                completion(img)
+                return
+            }
+        }
+        let request = URLRequest(url: url as URL)
+        let task = URLSession.shared.dataTask(with: request) { (data, _, _) in
+            if let imageData = data {
+                DispatchQueue.main.async {
+                    completion(UIImage(data: imageData))
+                }
+            }
+        }
+        task.resume()
+    }
+    
 	func addPdf(_ url: URL) {
 		guard #available(iOS 11.0, *) else { return }
 		pdfView.translatesAutoresizingMaskIntoConstraints = false

@@ -15,7 +15,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	var fields: [AnyObject] = []
 
 	var fieldType: FieldType = .line
-
+    
 	public override var frame: CGRect {
 		willSet { }
 		didSet {
@@ -163,6 +163,29 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return label
 	}()
 
+    internal lazy var agreementView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    internal lazy var agreementTextView: UITextView = {
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.isUserInteractionEnabled = true
+        textView.backgroundColor = .clear
+        textView.font = UIFont.systemFont(ofSize: 16)
+        textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        textView.isScrollEnabled = false
+        return textView
+    }()
+    
+    internal lazy var agreementButton: UIButton = {
+        let button = UIButton()
+        button.setImage(Desk360.Config.Images.agreementUnCheckIcon, for: .normal)
+        button.setImage(Desk360.Config.Images.agreementCheckIcon, for: .selected)
+        return button
+    }()
+    
 	private lazy var stackView: UIStackView = {
 		let view = UIStackView(arrangedSubviews: fields as! [UIView])
 		view.axis = .vertical
@@ -208,10 +231,13 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		addSubview(desk360BottomView)
 		addSubview(scrollView)
 
-		addSubview(bottomScrollView)
+        scrollView.addSubview(bottomScrollView)
 
 		bottomScrollView.addSubview(bottomDescriptionLabel)
-
+        
+        scrollView.addSubview(agreementView)
+        agreementView.addSubview(agreementButton)
+        agreementView.addSubview(agreementTextView)
 	}
 
 	@objc func endEditingKeyboard() {
@@ -243,8 +269,8 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		}
 
 		sendButton.snp.makeConstraints { make in
-			make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 1.5)
-			make.height.equalTo(UIButton.preferredHeight)
+            make.top.equalTo(agreementView.snp.bottom).offset(preferredSpacing * 0.4)
+            make.height.equalTo(UIButton.preferredHeight)
 			make.centerX.equalToSuperview()
 			make.width.equalTo(stackView)
 			make.bottom.equalToSuperview().inset(preferredSpacing)
@@ -264,21 +290,41 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 		scrollView.snp.makeConstraints { make in
 			make.leading.trailing.top.equalToSuperview()
-			make.bottom.equalTo(bottomScrollView.snp.top)
+            make.bottom.equalTo(desk360BottomView.snp.top) //yeni
 		}
-
+        
 		bottomScrollView.snp.makeConstraints { make in
-			make.bottom.equalTo(desk360BottomView.snp.top)
+            make.top.equalTo(sendButton.snp.bottom).offset((preferredSpacing * 0)) //eski 2.5
+            make.height.equalTo(preferredSpacing * 2)
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size))
 			make.centerX.equalToSuperview()
-			make.height.equalTo(preferredSpacing * 2.5)
 		}
 
 		bottomDescriptionLabel.snp.makeConstraints { make in
-			make.top.equalToSuperview().inset(preferredSpacing * 0.25)
-			make.centerX.equalToSuperview()
+            make.top.bottom.equalToSuperview().inset(preferredSpacing * 0.25)
+            make.centerX.equalToSuperview()
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) - (preferredSpacing * 3))
 		}
+        
+        agreementView.snp.makeConstraints { make in
+            make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 0.3)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(sendButton)
+            make.height.equalTo(preferredSpacing * 2)
+        }
+        
+        agreementButton.snp.makeConstraints { make in
+            make.height.width.equalTo(22)
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview()
+        }
+        
+        agreementTextView.snp.makeConstraints { make in
+            make.leading.equalTo(agreementButton.snp.trailing).offset(8)
+            make.trailing.equalToSuperview()
+            make.height.equalToSuperview()
+            make.top.equalTo(1)
+        }
 
 		attachmentButton.snp.makeConstraints { make in
 			make.leading.top.bottom.equalToSuperview()
@@ -927,8 +973,23 @@ extension CreateRequestView {
 		configureUnderLine(field: nameTextField)
 		configureUnderLine(field: emailTextField)
 		bottomDescriptionLabel.text = Config.shared.model?.createScreen?.bottomNoteText
-		bottomScrollView.isHidden = !(Config.shared.model?.createScreen?.bottomNoteIsHidden ?? false)
+        bottomDescriptionLabel.isHidden = !(Config.shared.model?.createScreen?.bottomNoteIsHidden ?? false)
 		bottomDescriptionLabel.textColor = Colors.bottomNoteColor
+        agreementButton.isHidden = !(Config.shared.model?.createScreen?.agreementIsHidden ?? false)
+        agreementTextView.isHidden = !(Config.shared.model?.createScreen?.agreementIsHidden ?? false)
+        let str = Config.shared.model?.createScreen?.agreementText ?? ""
+        let attributedString = NSMutableAttributedString(string: str)
+        if let url = Config.shared.model?.createScreen?.agreementUrl, url.count > 0 {
+            let uri = URL(string: url)!
+            attributedString.setAttributes([.link: uri], range: NSMakeRange(0, str.count))
+            agreementTextView.linkTextAttributes = [
+                .foregroundColor: UIColor.black,
+                .underlineStyle: NSUnderlineStyle.single.rawValue
+            ]
+        }
+        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 15), range: NSMakeRange(0, str.count))
+        agreementTextView.attributedText = attributedString
+
 		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model?.generalSettings?.bottomNoteFontWeight ?? 400))
 		sendButton.layer.borderColor = Colors.createScreenButttonBorderColor.cgColor
 		configureFields()
@@ -1124,6 +1185,10 @@ extension CreateRequestView {
 		sendButton.backgroundColor = Colors.createScreenButtonBackgroundColor
 		sendButton.layer.borderColor = Colors.createScreenButttonBorderColor.cgColor
 		sendButton.setTitleColor(Colors.createScreenButtonTextColor, for: .normal)
+        if Config.shared.model?.createScreen?.agreementIsHidden == true {
+            sendButton.isEnabled = false
+            sendButton.setTitleColor(.gray, for: .normal)
+        }
 		sendButton.tintColor = Colors.createScreenButtonTextColor
 		sendButton.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.createScreen?.buttonTextFontSize ?? 14), weight: Font.weight(type: Config.shared.model?.createScreen?.buttonTextFontWeight ?? 400))
 		sendButton.setTitle(Config.shared.model?.createScreen?.buttonText, for: .normal)
@@ -1186,7 +1251,7 @@ extension CreateRequestView {
 		sendButton.layer.cornerRadius = 0
 
 		sendButton.snp.remakeConstraints { make in
-			make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 1.5)
+            make.top.equalTo(agreementView.snp.bottom).offset(preferredSpacing * 0.4)
 			make.height.equalTo(UIButton.preferredHeight)
 			make.centerX.equalToSuperview()
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) + 2)
@@ -1196,8 +1261,8 @@ extension CreateRequestView {
 
 	func setupButtonDefaultLayout() {
 		sendButton.snp.remakeConstraints { make in
-			make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 1.5)
-			make.height.equalTo(UIButton.preferredHeight)
+            make.top.equalTo(agreementView.snp.bottom).offset(preferredSpacing * 0.4)
+            make.height.equalTo(UIButton.preferredHeight)
 			make.centerX.equalToSuperview()
 			make.width.equalTo(stackView)
 			make.bottom.equalToSuperview().inset(preferredSpacing)
@@ -1236,7 +1301,7 @@ extension CreateRequestView: KeyboardHandling {
 	/// - Parameter notification: `KeyboardNotification`
 	public func keyboardWillHide(_ notification: KeyboardNotification?) {
 		self.scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
-		self.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+		self.scrollView.setContentOffset(CGPoint(x: 0, y: self.scrollView.contentOffset.y), animated: true)
 	}
 
 	/// Called right before the keyboard is about to change its frame.
