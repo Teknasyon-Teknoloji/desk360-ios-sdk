@@ -54,7 +54,7 @@ Permission text is optional. you can type whatever you want. But this permission
 import Desk360
 
 Desk360.start(appId: "12345")
-Desk360.start(appId: "12345", deviceId: "34567", environment: .production, language: "en", jsonInfo: jsonObject: [String: Any] = ["yourInfoKey": "yourInfoValue"])
+Desk360.start(appId: "12345", deviceId: "34567", environment: .production, language: "en", country: "us", jsonInfo: jsonObject: [String: Any] = ["yourInfoKey": "yourInfoValue"])
 ```
 
 ### Using Desk360
