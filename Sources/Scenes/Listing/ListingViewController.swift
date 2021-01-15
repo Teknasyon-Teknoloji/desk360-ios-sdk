@@ -375,7 +375,7 @@ private extension ListingViewController {
         
         layoutableView.setLoading(showLoading)
         
-        Desk360.apiProvider.request(.getConfig(language: Desk360.languageCode)) { [weak self] result in
+        Desk360.apiProvider.request(.getConfig(language: Desk360.languageCode, country: Desk360.countryCode)) { [weak self] result in
             guard let self = self else { return }
             self.layoutableView.setLoading(false)
             switch result {

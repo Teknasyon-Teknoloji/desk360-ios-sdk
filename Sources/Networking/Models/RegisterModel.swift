@@ -14,14 +14,21 @@ public struct RegisterModel {
 	var deviceId: String
 	var environment: String
 	var language: String
+    var country: String
 
-	init(appId: String, deviceId: String, environment: Desk360Environment, language: String) {
-		self.appId = appId
-		self.deviceId = deviceId
-		self.environment = environment.rawValue
-		self.language = language
+	init(
+        appId: String,
+        deviceId: String,
+        environment: Desk360Environment,
+        language: String,
+        country: String
+    ) {
+        self.appId = appId
+        self.deviceId = deviceId
+        self.environment = environment.rawValue
+        self.language = language
+        self.country = country
 	}
-
 }
 
 extension RegisterModel: Codable {
@@ -31,6 +38,7 @@ extension RegisterModel: Codable {
 		case deviceId
 		case environment
 		case language
+        case country
 	}
 
 	/// Creates a new instance by decoding from the given decoder.
@@ -45,6 +53,7 @@ extension RegisterModel: Codable {
 			deviceId = try container.decode(String.self, forKey: .deviceId)
 			environment = try container.decode(String.self, forKey: .environment)
 			language = try container.decode(String.self, forKey: .language)
+            country = try container.decode(String.self, forKey: .country)
 
 		} catch let error as DecodingError {
 			print(error)
@@ -64,6 +73,7 @@ extension RegisterModel: Codable {
 			try container.encode(deviceId, forKey: .deviceId)
 			try container.encode(environment, forKey: .environment)
 			try container.encodeIfPresent(language, forKey: .language)
+            try container.encodeIfPresent(country, forKey: .country)
 		} catch let error as EncodingError {
 			print(error)
 			throw error
