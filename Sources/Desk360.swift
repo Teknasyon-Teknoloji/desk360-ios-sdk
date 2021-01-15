@@ -14,7 +14,7 @@ import Photos
 private var desk: Desk360?
 
 public enum Desk360Environment: String {
-	case test
+	case test = "sandbox"
 	case production
 }
 
@@ -29,6 +29,8 @@ public final class Desk360 {
 	private(set) public static var appPlatform: String!
 
 	private(set) public static var appVersion: String!
+    
+    private(set) public static var sdkVersion: String!
 
 	private(set) public static var languageCode: String!
     
@@ -73,7 +75,8 @@ public final class Desk360 {
 		Desk360.appId = appId
 		Desk360.deviceId = deviceId
 		Desk360.appPlatform = "iOS"
-		Desk360.appVersion = getVersion()
+		Desk360.appVersion = getAppVersion()
+        Desk360.sdkVersion = getSdkVersion()
 		Desk360.timeZone = TimeZone.current.identifier
 		Desk360.languageCode = language
         Desk360.countryCode = country
@@ -81,13 +84,20 @@ public final class Desk360 {
 		Desk360.jsonInfo = jsonInfo
 	}
 
-	func getVersion() -> String {
+	func getAppVersion() -> String {
 		guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
 			return "0.0.0"
 		}
 		return version
 	}
-
+    
+    func getSdkVersion() -> String {
+        guard let version = Bundle(for: Self.self).infoDictionary?["CFBundleShortVersionString"] as? String else {
+            return "0.0.0"
+        }
+        return version
+    }
+    
     static func fetchTicketList() {
         guard list != nil else { return }
         list?.fetchList()
