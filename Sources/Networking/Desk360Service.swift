@@ -75,7 +75,7 @@ extension Service: TargetType, AccessTokenAuthorizable {
             #if DEBUG
             print("DESK360 will be configured using language: \(language) and country \(country)")
             #endif
-            return .requestParameters(parameters: ["language_code": language, "country": country], encoding: JSONEncoding.default)
+            return .requestParameters(parameters: ["language_code": language, "country_code": country], encoding: JSONEncoding.default)
 		case .create(let ticket):
 			return .uploadMultipart(ticket)
 		case .ticketTypeList, .ticketWithId, .getTickets:
