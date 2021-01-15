@@ -292,7 +292,7 @@ private extension ListingViewController {
             return
         }
         
-        Desk360.apiProvider.request(.register(appKey: Desk360.appId, deviceId: Desk360.deviceId, appPlatform: Desk360.appPlatform, appVersion: Desk360.appVersion, timeZone: Desk360.timeZone, languageCode: Desk360.languageCode, sdkVersion: Desk360.sdkVersion, envinronment: Desk360.environment.rawValue)) { [weak self]  result in
+        Desk360.apiProvider.request(.register(appKey: Desk360.appId, deviceId: Desk360.deviceId, appPlatform: Desk360.appPlatform, appVersion: Desk360.appVersion, timeZone: Desk360.timeZone, languageCode: Desk360.languageCode)) { [weak self]  result in
             guard let self = self else { return }
             switch result {
             case .failure:

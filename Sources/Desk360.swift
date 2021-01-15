@@ -84,14 +84,14 @@ public final class Desk360 {
 		Desk360.jsonInfo = jsonInfo
 	}
 
-	func getAppVersion() -> String {
+	private func getAppVersion() -> String {
 		guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
 			return "0.0.0"
 		}
 		return version
 	}
     
-    func getSdkVersion() -> String {
+    private func getSdkVersion() -> String {
         guard let version = Bundle(for: Self.self).infoDictionary?["CFBundleShortVersionString"] as? String else {
             return "0.0.0"
         }
@@ -265,7 +265,7 @@ public final class Desk360 {
         if let country = country {
             currentCountry = country
         } else {
-            currentCountry = Locale.current.regionCode?.lowercased() ?? "tr"
+            currentCountry = Locale.current.regionCode?.lowercased() ?? "xx"
         }
 		
         var currentEnvironment: Desk360Environment = .production
