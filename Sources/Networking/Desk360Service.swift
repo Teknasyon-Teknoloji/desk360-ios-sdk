@@ -88,9 +88,9 @@ extension Service: TargetType, AccessTokenAuthorizable {
 	var headers: [String: String]? {
         switch self {
         case .ticketMessages:
-            return ["Content-Type": "multipart/form-data", "environment": Desk360.environment.rawValue, "sdk_version": Desk360.sdkVersion]
+            return ["Content-Type": "multipart/form-data", "Environment": Desk360.environment.rawValue, "Version": Desk360.sdkVersion]
         default:
-            return ["environment": Desk360.environment.rawValue, "sdk_version": Desk360.sdkVersion]
+            return ["Environment": Desk360.environment.rawValue, "Version": Desk360.sdkVersion]
         }
 	}
 
