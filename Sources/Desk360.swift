@@ -265,7 +265,7 @@ public final class Desk360 {
         if let country = country {
             currentCountry = country
         } else {
-            currentCountry = Locale.current.regionCode?.lowercased() ?? "xx"
+            currentCountry = Locale.current.regionCode?.uppercased() ?? "XX"
         }
 		
         var currentEnvironment: Desk360Environment = .production
