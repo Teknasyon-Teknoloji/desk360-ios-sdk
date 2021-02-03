@@ -14,7 +14,10 @@ import Photos
 private var desk: Desk360?
 
 public enum Desk360Environment: String {
-	case test = "sandbox"
+    @available(*, unavailable, renamed: "sandbox", message: "please use .sandbox option instead")
+	case test
+    
+    case sandbox
 	case production
 }
 
