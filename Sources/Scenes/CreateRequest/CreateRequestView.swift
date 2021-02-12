@@ -255,8 +255,8 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         agreementView.addSubview(agreementButton)
         agreementView.addSubview(agreementTextView)
         
-        addSubview(nameFieldLimit)
-        addSubview(emailFieldLimit)
+        scrollView.addSubview(nameFieldLimit)
+        scrollView.addSubview(emailFieldLimit)
 	}
 
 	@objc func endEditingKeyboard() {
