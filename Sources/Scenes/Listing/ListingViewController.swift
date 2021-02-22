@@ -151,13 +151,11 @@ extension ListingViewController {
         layoutableView.tableView.delegate = self
         layoutableView.tableView.reloadData()
         
-        if let token = Stores.tokenStore.object {
-            Desk360.token = token
-        }
+        Desk360.token = Stores.tokenStore.object()
         
         let registerModel = Stores.registerCacheModel.object
         
-        guard registerModel?.appId == Desk360.appId && registerModel?.deviceId == Desk360.deviceId &&  Desk360Environment(rawValue: registerModel?.environment ?? ".test")  == Desk360.environment else {
+        guard registerModel?.appId == Desk360.appId && registerModel?.deviceId == Desk360.deviceId &&  Desk360Environment(rawValue: registerModel?.environment ?? Desk360Environment.sandbox.rawValue)  == Desk360.environment else {
 			layoutableView.placeholderView.isHidden = true
             Stores.ticketsStore.deleteAll()
             Stores.tokenStore.delete()
@@ -302,7 +300,7 @@ private extension ListingViewController {
                 guard let register = try? response.map(DataResponse<RegisterRequest>.self) else { return }
                 Desk360.isRegister = true
                 Desk360.token = register.data?.accessToken
-                try? Stores.tokenStore.save(register.data?.accessToken)
+                try? Stores.tokenStore.save(register.data?.accessToken ?? "")
                 try? Stores.registerExpiredAt.save(register.data?.expiredDate)
                 Stores.configStore.object == nil ? self.getConfig(showLoading: true) : self.getConfig(showLoading: false)
                 
@@ -375,7 +373,7 @@ private extension ListingViewController {
         
         layoutableView.setLoading(showLoading)
         
-        Desk360.apiProvider.request(.getConfig(language: Desk360.languageCode)) { [weak self] result in
+        Desk360.apiProvider.request(.getConfig(language: Desk360.languageCode, country: Desk360.countryCode)) { [weak self] result in
             guard let self = self else { return }
             self.layoutableView.setLoading(false)
             switch result {

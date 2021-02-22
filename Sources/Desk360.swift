@@ -14,7 +14,10 @@ import Photos
 private var desk: Desk360?
 
 public enum Desk360Environment: String {
+    @available(*, unavailable, renamed: "sandbox", message: "Please use .sandbox option instead.")
 	case test
+    
+    case sandbox
 	case production
 }
 
@@ -29,8 +32,12 @@ public final class Desk360 {
 	private(set) public static var appPlatform: String!
 
 	private(set) public static var appVersion: String!
+    
+    private(set) public static var sdkVersion: String!
 
 	private(set) public static var languageCode: String!
+    
+    private(set) public static var countryCode: String!
 
 	private(set) public static var isDebug: Bool!
 
@@ -67,24 +74,33 @@ public final class Desk360 {
 		return NetworkReachabilityManager()?.isReachable ?? false
 	}
 
-	public init(appId: String, deviceId: String, environment: Desk360Environment, language: String, jsonInfo: [String: Any]) {
+    public init(appId: String, deviceId: String, environment: Desk360Environment, language: String, country: String , jsonInfo: [String: Any]) {
 		Desk360.appId = appId
 		Desk360.deviceId = deviceId
 		Desk360.appPlatform = "iOS"
-		Desk360.appVersion = getVersion()
+		Desk360.appVersion = getAppVersion()
+        Desk360.sdkVersion = getSdkVersion()
 		Desk360.timeZone = TimeZone.current.identifier
 		Desk360.languageCode = language
+        Desk360.countryCode = country
 		Desk360.environment = environment
 		Desk360.jsonInfo = jsonInfo
 	}
 
-	func getVersion() -> String {
+	private func getAppVersion() -> String {
 		guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
 			return "0.0.0"
 		}
 		return version
 	}
-
+    
+    private func getSdkVersion() -> String {
+        guard let version = Bundle(for: Self.self).infoDictionary?["CFBundleShortVersionString"] as? String else {
+            return "0.0.0"
+        }
+        return version
+    }
+    
     static func fetchTicketList() {
         guard list != nil else { return }
         list?.fetchList()
@@ -217,7 +233,7 @@ public final class Desk360 {
 		guard Desk360.messageId != nil else { return }
 		guard let registerModel = Stores.registerModel.object else { return }
 
-		desk = Desk360(appId: registerModel.appId, deviceId: registerModel.deviceId, environment: Desk360Environment(rawValue: registerModel.environment) ?? .production, language: registerModel.language, jsonInfo: [:])
+        desk = Desk360(appId: registerModel.appId, deviceId: registerModel.deviceId, environment: Desk360Environment(rawValue: registerModel.environment) ?? .production, language: registerModel.language, country: registerModel.country, jsonInfo: [:])
 
 		let listingViewController = ListingViewController()
 		listingViewController.hidesBottomBarWhenPushed = true
@@ -235,7 +251,7 @@ public final class Desk360 {
         return topViewController
     }
 
-	public static func start(appId: String, deviceId: String? = nil, environment: Desk360Environment? = .production, language: String? = nil, jsonInfo: [String: Any]? = [:]) {
+    public static func start(appId: String, deviceId: String? = nil, environment: Desk360Environment? = .production, language: String? = nil, country: String? = nil, jsonInfo: [String: Any]? = [:]) {
 		var id: String = ""
 		if deviceId == nil {
 			id = UIDevice.current.uniqueIdentifier
@@ -248,15 +264,22 @@ public final class Desk360 {
 		} else {
 			currentLanguage = language ?? "en"
 		}
-		var currentEnvironment: Desk360Environment = .production
+        var currentCountry: String
+        if let country = country {
+            currentCountry = country
+        } else {
+            currentCountry = Locale.current.regionCode?.uppercased() ?? "XX"
+        }
+		
+        var currentEnvironment: Desk360Environment = .production
 		if environment != nil {
 			currentEnvironment = environment ?? .production
 		}
 
 		isActive = true
-		desk = Desk360(appId: appId, deviceId: id, environment: currentEnvironment, language: currentLanguage, jsonInfo: jsonInfo ?? [:])
+        desk = Desk360(appId: appId, deviceId: id, environment: currentEnvironment, language: currentLanguage, country: currentCountry, jsonInfo: jsonInfo ?? [:])
 
-		let registerModel = RegisterModel(appId: appId, deviceId: id, environment: currentEnvironment, language: currentLanguage)
+        let registerModel = RegisterModel(appId: appId, deviceId: id, environment: currentEnvironment, language: currentLanguage, country: currentCountry)
 		try? Stores.registerModel.save(registerModel)
         
 		Stores.setStoresInitialValues()

@@ -15,7 +15,7 @@ struct Stores {
 
 	static let ticketWithMessageStore = UserDefaultsStore<Ticket>(uniqueIdentifier: "desk360_support_tickets_with_message")!
 
-	static let tokenStore = SingleUserDefaultsStore<String>(uniqueIdentifier: "access_token")!
+    static let tokenStore = SingleKeychainStore<String>(uniqueIdentifier: "access_token")
 
 	static let registerExpiredAt = SingleUserDefaultsStore<Date>(uniqueIdentifier: "register_expired_at")!
 

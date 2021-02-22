@@ -8,9 +8,9 @@
 import Moya
 
 enum Service {
-	case register(appKey: String, deviceId: String, appPlatform: String, appVersion: String, timeZone: String, languageCode: String)
+    case register(appKey: String, deviceId: String, appPlatform: String, appVersion: String, timeZone: String, languageCode: String)
 	case create(ticket: [MultipartFormData])
-	case getConfig(language: String)
+    case getConfig(language: String, country: String)
 	case getTickets
 	case ticketTypeList
 	case ticketWithId(Ticket.ID)
@@ -24,11 +24,7 @@ extension Service: TargetType, AccessTokenAuthorizable {
 	}
 
 	var baseURL: URL {
-		if Desk360.environment == .test {
-			return URL(string: "http://52.59.142.138:10380/api/v1")!
-		} else {
-			return URL(string: "https://teknasyon.desk360.com/api/v1")!
-		}
+        return URL(string: "https://teknasyon.desk360.com/api/v1")!
 	}
 
 	var validationType: ValidationType {
@@ -70,9 +66,12 @@ extension Service: TargetType, AccessTokenAuthorizable {
 	var task: Task {
 		switch self {
 		case .register(let appKey, let deviceId, let appPlatform, let appVersion, let timeZone, let languageCode):
-			return .requestParameters(parameters: ["app_key": appKey, "device_id": deviceId, "app_platform": appPlatform, "app_version": appVersion, "time_zone": timeZone, "language_code": languageCode], encoding: JSONEncoding.default)
-		case .getConfig(let language):
-			return .requestParameters(parameters: ["language_code": language], encoding: JSONEncoding.default)
+            return .requestParameters(parameters: ["app_key": appKey, "device_id": deviceId, "app_platform": appPlatform, "app_version": appVersion, "time_zone": timeZone, "language_code": languageCode], encoding: JSONEncoding.default)
+		case .getConfig(let language, let country):
+            #if DEBUG
+            print("DESK360 will be configured using language: \(language) and country \(country)")
+            #endif
+            return .requestParameters(parameters: ["language_code": language, "country_code": country], encoding: JSONEncoding.default)
 		case .create(let ticket):
 			return .uploadMultipart(ticket)
 		case .ticketTypeList, .ticketWithId, .getTickets:
@@ -85,9 +84,9 @@ extension Service: TargetType, AccessTokenAuthorizable {
 	var headers: [String: String]? {
         switch self {
         case .ticketMessages:
-            return ["Content-Type": "multipart/form-data"]
+            return ["Content-Type": "multipart/form-data", "Environment": Desk360.environment.rawValue, "Version": Desk360.sdkVersion]
         default:
-            return nil
+            return ["Environment": Desk360.environment.rawValue, "Version": Desk360.sdkVersion]
         }
 	}
 

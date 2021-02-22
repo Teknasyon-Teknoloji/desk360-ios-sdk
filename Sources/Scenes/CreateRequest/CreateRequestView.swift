@@ -45,6 +45,14 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return field
 	}()
 
+    internal lazy var nameFieldLimit: UILabel = {
+        var label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.textColor = .lightGray
+        label.text = "100/100"
+        return label
+    }()
+    
 	internal lazy var nameErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
@@ -62,6 +70,14 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return field
 	}()
 
+    internal lazy var emailFieldLimit: UILabel = {
+        var label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.textColor = .lightGray
+        label.text = "100/100"
+        return label
+    }()
+    
 	internal lazy var emailErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
@@ -238,6 +254,9 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         scrollView.addSubview(agreementView)
         agreementView.addSubview(agreementButton)
         agreementView.addSubview(agreementTextView)
+        
+        scrollView.addSubview(nameFieldLimit)
+        scrollView.addSubview(emailFieldLimit)
 	}
 
 	@objc func endEditingKeyboard() {
@@ -251,10 +270,20 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 			make.height.equalTo(UITextField.preferredHeight * 1.2)
 		}
 
+        nameFieldLimit.snp.makeConstraints { make in
+            make.bottom.equalTo(nameTextField.snp.bottom).offset(8)
+            make.trailing.equalTo(nameTextField.snp.trailing)//.offset(8)
+        }
+        
 		emailTextField.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight * 1.2)
 		}
 
+        emailFieldLimit.snp.makeConstraints { make in
+            make.bottom.equalTo(emailTextField.snp.bottom).offset(8)
+            make.trailing.equalTo(emailTextField.snp.trailing)//.offset(8)
+        }
+        
 		dropDownListView.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight * 1.2)
 			make.width.equalTo(UIScreen.main.bounds.width - preferredSpacing * 6)
@@ -742,6 +771,21 @@ extension CreateRequestView: UITextFieldDelegate {
 		configureLabelTextAlignment(label)
 	}
 
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
+        return self.textLimit(existingText: textField.text,
+                              newText: string,
+                              limit: 100)
+    }
+    
+    private func textLimit(existingText: String?,
+                           newText: String,
+                           limit: Int) -> Bool {
+        let text = existingText ?? ""
+        let isAtLimit = text.count + newText.count <= limit
+        return isAtLimit
+    }
 }
 
 // MARK: - Actions
@@ -771,6 +815,8 @@ extension CreateRequestView {
 		switch sender.tag {
 		case 1:
 			if let text = nameTextField.trimmedText, text.count > 0 {
+                let count = text.count ?? 0
+                nameFieldLimit.text = count < 10 ? "0\(count)/100" : "\(count)/100"
 				if fieldType == .shadow {
 					sender.layer.borderColor = Colors.createScreenFormInputFocusBorderColor.cgColor
 					sender.backgroundColor = Colors.createScreenFormInputFocusBackgroundColor
@@ -786,6 +832,8 @@ extension CreateRequestView {
 			}
 		case 2:
 			if let text = emailTextField.trimmedText, text.count > 0 {
+                let count = text.count ?? 0
+                emailFieldLimit.text = count < 10 ? "0\(count)/100" : "\(count)/100"
 				showTopLabel(sender)
 				if fieldType == .shadow {
 					sender.layer.borderColor = Colors.createScreenFormInputFocusBorderColor.cgColor
@@ -946,7 +994,6 @@ private extension CreateRequestView {
 	func minDimension(size: CGSize) -> CGFloat {
 		return min(size.width, size.height)
 	}
-
 }
 
 // MARK: - Configure
