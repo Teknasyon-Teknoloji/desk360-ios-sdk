@@ -194,8 +194,8 @@ public final class Desk360 {
 		guard let detail = hermes["target_detail"] as? [String: AnyObject] else { return nil }
 		guard let categoryId = detail["target_category"] as? String else { return nil }
 		guard categoryId == "Desk360Deeplink" else { return nil }
-		guard let id = detail["target_id"] as? Int else { return nil }
-		return id
+		guard let id = detail["target_id"] as? String else { return nil }
+		return Int(id)
 	}
 
 	static func checkIsActiveDesk360(_ navigationController: UINavigationController) {

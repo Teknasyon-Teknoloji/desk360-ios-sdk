@@ -15,7 +15,7 @@ final class ViewController: UIViewController {
 	@IBOutlet weak var languageTypeSwitchButton: UISwitch!
 	var jsonObject: [String: Any]? = nil
 	var deviceId: String?
-	var	environment: Desk360Environment = .test
+    var	environment: Desk360Environment = .sandbox
 	var appId: String = ""
 	var language: String = ""
 
@@ -36,7 +36,7 @@ final class ViewController: UIViewController {
 	}
 
 	@IBAction func environmentSwitchValueChanged(_ sender: Any) {
-		environment = environmentSwitchButton.isOn ? .test : .production
+        environment = environmentSwitchButton.isOn ? .sandbox : .production
 	}
 	@IBAction func didTapShowWithWrongAppId(_ sender: Any) {
 		showDesk360()
