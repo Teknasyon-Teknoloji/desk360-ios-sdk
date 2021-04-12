@@ -39,7 +39,7 @@ struct Stores {
 		}
 
 		if environment.object == nil {
-			try? environment.save("test")
+			try? environment.save("sandbox")
 		}
 
 		if useDeviceLanguage.object == nil {

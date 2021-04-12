@@ -251,7 +251,16 @@ public final class Desk360 {
         return topViewController
     }
 
-    public static func start(appId: String, deviceId: String? = nil, environment: Desk360Environment? = .production, language: String? = nil, country: String? = nil, jsonInfo: [String: Any]? = [:]) {
+    public static func start(
+        appId: String,
+        userName: String? = nil,
+        userEmail: String? = nil,
+        deviceId: String? = nil,
+        environment: Desk360Environment? = .production,
+        language: String? = nil,
+        country: String? = nil,
+        jsonInfo: [String: Any]? = [:]
+    ) {
 		var id: String = ""
 		if deviceId == nil {
 			id = UIDevice.current.uniqueIdentifier
@@ -275,7 +284,10 @@ public final class Desk360 {
 		if environment != nil {
 			currentEnvironment = environment ?? .production
 		}
-
+        
+        try? Stores.userName.save(userName)
+        try? Stores.userMail.save(userEmail)
+        
 		isActive = true
         desk = Desk360(appId: appId, deviceId: id, environment: currentEnvironment, language: currentLanguage, country: currentCountry, jsonInfo: jsonInfo ?? [:])
 
