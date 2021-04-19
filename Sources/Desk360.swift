@@ -253,12 +253,12 @@ public final class Desk360 {
 
     public static func start(
         appId: String,
-        userName: String? = nil,
-        userEmail: String? = nil,
         deviceId: String? = nil,
         environment: Desk360Environment? = .production,
         language: String? = nil,
         country: String? = nil,
+        userName: String? = nil,
+        userEmail: String? = nil,
         jsonInfo: [String: Any]? = [:]
     ) {
 		var id: String = ""

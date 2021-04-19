@@ -57,12 +57,12 @@ Desk360.start(appId: "12345")
 // Or if you would like to provide more info here is a full list of the params
 Desk360.start(
     appId: "12345",
-    userName: "User_Name", 
-    userEmail: "User_Email", 
     deviceId: "34567",
     environment: .production,
     anguage: "en",
     country: "us",
+    userName: "User_Name", 
+    userEmail: "User_Email", 
     jsonInfo: jsonObject: [String: Any] = ["yourInfoKey": "yourInfoValue"]
   )
 ```
