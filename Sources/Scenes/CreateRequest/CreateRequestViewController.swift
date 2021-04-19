@@ -298,7 +298,10 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 // MARK: - Config
 extension CreateRequestViewController {
 	func configLayoutableView() {
-
+        
+        layoutableView.emailTextField.text = Stores.userMail.object
+        layoutableView.nameTextField.text = Stores.userName.object
+        
 		let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
 		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model?.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
 		let navigationTitle = NSAttributedString(string: Config.shared.model?.createScreen?.navigationTitle ?? "", attributes: selectedattributes as [NSAttributedString.Key: Any])
