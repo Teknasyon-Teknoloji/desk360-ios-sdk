@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = "Desk360"
-    s.version = "1.5.2"
+    s.version = "1.6.0"
     s.summary = "Desk360 iOS SDK"
     s.description = <<-DESC
     Desk360 iOS SDK [WIP]
@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
     s.ios.deployment_target = "10.0"
 
     s.dependency "SnapKit"
-    s.dependency "Moya", '14.0.0'
+    s.dependency "Moya", '~> 14.0.0'
     s.dependency "PersistenceKit"
     s.dependency "DeviceKit"
     s.dependency "NVActivityIndicatorView", "4.8.0"
