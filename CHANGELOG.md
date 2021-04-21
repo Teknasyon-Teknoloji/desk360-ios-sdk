@@ -1,3 +1,7 @@
+## Version 1.6.0
+- **Minor Changes**
+  - Update Moya dependency
+
 ## Version 1.5.1
 - **Minor Changes**
   - Changed the order of the args in `start` method.
