@@ -17,6 +17,7 @@ public struct Desk360Properties {
     let jsonInfo: [String: Any]?
     let timeZone = TimeZone.current.identifier
     let appPlatform = "iOS"
+    let bypassCreateTicketIntro: Bool
     
     /// Creates a new instance of `Desk360Properties`
     /// - Parameters:
@@ -25,6 +26,7 @@ public struct Desk360Properties {
     ///   - language: The current device language
     ///   - country: The current user country.
     ///   - userCredentials: The logged in user credentails. Provide it if you want the credntial fields to be filled automatically.
+    ///   - bypassCreateTicketIntro: A flag used to hide the intro screen shown before creating a new ticket.
     ///   - jsonInfo: Any extra JSON data to be passed to the backend.
     public init(
         appID: String,
@@ -33,7 +35,8 @@ public struct Desk360Properties {
         language: String = Locale.current.languageCode ?? "en",
         country: String = Locale.current.regionCode?.uppercased() ?? "XX",
         userCredentials: Desk360Properties.Credentials? = nil,
-        jsonInfo: [String : Any]? = nil
+        bypassCreateTicketIntro: Bool = false,
+        jsonInfo: [String: Any]? = nil
     ) {
         self.appID = appID
         self.deviceID = deviceID
@@ -41,6 +44,7 @@ public struct Desk360Properties {
         self.language = language
         self.country = country
         self.userCredentials = userCredentials
+        self.bypassCreateTicketIntro = bypassCreateTicketIntro
         self.jsonInfo = jsonInfo
     }
 }

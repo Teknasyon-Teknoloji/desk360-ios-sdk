@@ -118,7 +118,12 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
     }
     
     @objc private func didTapCreateBarButtonItem(_ item: UIBarButtonItem) {
-        navigationController?.pushViewController(CreateRequestPreviewController(checkLastClass: false), animated: true)
+        guard let props = Desk360.properties else { return }
+        if props.bypassCreateTicketIntro {
+            navigationController?.pushViewController(CreateRequestViewController(checkLastClass: false), animated: true)
+        } else {
+            navigationController?.pushViewController(CreateRequestPreviewController(checkLastClass: false), animated: true)
+        }
     }
     
     @objc private func didTapCreateRequestButton(_ button: UIButton) {

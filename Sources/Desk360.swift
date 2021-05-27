@@ -40,7 +40,7 @@ public final class Desk360 {
 
 	static var token: String? = ""
 
-    static let authPlugin = AccessTokenPlugin { _ in Desk360.token ?? "" }
+    static let authPlugin = AccessTokenPlugin { Desk360.token ?? "" }
 
 	static let apiProvider = MoyaProvider<Service>(plugins: [authPlugin])
 
@@ -55,7 +55,7 @@ public final class Desk360 {
 		return NetworkReachabilityManager()?.isReachable ?? false
 	}
     
-    @available(*, unavailable, renamed: "init(properties:)")
+    @available(*, deprecated, renamed: "init(properties:)", message: "Deprecated and will be removed in the future versions")
     public init(appId: String, deviceId: String, environment: Desk360Environment, language: String, country: String , jsonInfo: [String: Any]) {
         let props = Desk360Properties(appID: appId, deviceID: deviceId, environment: environment, language: language, country: country, userCredentials: nil, jsonInfo: jsonInfo)
         Desk360.properties = props
@@ -176,7 +176,7 @@ public final class Desk360 {
 
 	}
 
-    @available(iOS, deprecated: 1.7.0, renamed: "start(properties:)", message: "This method will be removed in the next versions")
+    @available(iOS, deprecated, renamed: "start(properties:)", message: "This method will be removed in the next versions")
     public static func start(
         appId: String,
         deviceId: String? = nil,
@@ -254,11 +254,11 @@ public final class Desk360 {
     }
     
 	public static func show(on viewController: UIViewController, animated: Bool = true) {
-		let listingViewController = ListingViewController()
-		listingViewController.hidesBottomBarWhenPushed = true
-		let desk360Navcontroller = UINavigationController(rootViewController: listingViewController)
-		desk360Navcontroller.modalPresentationStyle = .fullScreen
-		viewController.present(desk360Navcontroller, animated: true, completion: nil)
+        let listingViewController = ListingViewController()
+        listingViewController.hidesBottomBarWhenPushed = true
+        let desk360Navcontroller = UINavigationController(rootViewController: listingViewController)
+        desk360Navcontroller.modalPresentationStyle = .fullScreen
+        viewController.present(desk360Navcontroller, animated: true, completion: nil)
 	}
 
     static func fetchTicketList() {
