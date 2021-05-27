@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 /// This view using for bottom desk360 bottom bar
 final class Desk360View: UIView, Layoutable {
 
@@ -19,18 +18,15 @@ final class Desk360View: UIView, Layoutable {
 	}()
 
 	func setupViews() {
-
 		backgroundColor = .clear
-
+        desk360LogoImageView.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		addSubview(desk360LogoImageView)
 	}
 
 	func setupLayout() {
-
 		desk360LogoImageView.snp.makeConstraints { make in
 			make.centerX.equalToSuperview()
 			make.top.equalToSuperview()
 		}
 	}
-
 }

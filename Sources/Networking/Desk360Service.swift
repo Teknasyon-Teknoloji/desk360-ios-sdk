@@ -24,6 +24,10 @@ extension Service: TargetType, AccessTokenAuthorizable {
 	}
 
 	var baseURL: URL {
+        if Desk360.properties?.environment == .some(.sandbox), let url = UserDefaults.standard.string(forKey: "DESK360_URL") {
+            return URL(string: url)!
+        }
+  
         return URL(string: "https://teknasyon.desk360.com/api/v1")!
 	}
 
@@ -84,9 +88,9 @@ extension Service: TargetType, AccessTokenAuthorizable {
 	var headers: [String: String]? {
         switch self {
         case .ticketMessages:
-            return ["Content-Type": "multipart/form-data", "Environment": Desk360.environment.rawValue, "Version": Desk360.sdkVersion]
+            return ["Content-Type": "multipart/form-data", "Environment": Desk360.properties?.environment.rawValue ?? "unknown", "Version": Desk360.sdkVersion]
         default:
-            return ["Environment": Desk360.environment.rawValue, "Version": Desk360.sdkVersion]
+            return ["Environment": Desk360.properties?.environment.rawValue ?? "unknown", "Version": Desk360.sdkVersion]
         }
 	}
 

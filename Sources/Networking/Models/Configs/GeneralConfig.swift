@@ -61,6 +61,8 @@ public struct GeneralConfigModel {
 	var galleryPermissionErrorButtonText: String?
 
 	var fileSizeErrorText: String?
+    
+    let isLogoHidden: Bool
 
 }
 
@@ -94,6 +96,7 @@ extension GeneralConfigModel: Codable {
 		case gallery_permission_error_message
 		case gallery_permission_error_button_text
 		case file_size_error_text
+        case copyright_logo_is_show
 	}
 
 	/// Creates a new instance by decoding from the given decoder.
@@ -145,7 +148,7 @@ extension GeneralConfigModel: Codable {
 			galleryPermissionErrorMessage = try (container.decodeIfPresent(String.self, forKey: .gallery_permission_error_message))
 			galleryPermissionErrorButtonText = try (container.decodeIfPresent(String.self, forKey: .gallery_permission_error_button_text))
 			fileSizeErrorText = try (container.decodeIfPresent(String.self, forKey: .file_size_error_text))
-
+            isLogoHidden = try container.decodeIfPresent(Bool.self, forKey: .copyright_logo_is_show) ?? false
 		} catch let error as DecodingError {
 			print(error)
 			throw error

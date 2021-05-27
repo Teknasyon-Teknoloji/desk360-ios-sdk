@@ -109,6 +109,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 		let view = UIView()
 		view.backgroundColor = .clear
 		view.addSubview(desk360LogoImageView)
+        view.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		return view
 	}()
 
@@ -116,6 +117,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 		let imageView = UIImageView()
 		imageView.image =  Desk360.Config.Images.desk360Logo
 		imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		return imageView
 	}()
 

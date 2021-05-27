@@ -74,6 +74,7 @@ final class SuccessView: UIView, Layoutable {
 		let view = UIView()
 		view.backgroundColor = .clear
 		view.addSubview(desk360LogoImageView)
+        view.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		return view
 	}()
 
@@ -81,6 +82,7 @@ final class SuccessView: UIView, Layoutable {
 		let imageView = UIImageView()
 		imageView.image =  Desk360.Config.Images.desk360Logo
 		imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		return imageView
 	}()
 
