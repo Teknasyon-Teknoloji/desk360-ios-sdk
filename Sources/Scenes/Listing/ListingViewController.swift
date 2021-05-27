@@ -155,7 +155,7 @@ extension ListingViewController {
         
         let registerModel = Stores.registerCacheModel.object
         
-        guard registerModel?.appId == Desk360.appId && registerModel?.deviceId == Desk360.deviceId &&  Desk360Environment(rawValue: registerModel?.environment ?? Desk360Environment.sandbox.rawValue)  == Desk360.environment else {
+        guard registerModel?.appId == Desk360.properties?.appID && registerModel?.deviceId == Desk360.properties?.deviceID &&  Desk360Environment(rawValue: registerModel?.environment ?? Desk360Environment.sandbox.rawValue)  == Desk360.properties?.environment else {
 			layoutableView.placeholderView.isHidden = true
             Stores.ticketsStore.deleteAll()
             Stores.tokenStore.delete()
@@ -285,12 +285,12 @@ private extension ListingViewController {
     
     func register() {
         
-        guard Desk360.appId != nil else {
+        guard let props = Desk360.properties else {
             Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
             return
         }
         
-        Desk360.apiProvider.request(.register(appKey: Desk360.appId, deviceId: Desk360.deviceId, appPlatform: Desk360.appPlatform, appVersion: Desk360.appVersion, timeZone: Desk360.timeZone, languageCode: Desk360.languageCode)) { [weak self]  result in
+        Desk360.apiProvider.request(.register(appKey: props.appID, deviceId: props.deviceID, appPlatform: props.appPlatform, appVersion: Desk360.appVersion, timeZone: props.timeZone, languageCode: props.language)) { [weak self]  result in
             guard let self = self else { return }
             switch result {
             case .failure:
@@ -372,8 +372,10 @@ private extension ListingViewController {
         }
         
         layoutableView.setLoading(showLoading)
-        
-        Desk360.apiProvider.request(.getConfig(language: Desk360.languageCode, country: Desk360.countryCode)) { [weak self] result in
+        guard let props = Desk360.properties else {
+            Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+            return }
+        Desk360.apiProvider.request(.getConfig(language: props.language, country: props.country)) { [weak self] result in
             guard let self = self else { return }
             self.layoutableView.setLoading(false)
             switch result {

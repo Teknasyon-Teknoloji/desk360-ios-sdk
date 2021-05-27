@@ -434,7 +434,7 @@ private extension CreateRequestViewController {
 		let countryCodeData = Locale.current.countryCode.data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(countryCodeData), name: "country_code"))
 
-		if let json = Desk360.jsonInfo {
+        if let json = Desk360.properties?.jsonInfo {
 			if let jsonData = try? JSONSerialization.data(withJSONObject: json) {
 				ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
 			}

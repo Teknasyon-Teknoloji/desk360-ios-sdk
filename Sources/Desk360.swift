@@ -13,7 +13,7 @@ import Photos
 
 private var desk: Desk360?
 
-public enum Desk360Environment: String {
+public enum Desk360Environment: String, Equatable {
     @available(*, unavailable, renamed: "sandbox", message: "Please use .sandbox option instead.")
 	case test
     
@@ -22,31 +22,12 @@ public enum Desk360Environment: String {
 }
 
 public final class Desk360 {
-
-	private(set) public static var appId: String!
-
-	private(set) public static var deviceId: String!
-
-	private(set) public static var timeZone: String!
-
-	private(set) public static var appPlatform: String!
-
-	private(set) public static var appVersion: String!
     
-    private(set) public static var sdkVersion: String!
-
-	private(set) public static var languageCode: String!
-    
-    private(set) public static var countryCode: String!
-
-	private(set) public static var isDebug: Bool!
-
-	private(set) public static var environment: Desk360Environment!
-
-	private(set) public static var jsonInfo: [String: Any]!
-
+    private(set) public static var properties: Desk360Properties?
 	private(set) public static var pushToken: String?
-
+    private(set) public static var appVersion: String = "x.x.x"
+    private(set) public static var sdkVersion: String = "x.x.x"
+    
 	public static var messageId: Int?
 
     static var list: ListingViewController?
@@ -73,37 +54,21 @@ public final class Desk360 {
 	static var isReachable: Bool {
 		return NetworkReachabilityManager()?.isReachable ?? false
 	}
-
+    
+    @available(*, unavailable, renamed: "init(properties:)")
     public init(appId: String, deviceId: String, environment: Desk360Environment, language: String, country: String , jsonInfo: [String: Any]) {
-		Desk360.appId = appId
-		Desk360.deviceId = deviceId
-		Desk360.appPlatform = "iOS"
-		Desk360.appVersion = getAppVersion()
+        let props = Desk360Properties(appID: appId, deviceID: deviceId, environment: environment, language: language, country: country, userCredentials: nil, jsonInfo: jsonInfo)
+        Desk360.properties = props
+        Desk360.appVersion = getAppVersion()
         Desk360.sdkVersion = getSdkVersion()
-		Desk360.timeZone = TimeZone.current.identifier
-		Desk360.languageCode = language
-        Desk360.countryCode = country
-		Desk360.environment = environment
-		Desk360.jsonInfo = jsonInfo
-	}
-
-	private func getAppVersion() -> String {
-		guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
-			return "0.0.0"
-		}
-		return version
 	}
     
-    private func getSdkVersion() -> String {
-        guard let version = Bundle(for: Self.self).infoDictionary?["CFBundleShortVersionString"] as? String else {
-            return "0.0.0"
-        }
-        return version
-    }
-    
-    static func fetchTicketList() {
-        guard list != nil else { return }
-        list?.fetchList()
+    /// Creates DESK360 instance configured with the given properties.
+    /// - Parameter properties: DESK360 configuration properties.
+    public init(properties: Desk360Properties) {
+        Desk360.properties = properties
+        Desk360.appVersion = getAppVersion()
+        Desk360.sdkVersion = getSdkVersion()
     }
     
 	public static var shared: Desk360 {
@@ -189,51 +154,19 @@ public final class Desk360 {
 		showWithPushDeeplink(on: topVC, animated: true)
 	}
 
-	static func userInfoHandle(_ data: [String: AnyObject]) -> Int? {
-		guard let hermes = data["hermes"] as? [String: AnyObject] else { return nil }
-		guard let detail = hermes["target_detail"] as? [String: AnyObject] else { return nil }
-		guard let categoryId = detail["target_category"] as? String else { return nil }
-		guard categoryId == "Desk360Deeplink" else { return nil }
-		guard let id = detail["target_id"] as? String else { return nil }
-		return Int(id)
-	}
-
-	static func checkIsActiveDesk360(_ navigationController: UINavigationController) {
-
-        guard let listingViewController = navigationController.children.first as? ListingViewController else { return }
-        let tickets = listingViewController.requests
-        let id = Desk360.messageId
-        Desk360.messageId = nil
-        Desk360.didTapNotification = false
-        var ticket: Ticket?
-        for tic in tickets where tic.id == id {
-            ticket = tic
-        }
-        guard ticket != nil else { return }
-        if let vc = Desk360.conVC {
-            vc.readRequest(ticket!)
-            return
-        }
-        if let convc = navigationController.viewControllers.last as? ConversationViewController {
-            convc.readRequest(ticket!)
-            return
-        } else {
-            guard navigationController.children.count <= 1 else {
-                navigationController.popToRootViewController(animated: false)
-                return
-            }
-            let viewController = ConversationViewController(request: ticket!)
-            viewController.hidesBottomBarWhenPushed = true
-            navigationController.pushViewController(viewController, animated: false)
-        }
-	}
-
 	public static func showWithPushDeeplink(on viewController: UIViewController, animated: Bool = false) {
 
 		guard Desk360.messageId != nil else { return }
 		guard let registerModel = Stores.registerModel.object else { return }
-
-        desk = Desk360(appId: registerModel.appId, deviceId: registerModel.deviceId, environment: Desk360Environment(rawValue: registerModel.environment) ?? .production, language: registerModel.language, country: registerModel.country, jsonInfo: [:])
+        let properties = Desk360Properties(
+            appID: registerModel.appId,
+            deviceID: registerModel.deviceId,
+            environment: Desk360Environment(rawValue: registerModel.environment) ?? .production,
+            language: registerModel.language,
+            country: registerModel.country
+        )
+        
+        desk = Desk360(properties: properties)
 
 		let listingViewController = ListingViewController()
 		listingViewController.hidesBottomBarWhenPushed = true
@@ -243,14 +176,7 @@ public final class Desk360 {
 
 	}
 
-	static var topViewController: UIViewController? {
-        guard var topViewController = UIApplication.shared.keyWindow?.rootViewController else { return nil }
-        while let presentedViewController = topViewController.presentedViewController {
-            topViewController = presentedViewController
-        }
-        return topViewController
-    }
-
+    @available(iOS, deprecated: 1.7.0, renamed: "start(properties:)", message: "This method will be removed in the next versions")
     public static func start(
         appId: String,
         deviceId: String? = nil,
@@ -289,15 +215,44 @@ public final class Desk360 {
         try? Stores.userMail.save(userEmail)
         
 		isActive = true
-        desk = Desk360(appId: appId, deviceId: id, environment: currentEnvironment, language: currentLanguage, country: currentCountry, jsonInfo: jsonInfo ?? [:])
+        
+        var cred: Desk360Properties.Credentials?
+        if let name = userName, let email = userEmail {
+            cred = Desk360Properties.Credentials.init(name: name, email: email)
+        }
+        
+        let properties = Desk360Properties(appID: appId, deviceID: id, environment: environment ?? .production, language: currentLanguage, country: currentCountry, userCredentials: cred, jsonInfo: jsonInfo)
+        
+        desk = Desk360(properties: properties)
 
-        let registerModel = RegisterModel(appId: appId, deviceId: id, environment: currentEnvironment, language: currentLanguage, country: currentCountry)
+        let registerModel = RegisterModel(
+            appId: appId,
+            deviceId: id,
+            environment: currentEnvironment,
+            language: currentLanguage,
+            country: currentCountry
+        )
+        
 		try? Stores.registerModel.save(registerModel)
         
 		Stores.setStoresInitialValues()
 		print("Desk360 SDK was initialized successfully!")
 	}
 
+    public static func start(using properties: Desk360Properties) {
+        try? Stores.userName.save(properties.userCredentials?.name)
+        try? Stores.userMail.save(properties.userCredentials?.email)
+        
+        isActive = true
+        desk = Desk360(properties: properties)
+        
+        let registerModel = RegisterModel(appId: properties.appID, deviceId: properties.deviceID, environment: properties.environment, language: properties.language, country: properties.language)
+        try? Stores.registerModel.save(registerModel)
+        
+        Stores.setStoresInitialValues()
+        print("Desk360 SDK was initialized successfully!")
+    }
+    
 	public static func show(on viewController: UIViewController, animated: Bool = true) {
 		let listingViewController = ListingViewController()
 		listingViewController.hidesBottomBarWhenPushed = true
@@ -306,7 +261,75 @@ public final class Desk360 {
 		viewController.present(desk360Navcontroller, animated: true, completion: nil)
 	}
 
+    static func fetchTicketList() {
+        guard list != nil else { return }
+        list?.fetchList()
+    }
+    
     static func isUrlLocal( _ url: URL) -> Bool {
         return !url.absoluteString.hasPrefix("https://")
+    }
+}
+
+private extension Desk360 {
+    
+    private func getAppVersion() -> String {
+        guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
+            return "0.0.0"
+        }
+        return version
+    }
+    
+    private func getSdkVersion() -> String {
+        guard let version = Bundle(for: Self.self).infoDictionary?["CFBundleShortVersionString"] as? String else {
+            return "0.0.0"
+        }
+        return version
+    }
+    static var topViewController: UIViewController? {
+        guard var topViewController = UIApplication.shared.keyWindow?.rootViewController else { return nil }
+        while let presentedViewController = topViewController.presentedViewController {
+            topViewController = presentedViewController
+        }
+        return topViewController
+    }
+    
+    static func userInfoHandle(_ data: [String: AnyObject]) -> Int? {
+        guard let hermes = data["hermes"] as? [String: AnyObject] else { return nil }
+        guard let detail = hermes["target_detail"] as? [String: AnyObject] else { return nil }
+        guard let categoryId = detail["target_category"] as? String else { return nil }
+        guard categoryId == "Desk360Deeplink" else { return nil }
+        guard let id = detail["target_id"] as? String else { return nil }
+        return Int(id)
+    }
+
+    static func checkIsActiveDesk360(_ navigationController: UINavigationController) {
+
+        guard let listingViewController = navigationController.children.first as? ListingViewController else { return }
+        let tickets = listingViewController.requests
+        let id = Desk360.messageId
+        Desk360.messageId = nil
+        Desk360.didTapNotification = false
+        var ticket: Ticket?
+        for tic in tickets where tic.id == id {
+            ticket = tic
+        }
+        guard ticket != nil else { return }
+        if let vc = Desk360.conVC {
+            vc.readRequest(ticket!)
+            return
+        }
+        if let convc = navigationController.viewControllers.last as? ConversationViewController {
+            convc.readRequest(ticket!)
+            return
+        } else {
+            guard navigationController.children.count <= 1 else {
+                navigationController.popToRootViewController(animated: false)
+                return
+            }
+            let viewController = ConversationViewController(request: ticket!)
+            viewController.hidesBottomBarWhenPushed = true
+            navigationController.pushViewController(viewController, animated: false)
+        }
     }
 }

@@ -9,7 +9,7 @@ import UIKit
 
 extension UIDevice {
 
-	var uniqueIdentifier: String {
+	public var uniqueIdentifier: String {
 		return identifierForVendor!.uuidString
 	}
 
