@@ -17,8 +17,8 @@ public final class Desk360 {
     
     private(set) public static var properties: Desk360Properties?
 	private(set) public static var pushToken: String?
-    private(set) public static var appVersion: String = "x.x.x"
-    private(set) public static var sdkVersion: String = "x.x.x"
+    private(set) public static var appVersion: String = "0.0.0"
+    private(set) public static var sdkVersion: String = "0.0.0"
     
 	public static var messageId: Int?
 
