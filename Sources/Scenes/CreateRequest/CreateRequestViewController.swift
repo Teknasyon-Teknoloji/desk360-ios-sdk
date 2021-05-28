@@ -429,17 +429,22 @@ private extension CreateRequestViewController {
 				addTextView(view: currentView.messageTextView)
 			}
 		}
-
+        
+        guard let props = Desk360.properties else {
+            Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+            return
+        }
+        
 		let sourceData = "App".data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(sourceData), name: "source"))
 
-		let platformData = "iOS".data(using: String.Encoding.utf8) ?? Data()
+        let platformData = props.appPlatform.data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(platformData), name: "platform"))
 
-		let countryCodeData = Locale.current.countryCode.data(using: String.Encoding.utf8) ?? Data()
+        let countryCodeData = props.country.data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(countryCodeData), name: "country_code"))
 
-        if let json = Desk360.properties?.jsonInfo {
+        if let json = props.jsonInfo {
 			if let jsonData = try? JSONSerialization.data(withJSONObject: json) {
 				ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
 			}
@@ -458,6 +463,7 @@ private extension CreateRequestViewController {
 			let pushTokenData = pushTokenString.data(using: String.Encoding.utf8) ?? Data()
 			ticket.append(Moya.MultipartFormData(provider: .data(pushTokenData), name: "push_token"))
 		}
+        
         self.layoutableView.setLoading(true)
 		Desk360.apiProvider.request(.create(ticket: ticket)) { [weak self] result in
 			guard let self = self else { return }
