@@ -109,6 +109,11 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		alert.addAction(showImagePicker)
 		alert.addAction(cancelAction)
 
+        if let popoverPresentationController = alert.popoverPresentationController {
+            popoverPresentationController.sourceView = self.layoutableView.attachmentButton
+            popoverPresentationController.sourceRect = self.layoutableView.attachmentButton.bounds
+        }
+        
 		attachmentButtonConfigure()
 		present(alert, animated: true, completion: { () in
 			self.attachmentButtonConfigure()
@@ -472,7 +477,11 @@ private extension CreateRequestViewController {
                 self.newTicket = data
                 self.cacheTicket()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
+                    if props.bypassCreateTicketIntro {
+                        self.navigationController?.popViewController(animated: true)
+                    } else {
+                        self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
+                    }
                 }
                 
 				break

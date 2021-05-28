@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import DeviceKit
 
 final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 
@@ -49,10 +50,9 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 			dateLabel.backgroundColor = containerBackgroundColor
 		}
 	}
-
+    
 	func setupViews() {
 		selectionStyle = .none
-
 		containerView.addSubview(stackView)
 		containerView.addSubview(iconImageView)
 		addSubview(containerView)
@@ -67,7 +67,8 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 
 		stackView.snp.makeConstraints { make in
 			make.leading.equalToSuperview().inset(preferredSpacing / 2)
-			make.top.bottom.equalToSuperview().inset(preferredSpacing)
+            let inset = Device.current.isPad ? preferredSpacing / 2 : preferredSpacing / 1.3
+            make.top.bottom.equalToSuperview().inset(inset)
 		}
 
 		iconImageView.snp.makeConstraints { make in
@@ -77,42 +78,33 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 			make.trailing.equalToSuperview().inset(preferredSpacing)
 		}
 	}
-
 }
 
 // MARK: - Configure
 internal extension ListingTableViewCell {
 
 	func createContainerType1() {
-
 		containerView.layer.cornerRadius = 10
 		remakeContainerLayout()
-
 	}
 
 	func createContainerType2() {
-
 		containerView.layer.cornerRadius = 4
-
 		remakeContainerLayout()
 	}
 
 	func createContainerType3() {
-
 		containerView.layer.cornerRadius = 2
 		remakeContainerLayout()
 	}
 
 	func createContainerType4() {
-
 		containerView.layer.cornerRadius = 0
-
 		containerView.snp.remakeConstraints { make in
 			make.leading.trailing.top.equalToSuperview()
 			make.height.equalTo(UIButton.preferredHeight * 2)
 			make.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
 		}
-
 	}
 
 	func remakeContainerLayout() {
@@ -222,7 +214,5 @@ internal extension ListingTableViewCell {
 			}
 			iconImageView.setNeedsLayout()
 		}
-
 	}
-
 }

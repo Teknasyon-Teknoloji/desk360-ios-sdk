@@ -205,9 +205,11 @@ extension ConversationViewController: InputViewDelegate {
         }
         alert.addAction(showImagePicker)
         alert.addAction(cancelAction)
-
-        present(alert, animated: true, completion: { () in
-        })
+        if let popoverPresentationController = alert.popoverPresentationController {
+            popoverPresentationController.sourceView = layoutableView.conversationInputView.attachButton
+            popoverPresentationController.sourceRect = layoutableView.conversationInputView.attachButton.bounds
+        }
+        present(alert, animated: true)
     }
     
     @objc func didTapDocumentBrowse(completion: @escaping (() -> Void)) {

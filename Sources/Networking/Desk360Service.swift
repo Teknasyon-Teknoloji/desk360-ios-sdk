@@ -19,15 +19,11 @@ enum Service {
 
 extension Service: TargetType, AccessTokenAuthorizable {
 
-	var authorizationType: AuthorizationType? {
+	var authorizationType: AuthorizationType {
 		return .bearer
 	}
 
 	var baseURL: URL {
-        if Desk360.properties?.environment == .some(.sandbox), let url = UserDefaults.standard.string(forKey: "DESK360_URL") {
-            return URL(string: url)!
-        }
-  
         return URL(string: "https://teknasyon.desk360.com/api/v1")!
 	}
 

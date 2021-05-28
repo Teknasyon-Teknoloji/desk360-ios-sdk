@@ -129,7 +129,6 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
     @objc private func didTapCreateRequestButton(_ button: UIButton) {
         navigationController?.pushViewController(CreateRequestViewController(checkLastClass: false), animated: true)
     }
-    
 }
 
 // MARK: - Desk360 Start
@@ -314,7 +313,6 @@ private extension ListingViewController {
     }
     
     func fetchRequests(showLoading: Bool) {
-        
         if showLoading {
             layoutableView.setLoading(true)
         }
@@ -348,7 +346,6 @@ private extension ListingViewController {
                 //self.checkNotificationDeeplink()
             }
         }
-        
     }
     
     func setTicketWithMessageStore() {
@@ -399,7 +396,6 @@ private extension ListingViewController {
                 self.fetchRequests(showLoading: false)
             }
         }
-        
     }
     
     func refreshView() {
@@ -432,7 +428,6 @@ private extension ListingViewController {
             }
         }
     }
-    
 }
 
 // MARK: - Config
