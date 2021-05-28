@@ -13,14 +13,6 @@ import Photos
 
 private var desk: Desk360?
 
-public enum Desk360Environment: String, Equatable {
-    @available(*, unavailable, renamed: "sandbox", message: "Please use .sandbox option instead.")
-	case test
-    
-    case sandbox
-	case production
-}
-
 public final class Desk360 {
     
     private(set) public static var properties: Desk360Properties?
@@ -40,7 +32,7 @@ public final class Desk360 {
 
 	static var token: String? = ""
 
-    static let authPlugin = AccessTokenPlugin { Desk360.token ?? "" }
+    static let authPlugin = AccessTokenPlugin { _ in Desk360.token ?? "" }
 
 	static let apiProvider = MoyaProvider<Service>(plugins: [authPlugin])
 
