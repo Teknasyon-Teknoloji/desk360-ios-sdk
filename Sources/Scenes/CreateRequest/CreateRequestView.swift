@@ -1030,7 +1030,7 @@ extension CreateRequestView {
             let uri = URL(string: url)!
             attributedString.setAttributes([.link: uri], range: NSMakeRange(0, str.count))
             agreementTextView.linkTextAttributes = [
-                .foregroundColor: Colors.createScreenFormInputFocusColor,
+                .foregroundColor:  Colors.createScreenFormInputColor,
                 .underlineStyle: NSUnderlineStyle.single.rawValue
             ]
         }
