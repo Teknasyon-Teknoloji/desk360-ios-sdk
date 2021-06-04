@@ -40,7 +40,7 @@ public final class Desk360 {
 
 	static var token: String? = ""
 
-    static let authPlugin = AccessTokenPlugin {  Desk360.token ?? "" }
+    static let authPlugin = AccessTokenPlugin { _ in Desk360.token ?? "" }
 
 	static let apiProvider = MoyaProvider<Service>(plugins: [authPlugin])
 

@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
     s.ios.deployment_target = "10.0"
 
     s.dependency "SnapKit"
-    s.dependency "Moya", '~> 13.0'
+    s.dependency "Moya", '~> 14.0'
     s.dependency "PersistenceKit"
     s.dependency "DeviceKit"
     s.dependency "NVActivityIndicatorView", "4.8.0"
