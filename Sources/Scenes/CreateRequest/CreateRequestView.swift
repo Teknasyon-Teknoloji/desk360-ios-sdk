@@ -167,7 +167,6 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		scrollView.showsVerticalScrollIndicator = false
 		scrollView.showsHorizontalScrollIndicator = false
 		scrollView.alwaysBounceVertical = true
-
 		return scrollView
 	}()
 
@@ -192,6 +191,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         textView.font = UIFont.systemFont(ofSize: 16)
         textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         textView.isScrollEnabled = false
+        textView.textColor = Colors.createScreenFormInputFocusColor
         return textView
     }()
     
@@ -1030,7 +1030,7 @@ extension CreateRequestView {
             let uri = URL(string: url)!
             attributedString.setAttributes([.link: uri], range: NSMakeRange(0, str.count))
             agreementTextView.linkTextAttributes = [
-                .foregroundColor: UIColor.black,
+                .foregroundColor:  Colors.createScreenFormInputColor,
                 .underlineStyle: NSUnderlineStyle.single.rawValue
             ]
         }

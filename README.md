@@ -53,18 +53,21 @@ Permission text is optional. you can type whatever you want. But this permission
 ```swift
 import Desk360
 
-Desk360.start(appId: "12345")
+let props = Desk360Properties(appID: "1234")
+
 // Or if you would like to provide more info here is a full list of the params
-Desk360.start(
-    appId: "12345",
-    deviceId: "34567",
-    environment: .production,
-    anguage: "en",
-    country: "us",
-    userName: "User_Name", 
-    userEmail: "User_Email", 
-    jsonInfo: jsonObject: [String: Any] = ["yourInfoKey": "yourInfoValue"]
-  )
+let props = Desk360Properties(
+        appID: "1234",
+        deviceID: "34567",
+        environment: .production,
+        language: "en",
+        country: "TR",
+        userCredentials: .init(userName: "John Appleased", email: "test@test.com"),
+        bypassCreateTicketIntro: true,
+        jsonInfo: [jsonObject: [String: Any] = ["yourInfoKey": "yourInfoValue"]
+    )
+
+Desk360.start(using: props)
 ```
 
 ### Using Desk360

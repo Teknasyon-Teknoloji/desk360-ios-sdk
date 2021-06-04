@@ -109,6 +109,11 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		alert.addAction(showImagePicker)
 		alert.addAction(cancelAction)
 
+        if let popoverPresentationController = alert.popoverPresentationController {
+            popoverPresentationController.sourceView = self.layoutableView.attachmentButton
+            popoverPresentationController.sourceRect = self.layoutableView.attachmentButton.bounds
+        }
+        
 		attachmentButtonConfigure()
 		present(alert, animated: true, completion: { () in
 			self.attachmentButtonConfigure()
@@ -424,17 +429,22 @@ private extension CreateRequestViewController {
 				addTextView(view: currentView.messageTextView)
 			}
 		}
-
+        
+        guard let props = Desk360.properties else {
+            Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+            return
+        }
+        
 		let sourceData = "App".data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(sourceData), name: "source"))
 
-		let platformData = "iOS".data(using: String.Encoding.utf8) ?? Data()
+        let platformData = props.appPlatform.data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(platformData), name: "platform"))
 
-		let countryCodeData = Locale.current.countryCode.data(using: String.Encoding.utf8) ?? Data()
+        let countryCodeData = props.country.data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(countryCodeData), name: "country_code"))
 
-		if let json = Desk360.jsonInfo {
+        if let json = props.jsonInfo {
 			if let jsonData = try? JSONSerialization.data(withJSONObject: json) {
 				ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
 			}
@@ -453,13 +463,15 @@ private extension CreateRequestViewController {
 			let pushTokenData = pushTokenString.data(using: String.Encoding.utf8) ?? Data()
 			ticket.append(Moya.MultipartFormData(provider: .data(pushTokenData), name: "push_token"))
 		}
+        
         self.layoutableView.setLoading(true)
 		Desk360.apiProvider.request(.create(ticket: ticket)) { [weak self] result in
 			guard let self = self else { return }
-			self.layoutableView.setLoading(false)
+			
 			switch result {
 			case .failure(let error):
                 self.cacheTicket()
+                self.layoutableView.setLoading(false)
 				print(error.localizedServerDescription)
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
@@ -471,10 +483,15 @@ private extension CreateRequestViewController {
                 guard let data = tickets.data else { return }
                 self.newTicket = data
                 self.cacheTicket()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
+                let delay: TimeInterval = props.bypassCreateTicketIntro ? 1 : 0.1
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    self.layoutableView.setLoading(false)
+                    if props.bypassCreateTicketIntro {
+                        self.navigationController?.popViewController(animated: true)
+                    } else {
+                        self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
+                    }
                 }
-                
 				break
 			}
 		}

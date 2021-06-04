@@ -9,9 +9,7 @@ import UIKit
 import SnapKit
 
 protocol ListingViewControllerDelegate: AnyObject {
-    
     func listingViewController(_ viewController: ListingViewController, didSelectTicket ticket: Ticket)
-    
 }
 
 final class ListingViewController: UIViewController, Layouting, UITableViewDelegate, UITableViewDataSource {
@@ -57,7 +55,6 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         self.navigationController?.navigationBar.setColors(background: .white, text: .white)
         layoutableView.placeholderView.createRequestButton.addTarget(self, action: #selector(didTapCreateRequestButton), for: .touchUpInside)
         layoutableView.segmentControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
-        
         setLoadingabletConfig()
     }
     
@@ -66,12 +63,13 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         Desk360.isActive = true
         
         navigationItem.leftBarButtonItem = NavigationItems.close(target: self, action: #selector(didTapCloseButton))
-        //		segmentcontrolButtonBarLayout()
+        // segmentcontrolButtonBarLayout()
         initialView()
-        
+    
         try? Stores.registerCacheModel.save(Stores.registerModel.object)
         
         checkForUnreadMessageIcon()
+      //  fetchRequests(showLoading: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -118,13 +116,17 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
     }
     
     @objc private func didTapCreateBarButtonItem(_ item: UIBarButtonItem) {
-        navigationController?.pushViewController(CreateRequestPreviewController(checkLastClass: false), animated: true)
+        guard let props = Desk360.properties else { return }
+        if props.bypassCreateTicketIntro {
+            navigationController?.pushViewController(CreateRequestViewController(checkLastClass: false), animated: true)
+        } else {
+            navigationController?.pushViewController(CreateRequestPreviewController(checkLastClass: false), animated: true)
+        }
     }
     
     @objc private func didTapCreateRequestButton(_ button: UIButton) {
         navigationController?.pushViewController(CreateRequestViewController(checkLastClass: false), animated: true)
     }
-    
 }
 
 // MARK: - Desk360 Start
@@ -155,7 +157,7 @@ extension ListingViewController {
         
         let registerModel = Stores.registerCacheModel.object
         
-        guard registerModel?.appId == Desk360.appId && registerModel?.deviceId == Desk360.deviceId &&  Desk360Environment(rawValue: registerModel?.environment ?? Desk360Environment.sandbox.rawValue)  == Desk360.environment else {
+        guard registerModel?.appId == Desk360.properties?.appID && registerModel?.deviceId == Desk360.properties?.deviceID &&  Desk360Environment(rawValue: registerModel?.environment ?? Desk360Environment.sandbox.rawValue)  == Desk360.properties?.environment else {
 			layoutableView.placeholderView.isHidden = true
             Stores.ticketsStore.deleteAll()
             Stores.tokenStore.delete()
@@ -285,12 +287,12 @@ private extension ListingViewController {
     
     func register() {
         
-        guard Desk360.appId != nil else {
+        guard let props = Desk360.properties else {
             Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
             return
         }
         
-        Desk360.apiProvider.request(.register(appKey: Desk360.appId, deviceId: Desk360.deviceId, appPlatform: Desk360.appPlatform, appVersion: Desk360.appVersion, timeZone: Desk360.timeZone, languageCode: Desk360.languageCode)) { [weak self]  result in
+        Desk360.apiProvider.request(.register(appKey: props.appID, deviceId: props.deviceID, appPlatform: props.appPlatform, appVersion: Desk360.appVersion, timeZone: props.timeZone, languageCode: props.language)) { [weak self]  result in
             guard let self = self else { return }
             switch result {
             case .failure:
@@ -309,7 +311,6 @@ private extension ListingViewController {
     }
     
     func fetchRequests(showLoading: Bool) {
-        
         if showLoading {
             layoutableView.setLoading(true)
         }
@@ -343,7 +344,6 @@ private extension ListingViewController {
                 //self.checkNotificationDeeplink()
             }
         }
-        
     }
     
     func setTicketWithMessageStore() {
@@ -361,7 +361,7 @@ private extension ListingViewController {
     }
     
     func getConfig(showLoading: Bool) {
-        
+        fetchRequests(showLoading: false)
         if isConfigFethecOnce {
             return
         }
@@ -372,8 +372,10 @@ private extension ListingViewController {
         }
         
         layoutableView.setLoading(showLoading)
-        
-        Desk360.apiProvider.request(.getConfig(language: Desk360.languageCode, country: Desk360.countryCode)) { [weak self] result in
+        guard let props = Desk360.properties else {
+            Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+            return }
+        Desk360.apiProvider.request(.getConfig(language: props.language, country: props.country)) { [weak self] result in
             guard let self = self else { return }
             self.layoutableView.setLoading(false)
             switch result {
@@ -390,9 +392,9 @@ private extension ListingViewController {
                 Config.shared.updateConfig(configData)
                 try? Stores.configStore.save(configData)
                 self.fetchRequests(showLoading: false)
+                self.layoutableView.desk360BottomView.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
             }
         }
-        
     }
     
     func refreshView() {
@@ -425,7 +427,6 @@ private extension ListingViewController {
             }
         }
     }
-    
 }
 
 // MARK: - Config

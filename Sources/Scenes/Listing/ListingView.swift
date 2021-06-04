@@ -105,18 +105,10 @@ class ListingView: UIView, Layoutable, Loadingable {
 		return imageView
 	}()
 
-	private lazy var desk360BottomView: UIView = {
-		let view = UIView()
-		view.backgroundColor = .clear
-		view.addSubview(desk360LogoImageView)
+    lazy var desk360BottomView: Desk360View = {
+        let view = Desk360View.create()
+        view.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		return view
-	}()
-
-	private lazy var desk360LogoImageView: UIImageView = {
-		let imageView = UIImageView()
-		imageView.image =  Desk360.Config.Images.desk360Logo
-		imageView.contentMode = .scaleAspectFit
-		return imageView
 	}()
 
 	public override var backgroundColor: UIColor? {
@@ -137,7 +129,6 @@ class ListingView: UIView, Layoutable, Loadingable {
 	}
 
 	func setupLayout() {
-
 		emptyImageView.snp.makeConstraints { make in
 			make.centerX.equalToSuperview()
 			make.top.lessThanOrEqualToSuperview().inset(preferredSpacing * 5 )
@@ -178,11 +169,6 @@ class ListingView: UIView, Layoutable, Loadingable {
 			make.bottom.equalTo(safeArea.bottom)
 		}
 
-		desk360LogoImageView.snp.makeConstraints { make in
-			make.centerX.equalToSuperview()
-			make.top.equalToSuperview()
-		}
-
 		placeholderView.snp.makeConstraints { make in
 			make.leading.trailing.top.equalToSuperview()
 			make.bottom.equalTo(desk360BottomView.snp.top)
@@ -202,7 +188,6 @@ class ListingView: UIView, Layoutable, Loadingable {
 		guard show else { return }
 		tableView.backgroundColor = Colors.backgroundColor
 	}
-
 }
 
 // MARK: - Config
