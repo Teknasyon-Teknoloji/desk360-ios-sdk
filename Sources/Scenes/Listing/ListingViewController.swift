@@ -69,7 +69,7 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         try? Stores.registerCacheModel.save(Stores.registerModel.object)
         
         checkForUnreadMessageIcon()
-        fetchRequests(showLoading: false)
+      //  fetchRequests(showLoading: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -361,6 +361,7 @@ private extension ListingViewController {
     }
     
     func getConfig(showLoading: Bool) {
+        fetchRequests(showLoading: false)
         if isConfigFethecOnce {
             return
         }
