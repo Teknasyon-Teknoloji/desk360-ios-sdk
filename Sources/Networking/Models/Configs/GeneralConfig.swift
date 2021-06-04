@@ -7,63 +7,34 @@
 
 /// Use `SupportMessage` to map JSON object returned from the methods in `SupportService`
 public struct GeneralConfigModel {
-
 	var fontType: String?
-
 	var mainBackgroundColor: UIColor?
-
 	var navigationBackgroundColor: UIColor?
-
 	var navigationTextColor: UIColor?
-
 	var navigationTitleFontSize: Int?
-
 	var navigationTitleFontWeight: Int?
-
 	var navigationImageViewTintColor: UIColor?
-
 	var navigationShadow: Bool?
-
 	var bottomNoteColor: UIColor?
-
 	var bottomNoteFontSize: Int?
-
 	var bottomNoteFontWeight: Int?
-
 	var copyrightBackgroundColor: UIColor?
-
 	var copyrightTextColor: UIColor?
-
 	var nameFieldText: String?
-
 	var emailFieldText: String?
-
 	var messageFieldText: String?
-
 	var subjectFieldText: String?
-
 	var addFileText: String?
-
 	var requiredFieldMessage: String?
-
 	var requiredMessageViewMessage: String?
-
 	var attachmentBrowseText: String?
-
 	var attachmentImagesText: String?
-
 	var attachmentCancelText: String?
-
 	var galleryPermissionErrorMessage: String?
-
 	var requiredEmailFieldMessage: String?
-
 	var galleryPermissionErrorButtonText: String?
-
 	var fileSizeErrorText: String?
-    
     let isLogoHidden: Bool
-
 }
 
 extension GeneralConfigModel: Codable {
@@ -148,7 +119,8 @@ extension GeneralConfigModel: Codable {
 			galleryPermissionErrorMessage = try (container.decodeIfPresent(String.self, forKey: .gallery_permission_error_message))
 			galleryPermissionErrorButtonText = try (container.decodeIfPresent(String.self, forKey: .gallery_permission_error_button_text))
 			fileSizeErrorText = try (container.decodeIfPresent(String.self, forKey: .file_size_error_text))
-            isLogoHidden = try container.decodeIfPresent(Bool.self, forKey: .copyright_logo_is_show) ?? false
+            isLogoHidden = !(try container.decodeIfPresent(Bool.self, forKey: .copyright_logo_is_show) ?? true)
+            print("hahah", isLogoHidden)
 		} catch let error as DecodingError {
 			print(error)
 			throw error

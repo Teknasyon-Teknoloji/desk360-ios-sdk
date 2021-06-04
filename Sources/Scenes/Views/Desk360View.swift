@@ -19,7 +19,8 @@ final class Desk360View: UIView, Layoutable {
 
 	func setupViews() {
 		backgroundColor = .clear
-        desk360LogoImageView.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
+        isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
+        desk360LogoImageView.isHidden = isHidden
 		addSubview(desk360LogoImageView)
 	}
 

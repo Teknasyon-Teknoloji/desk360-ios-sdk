@@ -105,20 +105,9 @@ class ListingView: UIView, Layoutable, Loadingable {
 		return imageView
 	}()
 
-	private lazy var desk360BottomView: UIView = {
-		let view = UIView()
-		view.backgroundColor = .clear
-		view.addSubview(desk360LogoImageView)
-        view.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
+	private lazy var desk360BottomView: Desk360View = {
+        let view = Desk360View.create()
 		return view
-	}()
-
-	private lazy var desk360LogoImageView: UIImageView = {
-		let imageView = UIImageView()
-		imageView.image =  Desk360.Config.Images.desk360Logo
-		imageView.contentMode = .scaleAspectFit
-        imageView.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
-		return imageView
 	}()
 
 	public override var backgroundColor: UIColor? {
@@ -178,11 +167,6 @@ class ListingView: UIView, Layoutable, Loadingable {
 			make.leading.trailing.equalToSuperview()
 			make.height.equalTo(preferredSpacing * 1.5)
 			make.bottom.equalTo(safeArea.bottom)
-		}
-
-		desk360LogoImageView.snp.makeConstraints { make in
-			make.centerX.equalToSuperview()
-			make.top.equalToSuperview()
 		}
 
 		placeholderView.snp.makeConstraints { make in
