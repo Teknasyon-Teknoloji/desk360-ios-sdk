@@ -120,7 +120,6 @@ extension GeneralConfigModel: Codable {
 			galleryPermissionErrorButtonText = try (container.decodeIfPresent(String.self, forKey: .gallery_permission_error_button_text))
 			fileSizeErrorText = try (container.decodeIfPresent(String.self, forKey: .file_size_error_text))
             isLogoHidden = !(try container.decodeIfPresent(Bool.self, forKey: .copyright_logo_is_show) ?? true)
-            print("hahah", isLogoHidden)
 		} catch let error as DecodingError {
 			print(error)
 			throw error

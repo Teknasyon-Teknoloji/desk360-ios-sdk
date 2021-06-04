@@ -467,10 +467,11 @@ private extension CreateRequestViewController {
         self.layoutableView.setLoading(true)
 		Desk360.apiProvider.request(.create(ticket: ticket)) { [weak self] result in
 			guard let self = self else { return }
-			self.layoutableView.setLoading(false)
+			
 			switch result {
 			case .failure(let error):
                 self.cacheTicket()
+                self.layoutableView.setLoading(false)
 				print(error.localizedServerDescription)
 				if error.response?.statusCode == 400 {
 					Desk360.isRegister = false
@@ -482,14 +483,15 @@ private extension CreateRequestViewController {
                 guard let data = tickets.data else { return }
                 self.newTicket = data
                 self.cacheTicket()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                let delay: TimeInterval = props.bypassCreateTicketIntro ? 1 : 0.1
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    self.layoutableView.setLoading(false)
                     if props.bypassCreateTicketIntro {
                         self.navigationController?.popViewController(animated: true)
                     } else {
                         self.navigationController?.pushViewController(SuccsessViewController(checkLastClass: true), animated: true)
                     }
                 }
-                
 				break
 			}
 		}

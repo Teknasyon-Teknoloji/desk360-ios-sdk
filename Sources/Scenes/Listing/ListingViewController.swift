@@ -9,9 +9,7 @@ import UIKit
 import SnapKit
 
 protocol ListingViewControllerDelegate: AnyObject {
-    
     func listingViewController(_ viewController: ListingViewController, didSelectTicket ticket: Ticket)
-    
 }
 
 final class ListingViewController: UIViewController, Layouting, UITableViewDelegate, UITableViewDataSource {
@@ -57,7 +55,6 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         self.navigationController?.navigationBar.setColors(background: .white, text: .white)
         layoutableView.placeholderView.createRequestButton.addTarget(self, action: #selector(didTapCreateRequestButton), for: .touchUpInside)
         layoutableView.segmentControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
-        
         setLoadingabletConfig()
     }
     
@@ -66,12 +63,13 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         Desk360.isActive = true
         
         navigationItem.leftBarButtonItem = NavigationItems.close(target: self, action: #selector(didTapCloseButton))
-        //		segmentcontrolButtonBarLayout()
+        // segmentcontrolButtonBarLayout()
         initialView()
-        
+    
         try? Stores.registerCacheModel.save(Stores.registerModel.object)
         
         checkForUnreadMessageIcon()
+        fetchRequests(showLoading: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -363,7 +361,6 @@ private extension ListingViewController {
     }
     
     func getConfig(showLoading: Bool) {
-        
         if isConfigFethecOnce {
             return
         }
@@ -394,6 +391,7 @@ private extension ListingViewController {
                 Config.shared.updateConfig(configData)
                 try? Stores.configStore.save(configData)
                 self.fetchRequests(showLoading: false)
+                self.layoutableView.desk360BottomView.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
             }
         }
     }

@@ -70,20 +70,10 @@ final class SuccessView: UIView, Layoutable {
 		return label
 	}()
 
-	private lazy var desk360BottomView: UIView = {
-		let view = UIView()
-		view.backgroundColor = .clear
-		view.addSubview(desk360LogoImageView)
+	private lazy var desk360BottomView: Desk360View = {
+        let view = Desk360View.create()
         view.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		return view
-	}()
-
-	private lazy var desk360LogoImageView: UIImageView = {
-		let imageView = UIImageView()
-		imageView.image =  Desk360.Config.Images.desk360Logo
-		imageView.contentMode = .scaleAspectFit
-        imageView.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
-		return imageView
 	}()
 
 	public override var backgroundColor: UIColor? {
@@ -152,13 +142,7 @@ final class SuccessView: UIView, Layoutable {
 			make.height.equalTo(preferredSpacing * 1.5)
 			make.bottom.equalTo(safeArea.bottom)
 		}
-
-		desk360LogoImageView.snp.makeConstraints { make in
-			make.centerX.equalToSuperview()
-			make.top.equalToSuperview()
-		}
 	}
-
 }
 
 // MARK: - Helpers

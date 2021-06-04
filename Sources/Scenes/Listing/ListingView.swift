@@ -105,8 +105,9 @@ class ListingView: UIView, Layoutable, Loadingable {
 		return imageView
 	}()
 
-	private lazy var desk360BottomView: Desk360View = {
+    lazy var desk360BottomView: Desk360View = {
         let view = Desk360View.create()
+        view.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		return view
 	}()
 
@@ -128,7 +129,6 @@ class ListingView: UIView, Layoutable, Loadingable {
 	}
 
 	func setupLayout() {
-
 		emptyImageView.snp.makeConstraints { make in
 			make.centerX.equalToSuperview()
 			make.top.lessThanOrEqualToSuperview().inset(preferredSpacing * 5 )
@@ -188,7 +188,6 @@ class ListingView: UIView, Layoutable, Loadingable {
 		guard show else { return }
 		tableView.backgroundColor = Colors.backgroundColor
 	}
-
 }
 
 // MARK: - Config

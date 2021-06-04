@@ -14,6 +14,7 @@ final class Desk360View: UIView, Layoutable {
 		let imageView = UIImageView()
 		imageView.image =  Desk360.Config.Images.desk360Logo
 		imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		return imageView
 	}()
 
