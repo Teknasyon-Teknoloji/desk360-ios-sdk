@@ -173,7 +173,7 @@ public final class Desk360 {
 		let desk360Navcontroller = UINavigationController(rootViewController: listingViewController)
 		desk360Navcontroller.modalPresentationStyle = .fullScreen
 		viewController.present(desk360Navcontroller, animated: true, completion: nil)
-
+        Desk360.messageId = nil
 	}
 
     @available(iOS, deprecated, renamed: "start(properties:)", message: "This method will be removed in the next versions")
