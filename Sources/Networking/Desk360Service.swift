@@ -19,7 +19,7 @@ enum Service {
 
 extension Service: TargetType, AccessTokenAuthorizable {
 
-	var authorizationType: AuthorizationType? {
+	var authorizationType: AuthorizationType {
 		return .bearer
 	}
 
