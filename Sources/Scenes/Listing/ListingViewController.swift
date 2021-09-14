@@ -155,9 +155,12 @@ extension ListingViewController {
         
         Desk360.token = Stores.tokenStore.object()
         
-        let registerModel = Stores.registerCacheModel.object
+		guard let registerModel = Stores.registerCacheModel.object else { return }
+		guard let desk360Properties = Desk360.properties else { return }
         
-        guard registerModel?.appId == Desk360.properties?.appID && registerModel?.deviceId == Desk360.properties?.deviceID &&  Desk360Environment(rawValue: registerModel?.environment ?? Desk360Environment.sandbox.rawValue)  == Desk360.properties?.environment else {
+		guard registerModel.appId == desk360Properties.appID &&
+				registerModel.deviceId == desk360Properties.deviceID &&
+				registerModel.environment == desk360Properties.environment.stringValue else {
 			layoutableView.placeholderView.isHidden = true
             Stores.ticketsStore.deleteAll()
             Stores.tokenStore.delete()

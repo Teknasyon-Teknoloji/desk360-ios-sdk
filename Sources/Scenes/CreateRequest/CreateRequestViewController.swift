@@ -444,10 +444,8 @@ private extension CreateRequestViewController {
         let countryCodeData = props.country.data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(countryCodeData), name: "country_code"))
 
-        if let json = props.jsonInfo {
-			if let jsonData = try? JSONSerialization.data(withJSONObject: json) {
-				ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
-			}
+		if let jsonData = try? JSONSerialization.data(withJSONObject: props.jsonInfo) {
+			ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
 		}
 
         if Config.shared.model?.createScreen?.agreementIsHidden == true {

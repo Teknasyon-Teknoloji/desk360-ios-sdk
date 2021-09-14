@@ -13,15 +13,26 @@ import Photos
 
 private var desk: Desk360?
 
-public enum Desk360Environment: String, Equatable {
-    @available(*, unavailable, renamed: "sandbox", message: "Please use .sandbox option instead.")
-    case test
-    
-    case sandbox
-    case production
+@objc public enum Desk360Environment: Int {
+	@available(*, unavailable, renamed: "sandbox", message: "Please use .sandbox option instead.")
+	case test
+	
+	case sandbox
+	case production
+	
+	var stringValue: String {
+		switch self {
+			case .test:
+				return "test"
+			case .sandbox:
+				return "sandbox"
+			case .production:
+				return "production"
+		}
+	}
 }
 
-public final class Desk360 {
+@objc open class Desk360: NSObject {
     
     private(set) public static var properties: Desk360Properties?
 	private(set) public static var pushToken: String?
@@ -55,22 +66,15 @@ public final class Desk360 {
 		return NetworkReachabilityManager()?.isReachable ?? false
 	}
     
-    @available(*, deprecated, renamed: "init(properties:)", message: "Deprecated and will be removed in the future versions")
-    public init(appId: String, deviceId: String, environment: Desk360Environment, language: String, country: String , jsonInfo: [String: Any]) {
-        let props = Desk360Properties(appID: appId, deviceID: deviceId, environment: environment, language: language, country: country, userCredentials: nil, jsonInfo: jsonInfo)
-        Desk360.properties = props
-        Desk360.appVersion = getAppVersion()
-        Desk360.sdkVersion = getSdkVersion()
-	}
-    
     /// Creates DESK360 instance configured with the given properties.
     /// - Parameter properties: DESK360 configuration properties.
-    public init(properties: Desk360Properties) {
+	@objc public init(properties: Desk360Properties) {
+		super.init()
         Desk360.properties = properties
-        Desk360.appVersion = getAppVersion()
-        Desk360.sdkVersion = getSdkVersion()
+		Desk360.appVersion = Desk360.getAppVersion()
+		Desk360.sdkVersion = Desk360.getSdkVersion()
     }
-    
+	
 	public static var shared: Desk360 {
 		guard let aDesk = desk else {
 			fatalError("Desk360 is not yet initialized, make sure to call Desk360.start(appId:) before using the SDK")
@@ -78,14 +82,14 @@ public final class Desk360 {
 		return aDesk
 	}
 
-	public static func setPushToken(deviceToken: Data? = nil) {
+	@objc public static func setPushToken(deviceToken: Data? = nil) {
 		guard let token = deviceToken else { return }
 		let tokenString = token.reduce("", {$0 + String(format: "%02X", $1)})
 		self.pushToken = tokenString
 		print("pushToken: \(String(describing: pushToken))")
 	}
 
-	public static func applicationLaunchChecker(_ launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+	@objc public static func applicationLaunchChecker(_ launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         guard let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any] else { return }
         guard let data = remoteNotif["data"] as? [String: AnyObject] else { return }
 		guard let id = userInfoHandle(data) else { return }
@@ -94,7 +98,7 @@ public final class Desk360 {
 		Desk360.messageId = id
     }
 
-    public static func willNotificationPresent(_ userInfo: [AnyHashable: Any]?) {
+    @objc public static func willNotificationPresent(_ userInfo: [AnyHashable: Any]?) {
 
         if Desk360.conVC != nil {
             guard let data = userInfo?["data"] as? [String: AnyObject] else { return }
@@ -112,7 +116,7 @@ public final class Desk360 {
         }
     }
     
-	public static func applicationUserInfoChecker(_ userInfo: [AnyHashable: Any]?) {
+	@objc public static func applicationUserInfoChecker(_ userInfo: [AnyHashable: Any]?) {
         
 		guard !Desk360.applaunchChecker else {
 			Desk360.applaunchChecker = false
@@ -154,14 +158,19 @@ public final class Desk360 {
 		showWithPushDeeplink(on: topVC, animated: true)
 	}
 
-	public static func showWithPushDeeplink(on viewController: UIViewController, animated: Bool = false) {
+	@objc public static func showWithPushDeeplink(on viewController: UIViewController?, animated: Bool = false) {
 
 		guard Desk360.messageId != nil else { return }
 		guard let registerModel = Stores.registerModel.object else { return }
+		var desk360Env: Desk360Environment = .production
+		if registerModel.environment == Desk360Environment.sandbox.stringValue {
+			desk360Env = .sandbox
+		}
+		
         let properties = Desk360Properties(
             appID: registerModel.appId,
             deviceID: registerModel.deviceId,
-            environment: Desk360Environment(rawValue: registerModel.environment) ?? .production,
+			environment: desk360Env,
             language: registerModel.language,
             country: registerModel.country
         )
@@ -176,70 +185,7 @@ public final class Desk360 {
 
 	}
 
-    @available(iOS, deprecated, renamed: "start(properties:)", message: "This method will be removed in the next versions")
-    public static func start(
-        appId: String,
-        deviceId: String? = nil,
-        environment: Desk360Environment? = .production,
-        language: String? = nil,
-        country: String? = nil,
-        userName: String? = nil,
-        userEmail: String? = nil,
-        jsonInfo: [String: Any]? = [:]
-    ) {
-		var id: String = ""
-		if deviceId == nil {
-			id = UIDevice.current.uniqueIdentifier
-		} else {
-			id = deviceId ?? ""
-		}
-		var currentLanguage = "en"
-		if language == nil {
-			currentLanguage = Locale.current.languageCode ?? "en"
-		} else {
-			currentLanguage = language ?? "en"
-		}
-        var currentCountry: String
-        if let country = country {
-            currentCountry = country
-        } else {
-            currentCountry = Locale.current.regionCode?.uppercased() ?? "XX"
-        }
-		
-        var currentEnvironment: Desk360Environment = .production
-		if environment != nil {
-			currentEnvironment = environment ?? .production
-		}
-        
-        try? Stores.userName.save(userName)
-        try? Stores.userMail.save(userEmail)
-        
-		isActive = true
-        
-        var cred: Desk360Properties.Credentials?
-        if let name = userName, let email = userEmail {
-            cred = Desk360Properties.Credentials.init(name: name, email: email)
-        }
-        
-        let properties = Desk360Properties(appID: appId, deviceID: id, environment: environment ?? .production, language: currentLanguage, country: currentCountry, userCredentials: cred, jsonInfo: jsonInfo)
-        
-        desk = Desk360(properties: properties)
-
-        let registerModel = RegisterModel(
-            appId: appId,
-            deviceId: id,
-            environment: currentEnvironment,
-            language: currentLanguage,
-            country: currentCountry
-        )
-        
-		try? Stores.registerModel.save(registerModel)
-        
-		Stores.setStoresInitialValues()
-		print("Desk360 SDK was initialized successfully!")
-	}
-
-    public static func start(using properties: Desk360Properties) {
+    @objc public static func start(using properties: Desk360Properties) {
         try? Stores.userName.save(properties.userCredentials?.name)
         try? Stores.userMail.save(properties.userCredentials?.email)
         
@@ -253,7 +199,7 @@ public final class Desk360 {
         print("Desk360 SDK was initialized successfully!")
     }
     
-	public static func show(on viewController: UIViewController, animated: Bool = true) {
+	@objc public static func show(on viewController: UIViewController, animated: Bool = true) {
         let listingViewController = ListingViewController()
         listingViewController.hidesBottomBarWhenPushed = true
         let desk360Navcontroller = UINavigationController(rootViewController: listingViewController)
@@ -273,14 +219,14 @@ public final class Desk360 {
 
 private extension Desk360 {
     
-    private func getAppVersion() -> String {
+    private static func getAppVersion() -> String {
         guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
             return "0.0.0"
         }
         return version
     }
     
-    private func getSdkVersion() -> String {
+    private static func getSdkVersion() -> String {
         guard let version = Bundle(for: Self.self).infoDictionary?["CFBundleShortVersionString"] as? String else {
             return "0.0.0"
         }
