@@ -181,7 +181,7 @@ private var desk: Desk360?
 		listingViewController.hidesBottomBarWhenPushed = true
 		let desk360Navcontroller = UINavigationController(rootViewController: listingViewController)
 		desk360Navcontroller.modalPresentationStyle = .fullScreen
-		viewController.present(desk360Navcontroller, animated: true, completion: nil)
+		viewController?.present(desk360Navcontroller, animated: true, completion: nil)
 
 	}
 
