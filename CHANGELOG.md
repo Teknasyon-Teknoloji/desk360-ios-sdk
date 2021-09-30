@@ -1,3 +1,8 @@
+## Version 1.7.2
+
+- **Minor Changes**
+  - Improved Deelplinking experience. 
+
 ## Version 1.7.0
 
 - **Features**
