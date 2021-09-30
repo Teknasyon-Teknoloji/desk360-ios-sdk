@@ -1,4 +1,4 @@
-# Desk360
+# Desk360 iOS SDK
 
 <p align="left">
   <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5-orange.svg" alt="Swift"/></a>
