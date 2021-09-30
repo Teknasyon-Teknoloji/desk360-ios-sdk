@@ -7,33 +7,28 @@
 
 import UIKit
 
+/// `CreateRequestPreviewController`
 final class CreateRequestPreviewController: UIViewController, Layouting, UIGestureRecognizerDelegate {
 
+	/// Layoutable view type
 	typealias ViewType = CreatRequestPreView
+	
+	/// Creates the view that the controller manages.
 	override func loadView() {
 		view = ViewType.create()
 	}
-
-	var checkLastClass: Bool?
-
-	convenience init(checkLastClass: Bool) {
-		self.init()
-		self.checkLastClass = checkLastClass
-	}
-
+	
+	/// Called after the controller's view is loaded into memory.
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
 		layoutableView.createRequestButton.addTarget(self, action: #selector(didTapSendRequestButton), for: .touchUpInside)
 
-		guard let check = checkLastClass, check else { return }
-		// let count = navigationController?.viewControllers.count ?? 0
-		// navigationController?.viewControllers.removeSubrange(count-2..<count-1)
-
-//		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
-
 	}
-
+	
+	/// Notifies the view controller that its view is about to be added to a view hierarchy.
+	///
+	/// - Parameter animated: If true, the view is being added to the window using an animation.
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
@@ -44,33 +39,37 @@ final class CreateRequestPreviewController: UIViewController, Layouting, UIGestu
 
 		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
 	}
-
+	
+	/// Called to notify the view controller that its view has just laid out its subviews.
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
 			self.layoutableView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.bottomScrollView.frame.size.width, height: self.layoutableView.bottomDescriptionLabel.frame.size.height + self.layoutableView.preferredSpacing * 0.5)
-//			self.layoutableView.createRequestButton.setImageAndTitle()
 		}
 
 	}
-
-	@objc
-	func didTapBackButton() {
+	
+	/// Back button popView action.
+	@objc func didTapBackButton() {
 		navigationController?.popViewController(animated: true)
 	}
 
 }
 
+//MARK: - Actions
 extension CreateRequestPreviewController {
-
+	
+	/// Create Request Button open CreateRequestViewController action.
 	@objc func didTapSendRequestButton() {
 		navigationController?.pushViewController(CreateRequestViewController(checkLastClass: true), animated: true)
 	}
 
 }
 
+//MARK: - Configure
 extension CreateRequestPreviewController {
-
+	
+	/// Configures for create request preview and CreateRequestPreviewController navigation title
 	func configure() {
 
 		let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
