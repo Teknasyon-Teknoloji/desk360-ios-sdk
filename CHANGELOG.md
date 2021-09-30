@@ -1,3 +1,8 @@
+## Version 1.8.0
+
+- **Features**
+  - Add the ability to get and present the unread tickets.
+  
 ## Version 1.7.2
 
 - **Minor Changes**
