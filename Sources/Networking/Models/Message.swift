@@ -82,7 +82,6 @@ extension Message: Identifiable, Equatable {
     public static func == (lhs: Message, rhs: Message) -> Bool {
         return lhs.id == rhs.id
     }
-    
 
     /// Id Type.
     public static var idKey = \Message.id

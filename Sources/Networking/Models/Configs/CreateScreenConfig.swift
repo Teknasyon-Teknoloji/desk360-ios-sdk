@@ -65,12 +65,12 @@ public struct CreateScreenConfigModel {
 
 	var bottomNoteText: String?
 
-    var agreementIsHidden: Bool? //form_confirm_is_hidden
-    
-    var agreementText: String? //form_confirm_text
-    
-    var agreementUrl: String? //form_confirm_link
-    
+    var agreementIsHidden: Bool? // form_confirm_is_hidden
+
+    var agreementText: String? // form_confirm_text
+
+    var agreementUrl: String? // form_confirm_link
+
 	var ticketTypes: [TicketType]?
 
 }
@@ -105,9 +105,9 @@ extension CreateScreenConfigModel: Codable {
 		case added_file_is_hidden
 		case bottom_note_is_hidden
 		case bottom_note_text
-        case form_confirm_is_hidden //agreementIsHidden
-        case form_confirm_text //agreementText
-        case form_confirm_link //agreementUrl
+        case form_confirm_is_hidden // agreementIsHidden
+        case form_confirm_text // agreementText
+        case form_confirm_link // agreementUrl
 		case custom_fields
 		case types
 	}

@@ -22,8 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		window?.rootViewController = UINavigationController(rootViewController: DemoViewController())
 		window?.makeKeyAndVisible()
 
-
-
 		return true
 	}
 

@@ -1,12 +1,12 @@
 PODS:
-  - Alamofire (5.4.2)
-  - Desk360 (1.7.0):
+  - Alamofire (5.4.3)
+  - Desk360 (1.7.2):
     - DeviceKit
     - Moya (~> 14.0)
     - NVActivityIndicatorView (= 4.8.0)
     - PersistenceKit
     - SnapKit
-  - DeviceKit (4.3.0)
+  - DeviceKit (4.4.0)
   - Moya (14.0.0):
     - Moya/Core (= 14.0.0)
   - Moya/Core (14.0.0):
@@ -34,9 +34,9 @@ EXTERNAL SOURCES:
     :path: ".."
 
 SPEC CHECKSUMS:
-  Alamofire: bfbc4c2fe5909b1d94fb4ef2277c6b3727ef5dae
-  Desk360: 67b5d92f88ae6aac7ae81129a1087670251139a0
-  DeviceKit: 7decde449c308ac7e816e2184ded1c7c596fb885
+  Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
+  Desk360: 790b84d1482c3d8e197cd05ee5c7bd9112a2185e
+  DeviceKit: 2c5d7485a2fa10b65c0091b2952d30843a6ba06d
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   NVActivityIndicatorView: d24b7ebcf80af5dcd994adb650e2b6c93379270f
   PersistenceKit: 510fe7a29039f2820c5dda21ecc1b9d0d99cbdd5

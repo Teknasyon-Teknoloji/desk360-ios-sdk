@@ -16,11 +16,11 @@ protocol InputViewDelegate: AnyObject {
 }
 
 final class InputView: UIView, Layoutable {
-    
+
 	weak var delegate: InputViewDelegate?
-    
+
     private var hasAttachView: Bool = false
-    
+
 	lazy var textView: UITextView = {
 		var view = UITextView()
 		view.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -31,12 +31,12 @@ final class InputView: UIView, Layoutable {
 		view.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right: .left
 		return view
 	}()
-    
+
     lazy var stackView: UIView = {
         let view = UIView()
         return view
     }()
-    
+
 	lazy var buttonBar: UIView = {
 		let view = UIView()
 		view.backgroundColor = .clear
@@ -70,7 +70,7 @@ final class InputView: UIView, Layoutable {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+
 	private lazy var activityIndicator: UIActivityIndicatorView = {
 		let view = UIActivityIndicatorView()
 		return view
@@ -107,7 +107,7 @@ final class InputView: UIView, Layoutable {
 		textView.delegate = self
         addSubview(stackView)
 		addSubview(textView)
-        
+
 		sendButton.isEnabled = false
 		sendButton.addTarget(self, action: #selector(didTapSendButton(_:)), for: .touchUpInside)
         attachButton.addTarget(self, action: #selector(didTapAttachButton(_:)), for: .touchUpInside)
@@ -126,7 +126,7 @@ final class InputView: UIView, Layoutable {
 			make.top.equalToSuperview().inset(textView.textContainerInset.top)
 			make.leading.equalToSuperview().inset(textView.textContainerInset.left)
 		}
-        
+
         attachButton.snp.makeConstraints { make in
             if attachButton.isHidden {
                 make.width.equalTo(0)
@@ -137,7 +137,7 @@ final class InputView: UIView, Layoutable {
             make.centerY.equalTo(sendButton)
             make.leading.equalTo(12)
         }
-        
+
 		textView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(preferredSpacing * 0.5).priority(.required)
             make.leading.equalTo(attachButton.snp.trailing).inset(-4)
@@ -193,7 +193,7 @@ final class InputView: UIView, Layoutable {
             self.layoutIfNeeded()
 		}
 	}
-    
+
     func resetAttachView() {
         reset(isClearText: false)
         self.hasAttachView = false
@@ -216,7 +216,7 @@ final class InputView: UIView, Layoutable {
             make.height.equalTo(1)
         }
     }
-    
+
     func setFrame(height: CGFloat) {
         hasAttachView = height > 0
         DispatchQueue.main.async {
@@ -316,7 +316,7 @@ private extension InputView {
     func didTapAttachButton(_ button: UIButton) {
         delegate?.inputView(self, didTapAttachButton: button)
     }
-    
+
 	@objc
 	func didTapCreateRequestButton(_ button: UIButton) {
 		delegate?.inputView(self, didTapCreateRequestButton: button)
@@ -444,7 +444,7 @@ internal extension InputView {
 
 // MARK: - Helpers
 extension InputView {
-    
+
 	func setPlaceholderLabel() {
 		placeholderLabel.isHidden = textView.trimmedText != nil || textView.isFirstResponder
 		buttonBar.backgroundColor = textView.trimmedText != nil || textView.isFirstResponder ? Colors.ticketDetailWriteMessageBorderActiveColor : Colors.ticketDetailWriteMessageBorderColor

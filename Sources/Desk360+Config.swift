@@ -38,7 +38,7 @@ public extension Desk360.Config {
 			guard let image = UIImage(contentsOfFile: path) else { return UIImage()}
 			return image.withRenderingMode(.alwaysTemplate)
 		}
-        
+
         static func createImageOriginal(resources: String) -> UIImage {
             guard let path = Desk360.Config.bundle?.path(forResource: resources, ofType: "png") else { return UIImage() }
             guard let image = UIImage(contentsOfFile: path) else { return UIImage()}
@@ -114,19 +114,19 @@ public extension Desk360.Config {
 		static var sendIcon: UIImage = {
 			return Desk360.Config.Images.createImage(resources: "Images/sendLight")
 		}()
-        
+
         static var attachIcon: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/attach")
         }()
-        
+
         static var attachRemoveIcon: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/attachRemove")
         }()
-        
+
         static var arrowDownIcon: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/arrowDown")
         }()
-        
+
         static var arrowUpIcon: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/arrowUp")
         }()
@@ -137,11 +137,11 @@ public extension Desk360.Config {
         static var receiverDownloadFile: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/filedownloadreceiver")
         }()
-        
+
         static var agreementCheckIcon: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/agreementCheck")
         }()
-        
+
         static var agreementUnCheckIcon: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/agreementUnCheck")
         }()
@@ -278,7 +278,7 @@ public extension Desk360.Config.Conversation {
 
 		/// Corner radius.
 		static var cornerRadius: CGFloat = 19
-        
+
         /// Message filename font.
         static var fileNameFont: UIFont = Desk360.Config.Conversation.font.withSize(14)
 	}

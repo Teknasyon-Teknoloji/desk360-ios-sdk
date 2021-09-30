@@ -36,7 +36,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 		view.backgroundColor = .white
 		return view
 	}()
-    
+
     lazy var notifLabel: UILabel = {
         let label = UILabel()
         label.backgroundColor = Colors.unreadIconColor
@@ -173,7 +173,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 			make.leading.trailing.top.equalToSuperview()
 			make.bottom.equalTo(desk360BottomView.snp.top)
 		}
-        
+
         notifLabel.snp.makeConstraints { make in
             make.trailing.equalTo(segmentControl).multipliedBy(0.5).inset(20)
             make.top.equalTo(segmentControl).offset(10)

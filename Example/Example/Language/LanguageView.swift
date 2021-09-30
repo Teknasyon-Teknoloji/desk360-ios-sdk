@@ -47,4 +47,3 @@ final class LanguageView: UIView, Layoutable {
 	}
 
 }
-

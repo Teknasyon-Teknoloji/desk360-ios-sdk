@@ -27,8 +27,8 @@ final class SuccsessViewController: UIViewController, Layouting, UIGestureRecogn
 		layoutableView.showListButton.addTarget(self, action: #selector(didTapSendRequestButton), for: .touchUpInside)
 
 		guard let check = checkLastClass, check else { return }
-		//let count = navigationController?.viewControllers.count ?? 0
-		//navigationController?.viewControllers.removeSubrange(0..<count-1)
+		// let count = navigationController?.viewControllers.count ?? 0
+		// navigationController?.viewControllers.removeSubrange(0..<count-1)
 
 	}
 
@@ -36,7 +36,7 @@ final class SuccsessViewController: UIViewController, Layouting, UIGestureRecogn
         super.viewWillDisappear(animated)
         Desk360.thanksVC = nil
     }
-    
+
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 

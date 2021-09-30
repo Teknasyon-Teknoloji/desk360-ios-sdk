@@ -50,7 +50,7 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 			dateLabel.backgroundColor = containerBackgroundColor
 		}
 	}
-    
+
 	func setupViews() {
 		selectionStyle = .none
 		containerView.addSubview(stackView)
@@ -149,7 +149,7 @@ internal extension ListingTableViewCell {
 		containerView.layer.shadowOpacity = 0.3
 		containerView.clipsToBounds = false
 	}
-	//swiftlint:disable function_body_length
+	// swiftlint:disable function_body_length
 	func configure(for request: Ticket) {
 
 		self.backgroundColor = Colors.ticketListingScreenBackgroudColor

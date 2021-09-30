@@ -50,7 +50,6 @@ struct Stores {
 			try? useJsonData.save(false)
 		}
 
-
 	}
 
 	static func generateRandomString(maxLength: Int = 32) -> String {
@@ -59,4 +58,3 @@ struct Stores {
 	}
 
 }
-

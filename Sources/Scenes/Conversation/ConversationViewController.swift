@@ -45,7 +45,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
             return 0
         }
     }()
-    
+
 	/// This parameter is used to ticket media objects
 	var attachment: URL?
     var isConfigure = false
@@ -104,16 +104,16 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		readRequest(request)
 //        layoutableView.conversationInputView.resetAttachView()
 	}
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
+
     }
 
     func refreshAction() {
         readRequest(request)
     }
-    
+
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
         Desk360.conVC = nil
@@ -146,7 +146,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
         message.attachments?.others?.count ?? 0 > 0 {
             hasAttach = true
         }
-        
+
 		if message.isAnswer {
 			let cell = tableView.dequeueReusableCell(SenderMessageTableViewCell.self)
             cell.clearCell()
@@ -181,7 +181,7 @@ extension ConversationViewController: InputViewDelegate {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.modalPresentationStyle = .fullScreen
         let showImagePicker = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentImagesText ?? "Images", style: .default) { _ in
-            self.didTapImagePicker{
+            self.didTapImagePicker {
                 view.attachButton.isHidden = false
                 view.sendButton.isHidden = false
                 view.isHidden = false
@@ -211,7 +211,7 @@ extension ConversationViewController: InputViewDelegate {
         }
         present(alert, animated: true)
     }
-    
+
     @objc func didTapDocumentBrowse(completion: @escaping (() -> Void)) {
 
         let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.adobe.pdf"], in: .import)
@@ -243,7 +243,7 @@ extension ConversationViewController: InputViewDelegate {
             self.manageAttachView()
         }
     }
-    
+
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         controller.dismiss(animated: true) {
             self.manageAttachView()
@@ -261,13 +261,13 @@ extension ConversationViewController: InputViewDelegate {
             completion()
         }
     }
-    
+
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true) {
             self.manageAttachView()
         }
     }
-    
+
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         guard var imgUrl = info[UIImagePickerController.InfoKey.referenceURL] as? URL else { return }
         guard var name = imgUrl.pathComponents.last else { return }
@@ -302,7 +302,7 @@ extension ConversationViewController: InputViewDelegate {
                 files.append(fileData(name: name, data: Data(referencing: data), url: videoUrl.absoluteString, type: "video"))
             }
         }
-        
+
         let abc = files.map({($0.data as NSData).length})
         let dataSize = abc.reduce(0, +)
         guard dataSize < 5242880 else {
@@ -311,12 +311,12 @@ extension ConversationViewController: InputViewDelegate {
             }
             return
         }
-        
+
         picker.dismiss(animated: true) {
             self.manageAttachView()
         }
     }
-    
+
     func manageAttachView() {
         guard files.count <= 5 else { return }
         for v in self.layoutableView.conversationInputView.stackView.subviews {
@@ -332,7 +332,7 @@ extension ConversationViewController: InputViewDelegate {
         var height: CGFloat = 22
         var maxWidth: CGFloat = 0
         var hStack = getAStackView()
-        hStack.frame = CGRect(x: 0, y: 0, width: self.layoutableView.conversationInputView.stackView.frame.size.width, height:20)
+        hStack.frame = CGRect(x: 0, y: 0, width: self.layoutableView.conversationInputView.stackView.frame.size.width, height: 20)
         var i = 0
         var yPoint: CGFloat = 0
         for file in files {
@@ -344,9 +344,9 @@ extension ConversationViewController: InputViewDelegate {
             lbl.sizeToFit()
             lbl.adjustsFontSizeToFitWidth = true
             lbl.minimumScaleFactor = 0.3
-            lbl.frame = CGRect(x: 4, y: 0, width: lbl.frame.width, height:20)
+            lbl.frame = CGRect(x: 4, y: 0, width: lbl.frame.width, height: 20)
 
-            let view = UIView(frame: CGRect(x: maxWidth, y: 0, width: lbl.frame.width + 30, height:20))
+            let view = UIView(frame: CGRect(x: maxWidth, y: 0, width: lbl.frame.width + 30, height: 20))
             view.backgroundColor = Colors.attachBgColor
             view.addSubview(lbl)
             view.layer.cornerRadius = 4
@@ -359,9 +359,9 @@ extension ConversationViewController: InputViewDelegate {
             if maxWidth > self.layoutableView.conversationInputView.stackView.frame.size.width {
                 yPoint = yPoint + 22
                 height = height + 22
-                view.frame = CGRect(x: 0, y: 0, width: lbl.frame.width + 30, height:20)
+                view.frame = CGRect(x: 0, y: 0, width: lbl.frame.width + 30, height: 20)
                 hStack = getAStackView()
-                hStack.frame = CGRect(x: 0, y: yPoint, width: self.layoutableView.conversationInputView.stackView.frame.size.width, height:20)
+                hStack.frame = CGRect(x: 0, y: yPoint, width: self.layoutableView.conversationInputView.stackView.frame.size.width, height: 20)
                 self.layoutableView.conversationInputView.stackView.addSubview(hStack)
                 maxWidth = lbl.frame.width + 32
             }
@@ -388,12 +388,12 @@ extension ConversationViewController: InputViewDelegate {
             }
         }
     }
-    
+
     func getAStackView() -> UIView {
         let hStack = UIView()
         return hStack
     }
-    
+
     @objc func removeAttach(_ sender: UIButton) {
         var i = 0
         for file in files {
@@ -415,7 +415,6 @@ extension ConversationViewController: InputViewDelegate {
         }
     }
 }
-
 
 // MARK: - Networking
 extension ConversationViewController {
@@ -448,7 +447,7 @@ extension ConversationViewController {
                 let storedTickets = Stores.ticketWithMessageStore.allObjects() // fetch previously saved tickets from the local just before save new tickets
                 try? Stores.ticketWithMessageStore.save(self.request)// save new tickets to the local.
                 if let url = data.attachmentUrl {
-                    self.attachment = url //attachments will be allways at first row of tableview.
+                    self.attachment = url // attachments will be allways at first row of tableview.
                 }
                 if let msg = self.request.messages.last {
                     let currentTicketWithMessage = storedTickets.filter({ $0.id == self.request.id })
@@ -458,7 +457,7 @@ extension ConversationViewController {
                                 if let url = data.attachmentUrl {
                                     if self.request != nil {
                                         DispatchQueue.main.async {
-                                            //attachments will be allways at first row of tableview.
+                                            // attachments will be allways at first row of tableview.
                                             let indexPath = IndexPath(row: 0, section: 0)
                                             guard self.layoutableView.tableView.isValid(indexPath: indexPath) else { return }
                                             self.layoutableView.tableView.reloadRows(at: [indexPath], with: .none)
@@ -466,12 +465,12 @@ extension ConversationViewController {
                                     }
                                 }
                                 self.scrollToBottom(animated: false)
-                                return //don't reload table to avoid performance issues
+                                return // don't reload table to avoid performance issues
                             }
                         }
                     }
                 }
-                
+
                 self.layoutableView.tableView.reloadData()
                 self.scrollToBottom(animated: false)
 			}
@@ -540,7 +539,7 @@ private extension ConversationViewController {
         case file = "file"
         case unknown = "unknown"
     }
-    
+
     func getFileType(url: URL) -> FileType {
         guard let path = url.pathComponents.last else { return .unknown }
         let words = path.split(separator: ".")
@@ -582,7 +581,7 @@ private extension ConversationViewController {
         }
         var msgObject = message
         msgObject.attachments = attach
-        
+
 		self.request.messages.append(msgObject)
 		try? Stores.ticketWithMessageStore.save(self.request)
 
@@ -621,7 +620,7 @@ private extension ConversationViewController {
 		let cancel = "cancel.button".localize()
 		let tryAgain = "try.again.button".localize()
 
-		Alert.shared.showAlert(viewController: self, withType: .info, title: "Desk360", message: "connection.error.message".localize(), buttons: [cancel,tryAgain], dismissAfter: 0.1) { [weak self] value in
+		Alert.shared.showAlert(viewController: self, withType: .info, title: "Desk360", message: "connection.error.message".localize(), buttons: [cancel, tryAgain], dismissAfter: 0.1) { [weak self] value in
 			guard let self = self else { return }
 			if value == 2 {
 				self.addMessage(self.message, to: self.request)
@@ -732,7 +731,7 @@ extension ConversationViewController {
         layoutableView.conversationInputView.attachButton.isHidden = false
         layoutableView.conversationInputView.sendButton.isHidden = false
 	}
-    
+
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if aiv.isAnimating == false {
             hidePDR()
@@ -759,7 +758,7 @@ extension ConversationViewController {
             hidePDR()
         }
     }
-    
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if aiv.isAnimating {
             return
@@ -768,24 +767,24 @@ extension ConversationViewController {
             hidePDR()
             return
         }
-        
-        if scrollView.contentOffset.y < -23 { //arrow starting to show down direction
+
+        if scrollView.contentOffset.y < -23 { // arrow starting to show down direction
             if isDragReleased {
                 return
             }
-            
+
             refreshIcon.isHidden = false
             self.refreshIcon.superview!.isHidden = false
             aiv.hidesWhenStopped = false
             self.aiv.stopAnimating()
         }
-        if scrollView.contentOffset.y < -65 { //arrow will turn up
+        if scrollView.contentOffset.y < -65 { // arrow will turn up
             var val = 0.0
 
             UIView.animate(withDuration: 0.1, animations: {
                 self.aiv.startAnimating()
                 self.refreshIcon.transform = CGAffineTransform(rotationAngle: .pi)
-            
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     self.refreshIcon.isHidden = true
                     self.refreshIcon.superview!.isHidden = true
@@ -796,7 +795,7 @@ extension ConversationViewController {
             return
         }
     }
-    
+
     func hidePDR() {
         refreshIcon.isHidden = true
         self.refreshIcon.superview!.isHidden = true
@@ -804,7 +803,7 @@ extension ConversationViewController {
         self.aiv.stopAnimating()
         self.refreshIcon.transform = CGAffineTransform(rotationAngle: 0)
     }
-    
+
     func showPDR() {
         refreshIcon.isHidden = true
         self.refreshIcon.superview!.isHidden = true

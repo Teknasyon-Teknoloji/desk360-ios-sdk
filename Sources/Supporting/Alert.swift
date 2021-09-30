@@ -60,8 +60,7 @@ final class Alert {
 
 	}
 
-
-	func showAlert(viewController: UIViewController,withType alertType: AlertType? = .info, title: String? = "", message: String, buttons: [String]? = nil, dismissAfter: Double? = nil, completion: ((Int) -> Void)! = nil) {
+	func showAlert(viewController: UIViewController, withType alertType: AlertType? = .info, title: String? = "", message: String, buttons: [String]? = nil, dismissAfter: Double? = nil, completion: ((Int) -> Void)! = nil) {
 
 		let alert = UIAlertController(title: "Desk360", message: "connection.error.message".localize(), preferredStyle: UIAlertController.Style.alert)
 
