@@ -7,13 +7,13 @@
 
 import Foundation
 
-public enum Desk360Error: LocalizedError {
+@objc public enum Desk360Error: Int, LocalizedError {
     case notInitalized
-    
+
     public var errorDescription: String? {
         switch self {
         case .notInitalized: return "The Desk360 SDK is not intialized properly. Please call start(with:) first"
-    
+
         }
     }
 }

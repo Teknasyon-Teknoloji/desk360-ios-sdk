@@ -7,10 +7,21 @@
 
 import Foundation
 
-public enum Desk360Environment: String, Equatable {
+@objc public enum Desk360Environment: Int {
     @available(*, unavailable, renamed: "sandbox", message: "Please use .sandbox option instead.")
     case test
-    
+
     case sandbox
     case production
+
+    var stringValue: String {
+        switch self {
+            case .test:
+                return "test"
+            case .sandbox:
+                return "sandbox"
+            case .production:
+                return "production"
+        }
+    }
 }

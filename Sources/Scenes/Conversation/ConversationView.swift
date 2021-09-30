@@ -22,10 +22,10 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 			self.frame = oldValue
 		}
 	}
-    
+
 	/// This parameter is used to detect third party keyboard actions.
 	var isCustomKeyboardActive = false
-    
+
 	lazy var tableView: UITableView = {
 		let view = UITableView()
 		view.separatorStyle = .none

@@ -117,7 +117,7 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 			make.top.trailing.equalToSuperview().inset(preferredSpacing / 2)
 			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
 		}
-		
+
 		stackView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(preferredSpacing / 2)
             $0.bottom.equalTo(checkMark.snp.top).offset(-4)
@@ -141,7 +141,7 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 		roundCorner()
 
 	}
-    
+
     func clearCell() {
         previewImageView.isHidden = true
         previewVideoView.isHidden = true
@@ -154,13 +154,13 @@ internal extension ReceiverMessageTableViewCell {
 
 	func configure(for request: Message, _ indexPath: IndexPath, _ attachment: URL? = nil, hasAttach: Bool = false) {
         if Desk360.conVC == nil { return }
-        
+
 		containerView.backgroundColor = Colors.ticketDetailChatReceiverBackgroundColor
 		messageTextView.text = request.message
 		messageTextView.textColor = Colors.ticketDetailChatReceiverTextColor
 		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.chatReceiverFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.chatReceiverFontWeight ?? 400))
 		dateLabel.textColor = Colors.ticketDetailChatChatReceiverDateColor
-        
+
         if let dateString = request.createdAt {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -181,15 +181,15 @@ internal extension ReceiverMessageTableViewCell {
 			pdfView.isHidden = true
 		}
 
-        if hasAttach == false { //hasAttach flag is holds is there attachments sent from messages not ticket creation.
+        if hasAttach == false { // hasAttach flag is holds is there attachments sent from messages not ticket creation.
             if let attachmentUrl = attachment { // function's attachment parameter is holds, ticket creation attachment.
-                guard indexPath.row == 0 else { return } //ticket attachments will allways at zero row, so, now we can return.
+                guard indexPath.row == 0 else { return } // ticket attachments will allways at zero row, so, now we can return.
                 checkFile(attachmentUrl, fileName: "", i: 1, fileInx: 1)
                 return
             }
         }
         if hasAttach == false { return }
-        
+
         var fileInx = 1
         if let images = request.attachments?.images {
             let val = images.filter({$0 != nil })
@@ -252,7 +252,7 @@ internal extension ReceiverMessageTableViewCell {
             self.addVideoView(url, fileExt: String(word), fileName: fileName, inx: i, fileInx: fileInx)
         }
     }
-    
+
     func addVideoView(_ url: URL, fileExt: String, fileName: String, inx: Int, fileInx: Int) {
         if Desk360.conVC == nil { return }
 
@@ -269,7 +269,7 @@ internal extension ReceiverMessageTableViewCell {
         let videoView = PlayerView()
         videoView.tag = inx
         self.previewVideoView.addSubview(videoView)
-        
+
         let playButton = UIButton()
         playButton.titleLabel?.tag = inx
         playButton.setImage(Desk360.Config.Images.playIcon, for: .normal)
@@ -284,7 +284,7 @@ internal extension ReceiverMessageTableViewCell {
 
         playButton.addTarget(self, action: #selector(self.didTapPlayButton(sender:)), for: .touchUpInside)
         playButton.tintColor = Colors.ticketDetailWriteMessageButtonIconColor
-        
+
         videoView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(previewVideoView.snp.width)
@@ -295,8 +295,8 @@ internal extension ReceiverMessageTableViewCell {
             }
         }
 
-        let avPlayer = AVPlayer(url: url);
-        videoView.playerLayer.player = avPlayer;
+        let avPlayer = AVPlayer(url: url)
+        videoView.playerLayer.player = avPlayer
 	}
 
     func addImageView(_ url: URL, fileExt: String, fileName: String, inx: Int, fileInx: Int) {
@@ -328,15 +328,15 @@ internal extension ReceiverMessageTableViewCell {
         imageFromUrl(url: url) { (image) in
             imgView.image = image
         }
-        
+
         self.previewImageView.isHidden = false
 	}
-    
+
     func addPdf(_ url: URL, fileName: String, inx: Int, fileInx: Int) {
         guard #available(iOS 11.0, *) else { return }
 
         if Desk360.conVC == nil { return }
-        
+
         if inx == 1 {
             previewPdfView.subviews.map({$0.removeFromSuperview()})
         }
@@ -345,7 +345,7 @@ internal extension ReceiverMessageTableViewCell {
             remake.leading.trailing.equalToSuperview()
             remake.height.equalTo(self.previewPdfView.snp.width).multipliedBy(inx).offset(4 * inx)
         }
-        
+
         let pdfView = PDFView()
         pdfView.tag = inx
         previewPdfView.addSubview(pdfView)
@@ -358,13 +358,13 @@ internal extension ReceiverMessageTableViewCell {
                 remake.top.equalTo(previewPdfView.viewWithTag(inx - 1)!.snp.bottom).offset(4)
             }
         }
-        
+
         self.previewPdfView.isHidden = false
         pdfView.translatesAutoresizingMaskIntoConstraints = false
         guard let document = PDFDocument(url: url) else { return }
         pdfView.document = document
     }
-    
+
     @objc func didTapPlayButton(sender: UIButton) {
         if sender == nil {
             playButton.isSelected = !playButton.isSelected
@@ -390,27 +390,27 @@ internal extension ReceiverMessageTableViewCell {
 	}
 
 	func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?) -> Void)) {
-		DispatchQueue.global().async { //1
-			let asset = AVAsset(url: url) //2
-			let avAssetImageGenerator = AVAssetImageGenerator(asset: asset) //3
-			avAssetImageGenerator.appliesPreferredTrackTransform = true //4
-			let thumnailTime = CMTimeMake(value: 50, timescale: 5) //5
+		DispatchQueue.global().async { // 1
+			let asset = AVAsset(url: url) // 2
+			let avAssetImageGenerator = AVAssetImageGenerator(asset: asset) // 3
+			avAssetImageGenerator.appliesPreferredTrackTransform = true // 4
+			let thumnailTime = CMTimeMake(value: 50, timescale: 5) // 5
 			do {
-				let cgThumbImage = try avAssetImageGenerator.copyCGImage(at: thumnailTime, actualTime: nil) //6
-				let thumbImage = UIImage(cgImage: cgThumbImage) //7
-				DispatchQueue.main.async { //8
-					completion(thumbImage) //9
+				let cgThumbImage = try avAssetImageGenerator.copyCGImage(at: thumnailTime, actualTime: nil) // 6
+				let thumbImage = UIImage(cgImage: cgThumbImage) // 7
+				DispatchQueue.main.async { // 8
+					completion(thumbImage) // 9
 				}
 			} catch {
-				print(error.localizedDescription) //10
+				print(error.localizedDescription) // 10
 				DispatchQueue.main.async {
-					completion(nil) //11
+					completion(nil) // 11
 				}
 			}
 		}
 	}
 
-    func imageFromUrl(url: URL, completion: @escaping ((_ image: UIImage?) -> Void))  {
+    func imageFromUrl(url: URL, completion: @escaping ((_ image: UIImage?) -> Void)) {
         if Desk360.isUrlLocal(url) {
             if let data = try? Data(contentsOf: url) {
                 let img = UIImage(data: data)
@@ -428,7 +428,7 @@ internal extension ReceiverMessageTableViewCell {
         }
         task.resume()
     }
-    
+
 	func addPdf(_ url: URL) {
 		guard #available(iOS 11.0, *) else { return }
 		pdfView.translatesAutoresizingMaskIntoConstraints = false

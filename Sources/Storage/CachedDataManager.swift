@@ -8,7 +8,6 @@
 import Moya
 import PersistenceKit
 
-
 final class CachedDataManager: NSObject {
 
 	static let shared = CachedDataManager()
@@ -18,6 +17,5 @@ final class CachedDataManager: NSObject {
 	func updateConfig(_ newModel: ConfigModel) {
 //		Config.shared.model = newModel
 	}
-
 
 }

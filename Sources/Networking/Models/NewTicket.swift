@@ -14,7 +14,7 @@ public struct NewTicket {
 
     /// name.
     public var name: String
-    
+
     /// email
     public var email: String
 

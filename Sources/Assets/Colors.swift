@@ -217,13 +217,13 @@ struct Colors {
     static var unreadIconColor: UIColor? {
         return UIColor(hex: "#58b0fa")
     }
-    
+
     static var attachBgColor: UIColor? {
         return UIColor(hex: "#eeeff0")
     }
-    
+
     static var writeMessagePHTextColor: UIColor? {
         return UIColor(hex: "#9298b1")
     }
-    
+
 }

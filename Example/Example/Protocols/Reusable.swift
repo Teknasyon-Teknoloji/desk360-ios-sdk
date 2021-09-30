@@ -55,4 +55,3 @@ public extension Reusable where Self: UICollectionReusableView {
 	}
 
 }
-

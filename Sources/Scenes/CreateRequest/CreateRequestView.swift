@@ -8,14 +8,14 @@
 import UIKit
 
 /// Create request view.
-//swiftlint:disable file_length
+// swiftlint:disable file_length
 final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	var ticketTypes: [TicketType] = []
 	var fields: [AnyObject] = []
 
 	var fieldType: FieldType = .line
-    
+
 	public override var frame: CGRect {
 		willSet { }
 		didSet {
@@ -52,7 +52,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         label.text = "100/100"
         return label
     }()
-    
+
 	internal lazy var nameErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
@@ -77,7 +77,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         label.text = "100/100"
         return label
     }()
-    
+
 	internal lazy var emailErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
@@ -182,7 +182,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         let view = UIView()
         return view
     }()
-    
+
     internal lazy var agreementTextView: UITextView = {
         let textView = UITextView()
         textView.isEditable = false
@@ -194,14 +194,14 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         textView.textColor = Colors.createScreenFormInputFocusColor
         return textView
     }()
-    
+
     internal lazy var agreementButton: UIButton = {
         let button = UIButton()
         button.setImage(Desk360.Config.Images.agreementUnCheckIcon, for: .normal)
         button.setImage(Desk360.Config.Images.agreementCheckIcon, for: .selected)
         return button
     }()
-    
+
 	private lazy var stackView: UIStackView = {
 		let view = UIStackView(arrangedSubviews: fields as! [UIView])
 		view.axis = .vertical
@@ -250,11 +250,11 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         scrollView.addSubview(bottomScrollView)
 
 		bottomScrollView.addSubview(bottomDescriptionLabel)
-        
+
         scrollView.addSubview(agreementView)
         agreementView.addSubview(agreementButton)
         agreementView.addSubview(agreementTextView)
-        
+
         scrollView.addSubview(nameFieldLimit)
         scrollView.addSubview(emailFieldLimit)
 	}
@@ -272,18 +272,18 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
         nameFieldLimit.snp.makeConstraints { make in
             make.bottom.equalTo(nameTextField.snp.bottom).offset(8)
-            make.trailing.equalTo(nameTextField.snp.trailing)//.offset(8)
+            make.trailing.equalTo(nameTextField.snp.trailing)// .offset(8)
         }
-        
+
 		emailTextField.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight * 1.2)
 		}
 
         emailFieldLimit.snp.makeConstraints { make in
             make.bottom.equalTo(emailTextField.snp.bottom).offset(8)
-            make.trailing.equalTo(emailTextField.snp.trailing)//.offset(8)
+            make.trailing.equalTo(emailTextField.snp.trailing)// .offset(8)
         }
-        
+
 		dropDownListView.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight * 1.2)
 			make.width.equalTo(UIScreen.main.bounds.width - preferredSpacing * 6)
@@ -319,11 +319,11 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 		scrollView.snp.makeConstraints { make in
 			make.leading.trailing.top.equalToSuperview()
-            make.bottom.equalTo(desk360BottomView.snp.top) //yeni
+            make.bottom.equalTo(desk360BottomView.snp.top) // yeni
 		}
-        
+
 		bottomScrollView.snp.makeConstraints { make in
-            make.top.equalTo(sendButton.snp.bottom).offset((preferredSpacing * 0)) //eski 2.5
+            make.top.equalTo(sendButton.snp.bottom).offset((preferredSpacing * 0)) // eski 2.5
             make.height.equalTo(preferredSpacing * 2)
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size))
 			make.centerX.equalToSuperview()
@@ -334,20 +334,20 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
             make.centerX.equalToSuperview()
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) - (preferredSpacing * 3))
 		}
-        
+
         agreementView.snp.makeConstraints { make in
             make.top.equalTo(stackView.snp.bottom).offset(preferredSpacing * 0.3)
             make.centerX.equalToSuperview()
             make.width.equalTo(sendButton)
             make.height.equalTo(preferredSpacing * 2)
         }
-        
+
         agreementButton.snp.makeConstraints { make in
             make.height.width.equalTo(22)
             make.centerY.equalToSuperview()
             make.leading.equalToSuperview()
         }
-        
+
         agreementTextView.snp.makeConstraints { make in
             make.leading.equalTo(agreementButton.snp.trailing).offset(8)
             make.trailing.equalToSuperview()
@@ -451,7 +451,7 @@ extension CreateRequestView {
 		textField.tintColor = Colors.createScreenFormInputFocusColor
 		setInputFont(textField)
 		setFieldStyle(textField)
-		//FIXME: Taglemeyi Constant tarafına taşı bir değişkene ata
+		// FIXME: Taglemeyi Constant tarafına taşı bir değişkene ata
 		textField.tag = 3
 		textField.accessibilityIdentifier = fieldModel.name
 		textField.delegate = self
@@ -463,7 +463,7 @@ extension CreateRequestView {
 			make.height.equalTo(UITextField.preferredHeight * 1.2)
 		}
 
-		//FIXME: Delete force. make optional
+		// FIXME: Delete force. make optional
 		checkTopLabels(field: textField, text: fieldModel.placeholder ?? "")
 		hideTopLabel(textField)
 	}
@@ -778,7 +778,7 @@ extension CreateRequestView: UITextFieldDelegate {
                               newText: string,
                               limit: 100)
     }
-    
+
     private func textLimit(existingText: String?,
                            newText: String,
                            limit: Int) -> Bool {
@@ -1028,13 +1028,13 @@ extension CreateRequestView {
         let attributedString = NSMutableAttributedString(string: str)
         if let url = Config.shared.model?.createScreen?.agreementUrl, url.count > 0 {
             let uri = URL(string: url)!
-            attributedString.setAttributes([.link: uri], range: NSMakeRange(0, str.count))
+            attributedString.setAttributes([.link: uri], range: NSRange(location: 0, length: str.count))
             agreementTextView.linkTextAttributes = [
-                .foregroundColor:  Colors.createScreenFormInputColor,
+                .foregroundColor: Colors.createScreenFormInputColor,
                 .underlineStyle: NSUnderlineStyle.single.rawValue
             ]
         }
-        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 15), range: NSMakeRange(0, str.count))
+        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 15), range: NSRange(location: 0, length: str.count))
         agreementTextView.attributedText = attributedString
 
 		bottomDescriptionLabel.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.bottomNoteFontSize ?? 8), weight: Font.weight(type: Config.shared.model?.generalSettings?.bottomNoteFontWeight ?? 400))

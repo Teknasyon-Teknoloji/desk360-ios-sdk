@@ -8,7 +8,7 @@
 import Foundation
 
 @objc open class Desk360Properties: NSObject {
-	
+
     let appID: String
     let deviceID: String
     let environment: Desk360Environment
@@ -19,7 +19,7 @@ import Foundation
     let timeZone = TimeZone.current.identifier
     let appPlatform = "iOS"
     let bypassCreateTicketIntro: Bool
-    
+
     /// Creates a new instance of `Desk360Properties`
     /// - Parameters:
     ///   - appID: The Desk360 App ID.
@@ -48,14 +48,14 @@ import Foundation
         self.bypassCreateTicketIntro = bypassCreateTicketIntro
 		self.jsonInfo = jsonInfo
     }
-	
+
 }
 
 /// Any user credentails.
 @objc public class Desk360UserCredentials: NSObject {
 	let name: String
 	let email: String
-	
+
 	@objc public init(
 		name: String,
 		email: String
@@ -64,6 +64,3 @@ import Foundation
 		self.email = email
 	}
 }
-
-
-

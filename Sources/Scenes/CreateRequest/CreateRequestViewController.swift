@@ -29,7 +29,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 	var attachmentUrl: URL?
 
     var newTicket: NewTicket?
-    
+
 	convenience init(checkLastClass: Bool) {
 		self.init()
 		self.checkLastClass = checkLastClass
@@ -113,7 +113,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
             popoverPresentationController.sourceView = self.layoutableView.attachmentButton
             popoverPresentationController.sourceRect = self.layoutableView.attachmentButton.bounds
         }
-        
+
 		attachmentButtonConfigure()
 		present(alert, animated: true, completion: { () in
 			self.attachmentButtonConfigure()
@@ -220,7 +220,7 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 		layoutableView.attachmentCancelButton.isEnabled = true
 		picker.dismiss(animated: true)
 	}
-    
+
     @objc private func didTapAgreementButton(sender: UIButton) {
         sender.isSelected = !sender.isSelected
         layoutableView.sendButton.isEnabled = sender.isSelected
@@ -303,10 +303,10 @@ final class CreateRequestViewController: UIViewController, UIDocumentBrowserView
 // MARK: - Config
 extension CreateRequestViewController {
 	func configLayoutableView() {
-        
+
         layoutableView.emailTextField.text = Stores.userMail.object
         layoutableView.nameTextField.text = Stores.userName.object
-        
+
 		let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
 		NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model?.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
 		let navigationTitle = NSAttributedString(string: Config.shared.model?.createScreen?.navigationTitle ?? "", attributes: selectedattributes as [NSAttributedString.Key: Any])
@@ -429,12 +429,12 @@ private extension CreateRequestViewController {
 				addTextView(view: currentView.messageTextView)
 			}
 		}
-        
+
         guard let props = Desk360.properties else {
             Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
             return
         }
-        
+
 		let sourceData = "App".data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(sourceData), name: "source"))
 
@@ -461,11 +461,11 @@ private extension CreateRequestViewController {
 			let pushTokenData = pushTokenString.data(using: String.Encoding.utf8) ?? Data()
 			ticket.append(Moya.MultipartFormData(provider: .data(pushTokenData), name: "push_token"))
 		}
-        
+
         self.layoutableView.setLoading(true)
 		Desk360.apiProvider.request(.create(ticket: ticket)) { [weak self] result in
 			guard let self = self else { return }
-			
+
 			switch result {
 			case .failure(let error):
                 self.cacheTicket()
@@ -517,7 +517,7 @@ private extension CreateRequestViewController {
 		let cancel = "cancel.button".localize()
 		let tryAgain = "try.again.button".localize()
 
-		Alert.shared.showAlert(viewController: self, withType: .info, title: "Desk360", message: "connection.error.message".localize(), buttons: [cancel,tryAgain], dismissAfter: 0.1) { [weak self] value in
+		Alert.shared.showAlert(viewController: self, withType: .info, title: "Desk360", message: "connection.error.message".localize(), buttons: [cancel, tryAgain], dismissAfter: 0.1) { [weak self] value in
 			guard let self = self else { return }
 			if value == 2 {
 				self.sendRequest()

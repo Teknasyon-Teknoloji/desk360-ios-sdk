@@ -7,7 +7,7 @@
 //
 
 import UIKit
-//import IQKeyboardManager
+// import IQKeyboardManager
 
 final class DemoViewController: UIViewController, Layouting {
 	typealias ViewType = DemoView
@@ -27,7 +27,7 @@ final class DemoViewController: UIViewController, Layouting {
 
 // MARK: - UITableViewDelegate, UITableViewDataSource
 extension DemoViewController: UITableViewDelegate, UITableViewDataSource {
-	
+
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return DemoItem.allCases.count
 	}

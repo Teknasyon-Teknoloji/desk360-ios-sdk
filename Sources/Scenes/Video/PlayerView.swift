@@ -7,24 +7,24 @@
 
 import Foundation
 import UIKit
-import AVKit;
-import AVFoundation;
+import AVKit
+import AVFoundation
 
 class PlayerView: UIView {
     override static var layerClass: AnyClass {
-        return AVPlayerLayer.self;
+        return AVPlayerLayer.self
     }
 
     var playerLayer: AVPlayerLayer {
-        return layer as! AVPlayerLayer;
+        return layer as! AVPlayerLayer
     }
-    
+
     var player: AVPlayer? {
         get {
-            return playerLayer.player;
+            return playerLayer.player
         }
         set {
-            playerLayer.player = newValue;
+            playerLayer.player = newValue
         }
     }
 }

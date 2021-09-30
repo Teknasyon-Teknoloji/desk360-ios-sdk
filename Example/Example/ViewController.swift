@@ -13,7 +13,7 @@ final class ViewController: UIViewController {
 
 	@IBOutlet weak var environmentSwitchButton: UISwitch!
 	@IBOutlet weak var languageTypeSwitchButton: UISwitch!
-	var jsonObject: [String: Any]? = nil
+	var jsonObject: [String: Any]?
 	var deviceId: String?
     var	environment: Desk360Environment = .sandbox
 	var appId: String = ""
@@ -67,7 +67,7 @@ extension ViewController {
 extension ViewController {
 
 	func showDesk360() {
-		Desk360.start(appId: appId, environment: environment, language: "en", jsonInfo: jsonObject)
+        Desk360.start(using: .init(appID: appId))
 		jsonObject = nil
 		appId = ""
 		Desk360.show(on: self, animated: true)

@@ -30,4 +30,3 @@ extension Layouting where Self: UIViewController {
 	}
 
 }
-

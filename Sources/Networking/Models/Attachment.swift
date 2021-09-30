@@ -16,7 +16,7 @@ public struct Attachment {
 }
 
 extension Attachment: Codable {
-    
+
     private enum CodingKeys: String, CodingKey {
         case images
         case videos
