@@ -406,7 +406,7 @@ private extension ListingViewController {
             layoutableView.emptyTextLabel.text = Config.shared.model?.ticketListingScreen?.emptyPastText
         }
         
-        filterTickets.sorted()
+        filterTickets.sort()
         layoutableView.emptyView.isHidden = !filterTickets.isEmpty
         
         self.layoutableView.tableView.reloadData()
@@ -440,8 +440,11 @@ extension ListingViewController {
             title = Config.shared.model?.ticketListingScreen?.title ?? ""
         }
         
-        let selectedattributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
-                                  NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model?.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow() ]
+        let selectedattributes = [
+            NSAttributedString.Key.foregroundColor: UIColor.white,
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.generalSettings?.navigationTitleFontSize ?? 16), weight: Font.weight(type: Config.shared.model?.generalSettings?.navigationTitleFontWeight ?? 400)), NSAttributedString.Key.shadow: NSShadow()
+        ]
+        
         let navigationTitle = NSAttributedString(string: title, attributes: selectedattributes as [NSAttributedString.Key: Any])
         let titleLabel = UILabel()
         titleLabel.attributedText = navigationTitle

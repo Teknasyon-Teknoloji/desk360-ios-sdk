@@ -28,28 +28,28 @@ public struct Ticket {
 	}
 
 	/// Id.
-	var id: Int
+	public var id: Int
 
 	/// Name.
-	var name: String
+    public let name: String
 
 	/// Email
-	var email: String
+    public let email: String
 
 	/// Status
-	var status: Status
+    public var status: Status
 
 	/// Date the request was created.
-	var createdAt: Date
+    public let createdAt: Date
 
-	var message: String
+    public var message: String
 
 	/// Array of conversation `SupportMessage`s.
-	var messages: [Message]
+    public var messages: [Message]
 
-	var attachmentUrl: URL?
+    public let attachmentUrl: URL?
 
-	var createDateString: String?
+    public let createDateString: String?
 
 }
 
