@@ -127,6 +127,7 @@ private var desk: Desk360?
 		if Desk360.messageId != nil { Desk360.messageId = nil }
 		guard let data = userInfo?["data"] as? [String: AnyObject] else { return }
 		guard let id = userInfoHandle(data) else { return }
+        Desk360.messageId = id
         
         if Desk360.conVC != nil {
             if let req = Desk360.conVC?.request {
@@ -140,9 +141,11 @@ private var desk: Desk360?
         }
         
 		guard Desk360.isActive == false else {
-			Desk360.messageId = id
+            guard let list = Desk360.list else {
+                showWithPushDeeplink(on: topViewController, animated: true)
+                return
+            }
             
-            guard let list = Desk360.list else { return }
             list.navigationController?.popToRootViewController(animated: false)
             guard let ticket = list.requests.first(where: {$0.id == id}) else { return }
             let viewController = ConversationViewController(request: ticket)
@@ -150,17 +153,16 @@ private var desk: Desk360?
             list.navigationController?.pushViewController(viewController, animated: false)
             Desk360.messageId = nil
             Desk360.didTapNotification = false
-            
 			return
 		}
-		Desk360.messageId = id
+    
         guard let topVC = topViewController else { return }
 		showWithPushDeeplink(on: topVC, animated: true)
 	}
 
 	@objc public static func showWithPushDeeplink(on viewController: UIViewController?, animated: Bool = false) {
 
-		guard Desk360.messageId != nil else { return }
+		guard Desk360.messageId != nil, let viewController = viewController else { return }
 		guard let registerModel = Stores.registerModel.object else { return }
 		var desk360Env: Desk360Environment = .production
 		if registerModel.environment == Desk360Environment.sandbox.stringValue {
@@ -232,6 +234,7 @@ private extension Desk360 {
         }
         return version
     }
+    
     static var topViewController: UIViewController? {
         guard var topViewController = UIApplication.shared.keyWindow?.rootViewController else { return nil }
         while let presentedViewController = topViewController.presentedViewController {
