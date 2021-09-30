@@ -160,6 +160,28 @@ final class YourMainViewController: UIViewController {
 }
 ```
 
+
+### Getting the unread tickets
+If you would like to get a list of the unread tickets you can do so like follows:
+```swift
+  Desk360.getUnreadTickets { results in
+			switch results {
+			case .failure(let error):
+				print(error.localizedDescription)
+			case .success(let tickets):
+				print("Tickets: \(tickets.count)")
+			}	
+	}
+```
+
+You can show the unread tickets the way that fits your app design and expierence. If you want to navigate to a specific ticket 
+detail you can do so so by following:
+
+```swift
+  let detailsViewController = Desk360.ticketDetailsViewController(ofTicket: unreadTicket)
+	self.present(detailsViewController, animated: true, completion: nil)
+```
+
 ### Customize Desk360 Theme
 
 You should use [Desk360](https://desk360.com/) dashboard for custom config.
