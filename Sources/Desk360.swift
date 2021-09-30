@@ -35,36 +35,44 @@ private var desk: Desk360?
 @objc open class Desk360: NSObject {
     
     private(set) public static var properties: Desk360Properties?
-	private(set) public static var pushToken: String?
+    private(set) public static var pushToken: String?
     private(set) public static var appVersion: String = "0.0.0"
     private(set) public static var sdkVersion: String = "0.0.0"
     
-	public static var messageId: Int?
-
+    public static var messageId: Int?
+    
     static var list: ListingViewController?
     
     static var conVC: ConversationViewController?
     
     static var thanksVC: SuccsessViewController?
     
-	static var isActive: Bool = false
-
-	static var token: String? = ""
-
+    static var isActive: Bool = false
+    
+    static var token: String? = ""
+    
     static let authPlugin = AccessTokenPlugin { _ in Desk360.token ?? "" }
-
-	static let apiProvider = MoyaProvider<Service>(plugins: [authPlugin])
-
-	static var isRegister = false
-
-	static var applaunchChecker = false
-
-	static var didTapNotification = false
-
-	/// Whether internet is reachable or not.
-	static var isReachable: Bool {
-		return NetworkReachabilityManager()?.isReachable ?? false
-	}
+    
+    static let apiProvider = MoyaProvider<Service>(plugins: [authPlugin])
+    
+    static var isRegister = false
+    
+    static var applaunchChecker = false
+    
+    static var didTapNotification = false
+    
+    /// Whether internet is reachable or not.
+    static var isReachable: Bool {
+        return NetworkReachabilityManager()?.isReachable ?? false
+    }
+    
+    @available(*, deprecated, renamed: "init(properties:)", message: "Deprecated and will be removed in the future versions")
+    public init(appId: String, deviceId: String, environment: Desk360Environment, language: String, country: String , jsonInfo: [String: Any]) {
+        let props = Desk360Properties(appID: appId, deviceID: deviceId, environment: environment, language: language, country: country, userCredentials: nil, jsonInfo: jsonInfo)
+        Desk360.properties = props
+        Desk360.appVersion = getAppVersion()
+        Desk360.sdkVersion = getSdkVersion()
+    }
     
     /// Creates DESK360 instance configured with the given properties.
     /// - Parameter properties: DESK360 configuration properties.
@@ -92,10 +100,10 @@ private var desk: Desk360?
 	@objc public static func applicationLaunchChecker(_ launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         guard let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any] else { return }
         guard let data = remoteNotif["data"] as? [String: AnyObject] else { return }
-		guard let id = userInfoHandle(data) else { return }
-		Desk360.didTapNotification = true
-		Desk360.applaunchChecker = true
-		Desk360.messageId = id
+        guard let id = userInfoHandle(data) else { return }
+        Desk360.didTapNotification = true
+        Desk360.applaunchChecker = true
+        Desk360.messageId = id
     }
 
     @objc public static func willNotificationPresent(_ userInfo: [AnyHashable: Any]?) {
@@ -118,15 +126,15 @@ private var desk: Desk360?
     
 	@objc public static func applicationUserInfoChecker(_ userInfo: [AnyHashable: Any]?) {
         
-		guard !Desk360.applaunchChecker else {
-			Desk360.applaunchChecker = false
-			return
-		}
-		if #available(iOS 13.0, *), Desk360.didTapNotification { return }
+        guard !Desk360.applaunchChecker else {
+            Desk360.applaunchChecker = false
+            return
+        }
+        if #available(iOS 13.0, *), Desk360.didTapNotification { return }
         Desk360.didTapNotification = false
-		if Desk360.messageId != nil { Desk360.messageId = nil }
-		guard let data = userInfo?["data"] as? [String: AnyObject] else { return }
-		guard let id = userInfoHandle(data) else { return }
+        if Desk360.messageId != nil { Desk360.messageId = nil }
+        guard let data = userInfo?["data"] as? [String: AnyObject] else { return }
+        guard let id = userInfoHandle(data) else { return }
         Desk360.messageId = id
         
         if Desk360.conVC != nil {
@@ -140,7 +148,7 @@ private var desk: Desk360?
             }
         }
         
-		guard Desk360.isActive == false else {
+        guard Desk360.isActive == false else {
             guard let list = Desk360.list else {
                 showWithPushDeeplink(on: topViewController, animated: true)
                 return
@@ -153,9 +161,9 @@ private var desk: Desk360?
             list.navigationController?.pushViewController(viewController, animated: false)
             Desk360.messageId = nil
             Desk360.didTapNotification = false
-			return
-		}
-    
+            return
+        }
+        
         guard let topVC = topViewController else { return }
 		showWithPushDeeplink(on: topVC, animated: true)
 	}
@@ -207,8 +215,39 @@ private var desk: Desk360?
         let desk360Navcontroller = UINavigationController(rootViewController: listingViewController)
         desk360Navcontroller.modalPresentationStyle = .fullScreen
         viewController.present(desk360Navcontroller, animated: true, completion: nil)
-	}
-
+    }
+    
+    /// Fetchs the unread ticket
+    /// - Parameter completion: The ticket fetching result/
+    @objc public static func getUnreadTickets(completion: @escaping TicketsHandler) {
+        Desk360Networking.getUnreadMessages(completion: completion)
+    }
+    
+    /// Instantiate an instance of Ticket details view controller with the given ticket and return it,
+    /// - Parameter ticket: The  ticket to be shown
+    /// - Returns: Ticket details view controller
+    @objc public static func ticketDetailsViewController(ofTicket ticket: Ticket) -> UIViewController {
+        return ConversationViewController(request: ticket)
+    }
+    
+    /// Prsensts the Ticket details view controller of the given ticket.
+    /// - Parameters:
+    ///   - ticket: The ticket to be shown
+    ///   - viewController: A viewcontroller to present ticket details on it.
+    ///   - animated: Presentation animation `Default` true
+    @objc public static func showDetails(ofTicket ticket: Ticket, on viewController: UIViewController, animated: Bool = true) {
+        let ticketViewController = ConversationViewController(request: ticket)
+        viewController.present(ticketViewController, animated: animated)
+    }
+    
+    /// Checks whether the incoming notification is dedicated to Desk360 or not.
+    /// - Parameter notification: The incoming notification.
+    /// - Returns: returns `true` if it can handle it or `false` otherwise.
+    public static func canHandleNotfication(_ notification: [AnyHashable: Any]) -> Bool {
+        guard let data = notification["data"] as? [String: AnyObject] else { return false }
+        return userInfoHandle(data) != nil
+    }
+    
     static func fetchTicketList() {
         guard list != nil else { return }
         list?.fetchList()
@@ -221,14 +260,14 @@ private var desk: Desk360?
 
 private extension Desk360 {
     
-    private static func getAppVersion() -> String {
+    static func getAppVersion() -> String {
         guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
             return "0.0.0"
         }
         return version
     }
     
-    private static func getSdkVersion() -> String {
+    static func getSdkVersion() -> String {
         guard let version = Bundle(for: Self.self).infoDictionary?["CFBundleShortVersionString"] as? String else {
             return "0.0.0"
         }
@@ -251,9 +290,9 @@ private extension Desk360 {
         guard let id = detail["target_id"] as? String else { return nil }
         return Int(id)
     }
-
+    
     static func checkIsActiveDesk360(_ navigationController: UINavigationController) {
-
+        
         guard let listingViewController = navigationController.children.first as? ListingViewController else { return }
         let tickets = listingViewController.requests
         let id = Desk360.messageId
@@ -279,6 +318,66 @@ private extension Desk360 {
             let viewController = ConversationViewController(request: ticket!)
             viewController.hidesBottomBarWhenPushed = true
             navigationController.pushViewController(viewController, animated: false)
+        }
+    }
+}
+
+
+private final class Desk360Networking {
+    
+    static func register(completion: @escaping((Result<Void, Error>) -> Void)) {
+        guard let props = Desk360.properties else {
+            completion(.failure(Desk360Error.notInitalized))
+            return
+        }
+        
+        Desk360.apiProvider.request(.register(appKey: props.appID, deviceId: props.deviceID, appPlatform: props.appPlatform, appVersion: Desk360.appVersion, timeZone: props.timeZone, languageCode: props.language)) {  result in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(let response):
+                guard let register = try? response.map(DataResponse<RegisterRequest>.self) else { return }
+                Desk360.isRegister = true
+                Desk360.token = register.data?.accessToken
+                try? Stores.tokenStore.save(register.data?.accessToken ?? "")
+                try? Stores.registerExpiredAt.save(register.data?.expiredDate)
+                completion(.success(()))
+            }
+        }
+    }
+    
+    static func getUnreadMessages(completion: @escaping TicketsHandler) {
+        register { result in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success:
+                fetchRequests { result in
+                    switch result {
+                    case .failure(let error):
+                        completion(.failure(error))
+                    case .success(let tickets):
+                        let unreadTickets = tickets.filter({ $0.status == .unread })
+                        completion(.success(unreadTickets))
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    private static func fetchRequests(completion: @escaping TicketsHandler) {
+        
+        Desk360.apiProvider.request(.getTickets) { result in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(let response):
+                guard let tickets = try? response.map(DataResponse<[Ticket]>.self) else { return }
+                guard let data = tickets.data else { return }
+                try? Stores.ticketsStore.save(data)
+                completion(.success(data))
+            }
         }
     }
 }
