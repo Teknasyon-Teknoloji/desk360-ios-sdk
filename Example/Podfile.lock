@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (5.4.3)
-  - Desk360 (1.7.2):
+  - Desk360 (1.8.0):
     - DeviceKit
     - Moya (~> 14.0)
     - NVActivityIndicatorView (= 4.8.0)
@@ -35,7 +35,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
-  Desk360: 790b84d1482c3d8e197cd05ee5c7bd9112a2185e
+  Desk360: 2bacb8e62d388e2bff21dfd21136a3cb422c4345
   DeviceKit: 2c5d7485a2fa10b65c0091b2952d30843a6ba06d
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   NVActivityIndicatorView: d24b7ebcf80af5dcd994adb650e2b6c93379270f

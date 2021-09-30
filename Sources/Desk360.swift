@@ -14,6 +14,38 @@ import Photos
 private var desk: Desk360?
 public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
 
+@objc public enum Desk360Error: Int, LocalizedError {
+    case notInitalized
+
+    public var errorDescription: String? {
+        switch self {
+        case .notInitalized: return "The Desk360 SDK is not intialized properly. Please call start(with:) first"
+
+        }
+    }
+}
+
+
+@objc public enum Desk360Environment: Int {
+    @available(*, unavailable, renamed: "sandbox", message: "Please use .sandbox option instead.")
+    case test
+
+    case sandbox
+    case production
+
+    var stringValue: String {
+        switch self {
+            case .test:
+                return "test"
+            case .sandbox:
+                return "sandbox"
+            case .production:
+                return "production"
+        }
+    }
+}
+
+
 @objc open class Desk360: NSObject {
 
     private(set) public static var properties: Desk360Properties?
