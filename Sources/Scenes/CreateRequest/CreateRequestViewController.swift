@@ -444,7 +444,7 @@ private extension CreateRequestViewController {
         let countryCodeData = props.country.data(using: String.Encoding.utf8) ?? Data()
 		ticket.append(Moya.MultipartFormData(provider: .data(countryCodeData), name: "country_code"))
 
-        if let jsonData = try? JSONSerialization.data(withJSONObject: props.jsonInfo ?? [:]) {
+        if let json = props.jsonInfo, let jsonData = try? JSONSerialization.data(withJSONObject: json) {
 			ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
 		}
 
