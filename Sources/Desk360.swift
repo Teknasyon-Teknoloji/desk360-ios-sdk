@@ -25,7 +25,6 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
     }
 }
 
-
 @objc public enum Desk360Environment: Int {
     @available(*, unavailable, renamed: "sandbox", message: "Please use .sandbox option instead.")
     case test
@@ -44,7 +43,6 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
         }
     }
 }
-
 
 @objc open class Desk360: NSObject {
 
@@ -368,7 +366,6 @@ private final class Desk360Networking {
                 }
             }
         }
-
     }
 
     private static func fetchRequests(completion: @escaping TicketsHandler) {
