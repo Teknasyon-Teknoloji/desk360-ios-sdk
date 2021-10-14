@@ -1,3 +1,9 @@
+## Version 1.8.2
+
+* **Bug Fixes**
+  + Fix the compilation issue in Xcode13.
+  
+
 ## Version 1.8.1
 
 * **Bug Fixes**
