@@ -22,5 +22,16 @@ targets:
     settings:
       INFOPLIST_FILE: Sources/Desk360.plist
     postbuildScripts:
-      - script: swiftlint
+      - script: | 
+          # Adds support for Apple Silicon brew directory
+          export PATH="$PATH:/opt/homebrew/bin"
+          swiftlint
         name: SwiflLint
+  
+  Desk360Tests:
+    type: bundle.unit-test
+    platform: iOS
+    scheme: {}
+    sources: [Tests]
+    dependencies:
+      - target: Desk360

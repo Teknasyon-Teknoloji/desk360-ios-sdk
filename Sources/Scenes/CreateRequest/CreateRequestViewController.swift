@@ -331,21 +331,42 @@ extension CreateRequestViewController {
 // MARK: - KeyboardObserving
 extension CreateRequestViewController: KeyboardObserving {
 
+	/// Called right before the keyboard is presented.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardWillShow(_ notification: KeyboardNotification?) {
 		layoutableView.keyboardWillShow(notification)
 	}
 
+	/// Called right before the keyboard is hidden.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardWillHide(_ notification: KeyboardNotification?) {
         layoutableView.keyboardWillHide(notification)
 	}
 
+	/// Called right after the keyboard is hidden.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardDidHide(_ notification: KeyboardNotification?) {
 		layoutableView.keyboardDidHide(notification)
 	}
+	
+	/// Called right after the keyboard is presented.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardDidShow(_ notification: KeyboardNotification?) {}
+	
+	/// Called right before the keyboard is about to change its frame.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {
 		layoutableView.keyboardWillChangeFrame(notification)
 	}
+	
+	/// Called right after the keyboard did changed its frame.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardDidChangeFrame(_ notification: KeyboardNotification?) {}
 
 }

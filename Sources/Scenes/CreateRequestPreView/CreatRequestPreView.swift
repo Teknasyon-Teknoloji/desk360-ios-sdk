@@ -72,14 +72,14 @@ final class CreatRequestPreView: UIView, Layoutable {
 		return Desk360View.create()
 	}()
 	
-	/// Override this method to set your custom views here
+	/// Background Color
 	public override var backgroundColor: UIColor? {
 		didSet {
 			titleLabel.backgroundColor = backgroundColor
 		}
 	}
 	
-	/// Override this method to set your custom layout here
+	/// Override this method to set your custom views here
 	func setupViews() {
 		addSubview(stackView)
 		addSubview(createRequestButton)
@@ -88,7 +88,7 @@ final class CreatRequestPreView: UIView, Layoutable {
 		bottomScrollView.addSubview(bottomDescriptionLabel)
 	}
 	
-	/// Create button type 4
+	/// Override this method to set your custom layout here
 	func setupLayout() {
 
 		createRequestButton.snp.makeConstraints { make in

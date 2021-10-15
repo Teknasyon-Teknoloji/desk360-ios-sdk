@@ -10,4 +10,13 @@ target 'Desk360' do
   pod 'DeviceKit'
   pod 'NVActivityIndicatorView', '4.8.0'
   pod 'PersistenceKit'
+  
+end
+
+target 'Desk360Tests' do
+
+  inherit! :search_paths
+  pod 'Quick'
+  pod 'Nimble'
+  
 end

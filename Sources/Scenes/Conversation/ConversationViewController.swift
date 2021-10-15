@@ -814,9 +814,15 @@ extension ConversationViewController {
 
 // MARK: - KeyboardObserving
 extension ConversationViewController: KeyboardObserving {
-
+	
+	/// Called right before the keyboard is presented.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardWillShow(_ notification: KeyboardNotification?) { }
 
+	/// Called right before the keyboard is hidden.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardWillHide(_ notification: KeyboardNotification?) {
 
 		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
@@ -828,8 +834,19 @@ extension ConversationViewController: KeyboardObserving {
 		layoutableView.conversationInputView.layoutSubviews()
 	}
 
+	/// Called right after the keyboard is hidden.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardDidHide(_ notification: KeyboardNotification?) {}
+	
+	/// Called right after the keyboard is presented.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardDidShow(_ notification: KeyboardNotification?) {}
+	
+	/// Called right before the keyboard is about to change its frame.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {
 
 		guard let keyboardEndFrame = notification?.endFrame else { return }
@@ -847,6 +864,9 @@ extension ConversationViewController: KeyboardObserving {
             scrollToBottom(animated: false)
         }
 	}
+	/// Called right after the keyboard did changed its frame.
+	///
+	/// - Parameter notification: `KeyboardNotification`
 	func keyboardDidChangeFrame(_ notification: KeyboardNotification?) {}
 
 }

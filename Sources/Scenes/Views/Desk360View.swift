@@ -18,6 +18,7 @@ final class Desk360View: UIView, Layoutable {
 		return imageView
 	}()
 
+	/// Override this method to set your custom views here
 	func setupViews() {
 		backgroundColor = .clear
         isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
@@ -25,6 +26,7 @@ final class Desk360View: UIView, Layoutable {
 		addSubview(desk360LogoImageView)
 	}
 
+	/// Override this method to set your custom layout here
 	func setupLayout() {
 		desk360LogoImageView.snp.makeConstraints { make in
 			make.centerX.equalToSuperview()

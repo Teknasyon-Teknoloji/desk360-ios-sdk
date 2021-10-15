@@ -7,8 +7,10 @@
 
 import UIKit
 
+/// `ListingPlaceholderView`
 final class ListingPlaceholderView: UIView, Layoutable {
 
+	/// Title Label
 	internal lazy var titleLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 4
@@ -17,6 +19,7 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		return label
 	}()
 
+	/// Description Label
 	internal lazy var descriptionLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 6
@@ -25,6 +28,7 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		return label
 	}()
 
+	/// Create Request Button
 	internal lazy var createRequestButton: UIButton = {
 		var button = UIButton(type: .system)
 		button.layer.borderWidth = 1
@@ -34,6 +38,7 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		return button
 	}()
 
+	/// Stack View for labels
 	private lazy var stackView: UIStackView = {
 		let view = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
 		view.axis = .vertical
@@ -43,6 +48,7 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		return view
 	}()
 
+	/// Scroll View
 	internal lazy var bottomScrollView: UIScrollView = {
 		let scrollView = UIScrollView()
 		scrollView.showsVerticalScrollIndicator = false
@@ -51,6 +57,7 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		return scrollView
 	}()
 
+	/// Description Label for bottom
 	internal lazy var bottomDescriptionLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 0
@@ -59,12 +66,14 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		return label
 	}()
 
+	/// Background Color
 	public override var backgroundColor: UIColor? {
 		didSet {
 			titleLabel.backgroundColor = backgroundColor
 		}
 	}
 
+	/// Override this method to set your custom views here
 	func setupViews() {
 		addSubview(stackView)
 		addSubview(createRequestButton)
@@ -73,6 +82,7 @@ final class ListingPlaceholderView: UIView, Layoutable {
 		bottomScrollView.addSubview(bottomDescriptionLabel)
 	}
 
+	/// Override this method to set your custom layout here
 	func setupLayout() {
 
 		createRequestButton.snp.makeConstraints { make in
@@ -110,21 +120,25 @@ final class ListingPlaceholderView: UIView, Layoutable {
 // MARK: - Helpers
 extension ListingPlaceholderView {
 
+	/// Create button type 1
 	func createButtonType1() {
 		createRequestButton.layer.cornerRadius = 22
 		setupButtonDefaultLayout()
 	}
 
+	/// Create button type 2
 	func createButtonType2() {
 		createRequestButton.layer.cornerRadius = 10
 		setupButtonDefaultLayout()
 	}
 
+	/// Create button type 3
 	func createButtonType3() {
 		createRequestButton.layer.cornerRadius = 2
 		setupButtonDefaultLayout()
 	}
 
+	/// Create button type 4
 	func createButtonType4() {
 
 		createRequestButton.layer.cornerRadius = 0
@@ -141,6 +155,7 @@ extension ListingPlaceholderView {
 		}
 	}
 
+	/// Setup for create request preview button
 	func setupButtonDefaultLayout() {
 		createRequestButton.snp.remakeConstraints { make in
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) - (preferredSpacing * 3))
@@ -150,6 +165,7 @@ extension ListingPlaceholderView {
 		}
 	}
 
+	/// Configuration for buttons
 	func configureButton() {
 		let type = Config.shared.model?.firstScreen?.buttonStyleId
 		createRequestButton.layer.shadowColor = UIColor.clear.cgColor
@@ -206,6 +222,7 @@ extension ListingPlaceholderView {
 // MARK: - Configuer
 extension ListingPlaceholderView {
 
+	/// Configuration for view
 	func configure() {
 
 		self.backgroundColor = Colors.backgroundColor

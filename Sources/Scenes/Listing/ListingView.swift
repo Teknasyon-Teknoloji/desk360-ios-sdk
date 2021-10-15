@@ -8,14 +8,17 @@
 import UIKit
 import DeviceKit
 
+/// `ListingView`
 class ListingView: UIView, Layoutable, Loadingable {
 
+	/// Listing Placeholder View
 	lazy var placeholderView: ListingPlaceholderView = {
 		let view = ListingPlaceholderView.create()
 		view.isHidden = true
 		return view
 	}()
 
+	/// Listing segmented control height
 	var segmentControlHeight: CGFloat = {
 		let diagonal = Device.current.realDevice.diagonal
 		if diagonal >= 6 && diagonal < 7 { return 58.0 }
@@ -24,6 +27,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 		return 50.0
 	}()
 
+	/// Item array for segmentedControl
 	var items: [String] {
 		return [
 			"Current",
@@ -31,12 +35,14 @@ class ListingView: UIView, Layoutable, Loadingable {
 		]
 	}
 
+	/// Button Bar View
 	lazy var buttonBar: UIView = {
 		let view = UIView()
 		view.backgroundColor = .white
 		return view
 	}()
 
+	/// Notification Label
     lazy var notifLabel: UILabel = {
         let label = UILabel()
         label.backgroundColor = Colors.unreadIconColor
@@ -48,6 +54,7 @@ class ListingView: UIView, Layoutable, Loadingable {
         return label
     }()
 
+	/// Segmented Control for current and past tickets
 	lazy var segmentControl: UISegmentedControl = {
 		var segmentControl = UISegmentedControl(items: items)
 		segmentControl.selectedSegmentIndex = 0
@@ -71,6 +78,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 		return segmentControl
 	}()
 
+	/// Tableview for ticket listing
 	lazy var tableView: UITableView = {
 		let view = UITableView()
 		view.separatorStyle = .none
@@ -81,6 +89,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 		return view
 	}()
 
+	/// Empty View
 	lazy var emptyView: UIView = {
 		let view = UIView()
 		view.isHidden = true
@@ -89,6 +98,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 		return view
 	}()
 
+	/// Label for empty text
 	lazy var emptyTextLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 0
@@ -98,6 +108,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 		return label
 	}()
 
+	/// Image View for empty icon
 	private lazy var emptyImageView: UIImageView = {
 		let imageView = UIImageView()
 		imageView.image = Desk360.Config.Images.emptyIcon
@@ -105,18 +116,21 @@ class ListingView: UIView, Layoutable, Loadingable {
 		return imageView
 	}()
 
+	/// Desk360 View for bottom.
     lazy var desk360BottomView: Desk360View = {
         let view = Desk360View.create()
         view.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		return view
 	}()
 
+	/// Background Color
 	public override var backgroundColor: UIColor? {
 		didSet {
 			tableView.backgroundColor = backgroundColor
 		}
 	}
 
+	/// Override this method to set your custom views here
 	func setupViews() {
 		backgroundColor = .white
 		addSubview(tableView)
@@ -128,6 +142,7 @@ class ListingView: UIView, Layoutable, Loadingable {
         addSubview(notifLabel)
 	}
 
+	/// Override this method to set your custom layout here
 	func setupLayout() {
 		emptyImageView.snp.makeConstraints { make in
 			make.centerX.equalToSuperview()
@@ -193,6 +208,7 @@ class ListingView: UIView, Layoutable, Loadingable {
 // MARK: - Config
 extension ListingView {
 
+	/// Configuration for listing view
 	func configure() {
 		self.backgroundColor = Colors.backgroundColor
 		emptyView.backgroundColor = Colors.ticketListingScreenBackgroudColor
@@ -203,6 +219,7 @@ extension ListingView {
 		placeholderView.configure()
 	}
 
+	/// Configuration for segmented control
 	func configureSegmentedControl() {
 		segmentControl.backgroundColor = Colors.backgroundColor
 		buttonBar.backgroundColor = Colors.ticketListingScreenTabActiveBorderColor

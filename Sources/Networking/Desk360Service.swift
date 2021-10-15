@@ -45,7 +45,7 @@ extension Service: TargetType, AccessTokenAuthorizable {
 			return "tickets/types/list"
 		case .ticketWithId(let ticketId):
 			return "tickets/\(ticketId)"
-		case .ticketMessages(let ticketId, let attachments):
+		case .ticketMessages(let ticketId, _):
 			return "tickets/\(ticketId)/messages"
 		}
 	}
@@ -76,7 +76,7 @@ extension Service: TargetType, AccessTokenAuthorizable {
 			return .uploadMultipart(ticket)
 		case .ticketTypeList, .ticketWithId, .getTickets:
 			return .requestPlain
-		case .ticketMessages(let ticketId, let attachments):
+		case .ticketMessages(_, let attachments):
             return .uploadMultipart(attachments)
 		}
 	}

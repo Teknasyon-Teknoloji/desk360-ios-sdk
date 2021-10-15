@@ -447,6 +447,8 @@ class HADropDown: UIView {
 		}
 	}
 }
+
+// MARK: - UITableViewDelegate, UITableViewDataSource
 extension HADropDown: UITableViewDelegate, UITableViewDataSource {
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return items.count

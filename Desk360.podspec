@@ -23,4 +23,7 @@ Pod::Spec.new do |s|
     s.dependency "PersistenceKit"
     s.dependency "DeviceKit"
     s.dependency "NVActivityIndicatorView", "4.8.0"
+    s.dependency "Quick"
+    s.dependency "Nimble"
+
 end

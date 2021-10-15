@@ -7,8 +7,10 @@
 
 import UIKit
 
+/// `SuccessView`
 final class SuccessView: UIView, Layoutable {
 
+	/// Imageview for success icon
 	internal lazy var imageView: UIImageView = {
 		let view = UIImageView()
 		view.contentMode = .scaleToFill
@@ -17,6 +19,7 @@ final class SuccessView: UIView, Layoutable {
 		return view
 	}()
 
+	/// Title Label
 	internal lazy var titleLabel: UILabel = {
 		let label = UILabel()
 		label.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -26,6 +29,7 @@ final class SuccessView: UIView, Layoutable {
 		return label
 	}()
 
+	/// Description Label
 	internal lazy var descriptionLabel: UILabel = {
 		let label = UILabel()
 		label.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -35,6 +39,7 @@ final class SuccessView: UIView, Layoutable {
 		return label
 	}()
 
+	/// Show List Button
 	internal lazy var showListButton: UIButton = {
 		var button = UIButton(type: .system)
 		button.layer.borderWidth = 1
@@ -44,6 +49,7 @@ final class SuccessView: UIView, Layoutable {
 		return button
 	}()
 
+	/// Stack View For Labels
 	private lazy var stackView: UIStackView = {
 		let view = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
 		view.axis = .vertical
@@ -53,6 +59,7 @@ final class SuccessView: UIView, Layoutable {
 		return view
 	}()
 
+	/// Scroll View
 	internal lazy var bottomScrollView: UIScrollView = {
 		let scrollView = UIScrollView()
 		scrollView.showsVerticalScrollIndicator = false
@@ -62,6 +69,7 @@ final class SuccessView: UIView, Layoutable {
 		return scrollView
 	}()
 
+	/// Description Label for bottom
 	internal lazy var bottomDescriptionLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 0
@@ -70,18 +78,21 @@ final class SuccessView: UIView, Layoutable {
 		return label
 	}()
 
+	/// Desk360 View for bottom.
 	private lazy var desk360BottomView: Desk360View = {
         let view = Desk360View.create()
         view.isHidden = Config.shared.model?.generalSettings?.isLogoHidden ?? false
 		return view
 	}()
 
+	/// Background Color
 	public override var backgroundColor: UIColor? {
 		didSet {
 			titleLabel.backgroundColor = backgroundColor
 		}
 	}
 
+	/// Override this method to set your custom views here
 	func setupViews() {
 		addSubview(imageView)
 		addSubview(stackView)
@@ -91,6 +102,7 @@ final class SuccessView: UIView, Layoutable {
 		bottomScrollView.addSubview(bottomDescriptionLabel)
 	}
 
+	/// Override this method to set your custom layout here
 	func setupLayout() {
 
 		imageView.snp.makeConstraints { make in
@@ -148,20 +160,24 @@ final class SuccessView: UIView, Layoutable {
 // MARK: - Helpers
 extension SuccessView {
 
+	/// Showing button type 1
 	func showListButtonType1() {
 		showListButton.layer.cornerRadius = 22
 		setupButtonDefaultLayout()
 	}
 
+	/// Showing button type 2
 	func showListButtonType2() {
 		showListButton.layer.cornerRadius = 10
 		setupButtonDefaultLayout()
 	}
 
+	/// Showing button type 3
 	func showListButtonType3() {
 		showListButton.layer.cornerRadius = 2
 	}
 
+	/// Showing button type 4
 	func showListButtonType4() {
 		showListButton.layer.cornerRadius = 0
 
@@ -177,6 +193,7 @@ extension SuccessView {
 		}
 	}
 
+	/// Set default button layout
 	func setupButtonDefaultLayout() {
 		showListButton.snp.remakeConstraints { make in
 			make.width.equalTo(minDimension(size: UIScreen.main.bounds.size) - (preferredSpacing * 3))
@@ -189,7 +206,8 @@ extension SuccessView {
 }
 
 extension SuccessView {
-
+	
+	/// Configuration for success view
 	func configure() {
 
 		self.backgroundColor = Colors.backgroundColor
@@ -238,7 +256,8 @@ extension SuccessView {
 		descriptionLabel.sizeToFit()
 
 	}
-
+	
+	/// Configuration for success view buttons
 	func configureButton() {
 		let type = Config.shared.model?.successScreen?.buttonStyleId
 

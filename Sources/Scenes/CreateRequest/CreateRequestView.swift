@@ -15,7 +15,8 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	var fields: [AnyObject] = []
 
 	var fieldType: FieldType = .line
-
+	
+	/// Frame for viiew
 	public override var frame: CGRect {
 		willSet { }
 		didSet {
@@ -23,11 +24,13 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 			self.frame = oldValue
 		}
 	}
-
+	
+	/// UIFont
 	var inputFont: UIFont = {
 		return UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.createScreen?.formInputFontSize ?? 16), weight: Font.weight(type: Config.shared.model?.createScreen?.formInputFontWeight ?? 400))
 	}()
-
+	
+	/// Scroll view for create request view
 	internal lazy var scrollView: UIScrollView = {
 		let view = UIScrollView()
 		view.showsVerticalScrollIndicator = false
@@ -35,7 +38,8 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		view.keyboardDismissMode = .interactive
 		return view
 	}()
-
+	
+	/// Name Textfield
 	internal lazy var nameTextField: UITextField = {
 		var field = SupportTextField()
 		field.setTextType(.generic)
@@ -45,6 +49,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return field
 	}()
 
+	/// Name Field Limit Label
     internal lazy var nameFieldLimit: UILabel = {
         var label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .regular)
@@ -53,6 +58,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         return label
     }()
 
+	/// Name validation  error label
 	internal lazy var nameErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
@@ -60,6 +66,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return label
 	}()
 
+	/// Email Textfield
 	internal lazy var emailTextField: UITextField = {
 		var field = SupportTextField()
 		field.setTextType(.emailAddress)
@@ -70,6 +77,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return field
 	}()
 
+	/// Email  Field Limit Label
     internal lazy var emailFieldLimit: UILabel = {
         var label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .regular)
@@ -78,6 +86,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         return label
     }()
 
+	/// Email  validation  error label
 	internal lazy var emailErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
@@ -85,6 +94,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return label
 	}()
 
+	/// Drop down list
 	internal lazy var dropDownListView: HADropDown = {
 		let view = HADropDown()
 		view.accessibilityIdentifier = "type_id"
@@ -95,6 +105,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return view
 	}()
 
+	/// Message Text View Label
 	internal lazy var messageTextViewLabel: UILabel = {
 		let label = UILabel()
 		label.tag = 30
@@ -109,6 +120,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return label
 	}()
 
+	/// Message Text View
 	internal lazy var messageTextView: CustomMessageTextView = {
 		var view = CustomMessageTextView.create()
 		setTextViewStyle(view.messageTextView)
@@ -117,6 +129,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return view
 	}()
 
+	/// Message Text View  validation  error label
 	lazy var messageTextViewErrorLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = UIColor.init(hex: "d93a50")!
@@ -124,6 +137,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return label
 	}()
 
+	/// Attachment Container View
 	private lazy var attachmentContainerView: UIView = {
 		let view = UIView()
 		view.backgroundColor = .clear
@@ -133,6 +147,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return view
 	}()
 
+	/// Attachment Button
 	lazy var attachmentButton: UIButton = {
 		let button = UIButton()
 		button.setImage(Desk360.Config.Images.attachmentIcon, for: .normal)
@@ -142,6 +157,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return button
 	}()
 
+	/// Attachment Cancel Button
 	lazy var attachmentCancelButton: UIButton = {
 		let button = UIButton()
 		button.setImage(Desk360.Config.Images.closeIcon, for: .normal)
@@ -151,6 +167,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return button
 	}()
 
+	/// Send Button
 	lazy var sendButton: UIButton = {
 		var button = UIButton(type: .system)
 		button.layer.borderWidth = 1
@@ -158,10 +175,12 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return button
 	}()
 
+	/// Desk360 Bottom View
 	private lazy var desk360BottomView: Desk360View = {
 		return Desk360View.create()
 	}()
 
+	/// Scroll View
 	internal lazy var bottomScrollView: UIScrollView = {
 		let scrollView = UIScrollView()
 		scrollView.showsVerticalScrollIndicator = false
@@ -170,6 +189,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return scrollView
 	}()
 
+	/// Bottom Description Label
 	internal lazy var bottomDescriptionLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 0
@@ -178,11 +198,13 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return label
 	}()
 
+	/// Agreement View
     internal lazy var agreementView: UIView = {
         let view = UIView()
         return view
     }()
 
+	/// Agreement Text View
     internal lazy var agreementTextView: UITextView = {
         let textView = UITextView()
         textView.isEditable = false
@@ -195,6 +217,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         return textView
     }()
 
+	/// Agreement Button
     internal lazy var agreementButton: UIButton = {
         let button = UIButton()
         button.setImage(Desk360.Config.Images.agreementUnCheckIcon, for: .normal)
@@ -202,6 +225,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         return button
     }()
 
+	/// StackView for fields
 	private lazy var stackView: UIStackView = {
 		let view = UIStackView(arrangedSubviews: fields as! [UIView])
 		view.axis = .vertical
@@ -211,6 +235,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return view
 	}()
 
+	/// Attachmen tLabel
 	lazy var attachmentLabel: UILabel = {
 		let label = UILabel()
 		label.lineBreakMode = .byTruncatingMiddle
@@ -218,6 +243,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		return label
 	}()
 
+	/// Override this method to set your custom views here
 	func setupViews() {
 		let gesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
 		self.addGestureRecognizer(gesture)
@@ -259,11 +285,13 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
         scrollView.addSubview(emailFieldLimit)
 	}
 
+	/// Keyboarding
 	@objc func endEditingKeyboard() {
 		self.endEditing(true)
 	}
 
 	// swiftlint:disable function_body_length
+	/// Override this method to set your custom layout here
 	func setupLayout() {
 
 		nameTextField.snp.makeConstraints { make in
@@ -379,6 +407,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 extension CreateRequestView {
 
 	// swiftlint:disable cyclomatic_complexity
+	/// Add fields for create ticket
 	func addFields() {
 
 		fields.removeAll()
@@ -442,7 +471,9 @@ extension CreateRequestView {
 			stackView.setCustomSpacing(0, after: messageTextViewLabel)
 		}
 	}
-
+	
+	/// Add textfields for create request view
+	/// - Parameter fieldModel: fieldmodel using for textfield configuration
 	func addTextField(fieldModel: Field) {
 		let textField = SupportTextField()
 
@@ -467,7 +498,11 @@ extension CreateRequestView {
 		checkTopLabels(field: textField, text: fieldModel.placeholder ?? "")
 		hideTopLabel(textField)
 	}
-
+	
+	/// Add dropdownList for create request view
+	/// - Parameters:
+	///   - fieldModel: fieldmodel using for dropdownlist configuration
+	///   - index: item index for set tag
 	func addDropDownListView(fieldModel: Field, index: Int) {
 		let view = HADropDown()
 		view.title = fieldModel.placeholder ?? ""
@@ -498,7 +533,9 @@ extension CreateRequestView {
 
 		fields.append(view)
 	}
-
+	
+	/// Add message textView for create request view
+	/// - Parameter fieldModel: fieldmodel using for textView configuration
 	func addTextView(fieldModel: Field) {
 		let view = CustomMessageTextView.create()
 		setTextViewStyle(view.messageTextView)
@@ -518,7 +555,9 @@ extension CreateRequestView {
 
 		configureTextViewTopLabels(view.frameView, fieldModel.placeholder ?? "")
 	}
-
+	
+	/// Add message textView label for create request view
+	/// - Parameter text: message label title
 	func addMessageTextViewLabel (text: String) {
 		let label = UILabel()
 		label.tag = 30
@@ -539,6 +578,7 @@ extension CreateRequestView {
 
 // MARK: - HADropDownDelegate Configure
 extension CreateRequestView: HADropDownDelegate {
+	
 	func willHide(dropDown: HADropDown) {
 		scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
 	}

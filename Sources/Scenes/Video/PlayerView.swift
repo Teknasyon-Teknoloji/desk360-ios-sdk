@@ -10,15 +10,20 @@ import UIKit
 import AVKit
 import AVFoundation
 
+/// `PlayerView`
 class PlayerView: UIView {
+	
+	/// Returns the class used to create the layer for instances of this class.
     override static var layerClass: AnyClass {
         return AVPlayerLayer.self
     }
-
+	
+	/// Player Layer
     var playerLayer: AVPlayerLayer {
         return layer as! AVPlayerLayer
     }
-
+	
+	/// Player
     var player: AVPlayer? {
         get {
             return playerLayer.player

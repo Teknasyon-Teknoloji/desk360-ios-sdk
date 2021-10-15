@@ -8,25 +8,23 @@
 import UIKit
 import SnapKit
 
-protocol ListingViewControllerDelegate: AnyObject {
-    func listingViewController(_ viewController: ListingViewController, didSelectTicket ticket: Ticket)
-}
-
+/// `ListingViewController`
 final class ListingViewController: UIViewController, Layouting, UITableViewDelegate, UITableViewDataSource {
 
     typealias ViewType = ListingView
 
-    weak var delegate: ListingViewControllerDelegate?
-
     var refreshIcon = UIImageView()
     var aiv = UIActivityIndicatorView()
     var isDragReleased = false
-
+	
+	/// Initializes a document of a specified type.
+	/// - Parameter tickets: tickets for listing
     convenience init(tickets: [Ticket]) {
         self.init()
         self.requests = tickets
     }
-
+	
+	/// Tickets array for listing
     var requests: [Ticket] = [] {
         didSet {
             if layoutableView.segmentControl.selectedSegmentIndex == 0 {
@@ -42,13 +40,16 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         }
     }
 
+	/// Filtered tickets array for listing with
     var filterTickets: [Ticket] = []
     var isConfigFethecOnce: Bool = false
-
+	
+	/// Creates the view that the controller manages.
     override func loadView() {
         view = ViewType.create()
     }
-
+	
+	/// Called after the controller's view is loaded into memory.
     override func viewDidLoad() {
         super.viewDidLoad()
         Desk360.list = self
@@ -57,28 +58,22 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         layoutableView.segmentControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
         setLoadingabletConfig()
     }
-
+	
+	/// Notifies the view controller that its view is about to be added to a view hierarchy.
+	/// - Parameter animated: If true, the view is being added to the window using an animation.
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         Desk360.isActive = true
 
         navigationItem.leftBarButtonItem = NavigationItems.close(target: self, action: #selector(didTapCloseButton))
-        // segmentcontrolButtonBarLayout()
         initialView()
 
         try? Stores.registerCacheModel.save(Stores.registerModel.object)
 
         checkForUnreadMessageIcon()
-      //  fetchRequests(showLoading: false)
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        let count = navigationController?.viewControllers.count ?? 0
-        guard count > 1 else { return }
-        // navigationController?.viewControllers.removeSubrange(0..<count-1)
-    }
-
+	
+	/// Called to notify the view controller that its view has just laid out its subviews.
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
@@ -87,18 +82,32 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         self.layoutableView.placeholderView.bottomScrollView.setContentOffset(CGPoint(x: 0, y: 2), animated: true)
 
     }
-
+	
+	/// Tells the data source to return the number of rows in a given section of a table view. Required.
+	/// - Parameters:
+	///   - tableView: The table-view object requesting this information.
+	///   - section: An index number identifying a section in tableView.
+	/// - Returns: The number of rows in section.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         setCreateNavButtonItem(show: !requests.isEmpty)
         return filterTickets.count
     }
-
+	
+	/// Asks the data source for a cell to insert in a particular location of the table view. Required.
+	/// - Parameters:
+	///   - tableView: A table-view object requesting the cell.
+	///   - indexPath: An index path locating a row in tableView.
+	/// - Returns: An object inheriting from UITableViewCell that the table view can use for the specified row. UIKit raises an assertion if you return nil.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(ListingTableViewCell.self)
         cell.configure(for: filterTickets.sorted()[indexPath.row])
         return cell
     }
-
+	
+	/// Tells the delegate a row is selected.
+	/// - Parameters:
+	///   - tableView: A table view informing the delegate about the new row selection.
+	///   - indexPath: An index path locating the new selected row in tableView.
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let request = filterTickets[indexPath.row]
         guard request.id != -1 else { return }
@@ -106,16 +115,25 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         viewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(viewController, animated: true)
     }
-
+	
+	/// Tells the delegate that the specified row was highlighted.
+	/// - Parameters:
+	///   - tableView: The table view that highlighted the cell.
+	///   - indexPath: The index path of the row that was highlighted.
     func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.isHighlighted = true
     }
-
+	
+	/// Tells the delegate that the highlight was removed from the row at the specified index path.
+	/// - Parameters:
+	///   - tableView: The table view that removed the highlight from the cell.
+	///   - indexPath: The index path of the row that had its highlight removed.
     func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.isHighlighted = false
     }
-
-    @objc private func didTapCreateBarButtonItem(_ item: UIBarButtonItem) {
+	
+	/// Create Bar Button request button action
+    @objc private func didTapCreateBarButtonItem() {
         guard let props = Desk360.properties else { return }
         if props.bypassCreateTicketIntro {
             navigationController?.pushViewController(CreateRequestViewController(), animated: true)
@@ -123,15 +141,17 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
             navigationController?.pushViewController(CreateRequestPreviewController(), animated: true)
         }
     }
-
-    @objc private func didTapCreateRequestButton(_ button: UIButton) {
+	
+	/// Create request button action
+    @objc private func didTapCreateRequestButton() {
         navigationController?.pushViewController(CreateRequestViewController(checkLastClass: false), animated: true)
     }
 }
 
 // MARK: - Desk360 Start
 extension ListingViewController {
-
+	
+	/// Filtering tickets with expire status
     func filterTicketsForSegment() {
         if layoutableView.segmentControl.selectedSegmentIndex == 0 {
             filterTickets = requests.filter({ $0.status != .expired })
@@ -141,7 +161,8 @@ extension ListingViewController {
 
         filterTickets = filterTickets.sorted()
     }
-
+	
+	/// Initialize listing view
     func initialView() {
         requests = Stores.ticketsStore.allObjects().sorted()
 
@@ -183,14 +204,14 @@ extension ListingViewController {
         }
 
         checkNotificationDeeplink()
-
         getAsyncRequest()
     }
 }
 
 // MARK: - Helpers
 extension ListingViewController {
-
+	
+	/// Checking unread message icon
     func checkForUnreadMessageIcon() {
         let undreadCount = filterTickets.filter({$0.status == .unread}).count
         layoutableView.notifLabel.isHidden = undreadCount <= 0
@@ -198,18 +219,14 @@ extension ListingViewController {
         layoutableView.notifLabel.isHidden = false
         layoutableView.notifLabel.text = "\(undreadCount)"
     }
-
+	
+	/// Fetching config for listing view from backend. This request is async so that the user does not wait
     func getAsyncRequest() {
 
         getConfig(showLoading: false)
-        //		if Stores.configStore.object != nil {
-        //
-        //		} else {
-        //			getConfig(showLoading: true)
-        //		}
-
     }
-
+	
+	/// Remake segmented control button bar layouts with animation
     func segmentcontrolButtonBarLayout() {
         self.layoutableView.buttonBar.snp.remakeConstraints { make in
             make.leading.equalTo((self.layoutableView.segmentControl.frame.width / CGFloat(self.layoutableView.segmentControl.numberOfSegments)) * CGFloat(self.layoutableView.segmentControl.selectedSegmentIndex))
@@ -223,21 +240,25 @@ extension ListingViewController {
             self.refreshView()
         }, completion: nil )
     }
-
+	
+	/// Set loading indicator config
     func setLoadingabletConfig() {
         LoadingableConfig.indicatorBackgroundColor = .clear
         LoadingableConfig.indicatorType = .circleStrokeSpin
         LoadingableConfig.indicatorTintColor = .black
     }
-
+	
+	/// Create navigation right bar button
+	/// - Parameter show: Bool value for showing create button
     func setCreateNavButtonItem(show: Bool) {
         guard show else {
             navigationItem.rightBarButtonItem = nil
             return
         }
-        navigationItem.rightBarButtonItem = NavigationItems.add(target: self, action: #selector(didTapCreateBarButtonItem(_:)))
+        navigationItem.rightBarButtonItem = NavigationItems.add(target: self, action: #selector(didTapCreateBarButtonItem))
     }
 
+	/// Check Notification direction deeplink
     func checkNotificationDeeplink() {
         guard let id = Desk360.messageId else { return }
         if UIApplication.shared.applicationState != .active {
@@ -259,18 +280,21 @@ extension ListingViewController {
 
 // MARK: - Actions
 extension ListingViewController {
-
+	
+	/// After segmented control value changed
     @objc func segmentedControlValueChanged() {
         segmentcontrolButtonBarLayout()
     }
-
+	
+	/// Close Button Action
     @objc func didTapCloseButton() {
         Desk360.isActive = false
         Desk360.conVC = nil
         Desk360.list = nil
         dismiss(animated: true, completion: nil)
     }
-
+	
+	/// Back button action
     @objc func didTapBackButton() {
         if navigationController?.presentingViewController == nil {
             navigationController?.popViewController(animated: true)
@@ -279,7 +303,8 @@ extension ListingViewController {
             navigationController?.dismiss(animated: true, completion: nil)
         }
     }
-
+	
+	/// Fecthing request for tickets
     func fetchList() {
         fetchRequests(showLoading: false)
     }
@@ -287,7 +312,8 @@ extension ListingViewController {
 
 // MARK: - Networking
 private extension ListingViewController {
-
+	
+	/// Registiration for device from backend
     func register() {
 
         guard let props = Desk360.properties else {
@@ -312,7 +338,9 @@ private extension ListingViewController {
             }
         }
     }
-
+	
+	/// Fetching tickets for list from backend
+	/// - Parameter showLoading: Bool value for loading showing
     func fetchRequests(showLoading: Bool) {
         if showLoading {
             layoutableView.setLoading(true)
@@ -348,7 +376,8 @@ private extension ListingViewController {
             }
         }
     }
-
+	
+	/// Set tickets from local cache.
     func setTicketWithMessageStore() {
         let tickets = Stores.ticketsStore.allObjects().sorted()
         let ticketsWithMessages = Stores.ticketWithMessageStore.allObjects()
@@ -362,7 +391,9 @@ private extension ListingViewController {
             try? Stores.ticketWithMessageStore.save(currentTicket)
         }
     }
-
+	
+	/// Fetching config for listing view from backend
+	/// - Parameter showLoading: Bool value for loading showing
     func getConfig(showLoading: Bool) {
         fetchRequests(showLoading: false)
         if isConfigFethecOnce {
@@ -399,7 +430,8 @@ private extension ListingViewController {
             }
         }
     }
-
+	
+	/// View Refreshing
     func refreshView() {
         if layoutableView.segmentControl.selectedSegmentIndex == 0 {
             filterTickets = requests.filter({ $0.status != .expired })
@@ -414,7 +446,8 @@ private extension ListingViewController {
 
         self.layoutableView.tableView.reloadData()
     }
-
+	
+	/// Network Error Alert Showing
     func networkError() {
         layoutableView.setLoading(false)
 
@@ -435,6 +468,7 @@ private extension ListingViewController {
 // MARK: - Config
 extension ListingViewController {
 
+	/// Configuration for Listing View Controller
     func configureLayoutableView() {
         var title = ""
         if self.requests.isEmpty {
@@ -484,19 +518,27 @@ extension ListingViewController {
         self.navigationController?.navigationBar.layer.shadowOpacity = 1.0
         self.navigationController?.navigationBar.layer.masksToBounds = false
     }
-
+	
+	/// Tells the delegate when dragging ended in the scroll view.
+	/// - Parameters:
+	///   - scrollView: The scroll-view object that finished scrolling the content view.
+	///   - decelerate: YES if the scrolling movement will continue, but decelerate, after a touch-up gesture during a dragging operation. If the value is NO, scrolling stops immediately upon touch-up.
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if aiv.isAnimating == false {
             hidePDR()
         }
     }
-
+	
+	/// Tells the delegate that the scroll view has ended decelerating the scrolling movement.
+	/// - Parameter scrollView: The scroll-view object that is decelerating the scrolling of the content view.
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if aiv.isAnimating == false {
             hidePDR()
         }
     }
-
+	
+	/// Tells the delegate when the scroll view is about to start scrolling the content.
+	/// - Parameter scrollView: The scroll-view object that is about to scroll the content view.
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         isDragReleased = false
         refreshIcon.isHidden = false
@@ -504,14 +546,21 @@ extension ListingViewController {
             return
         }
     }
-
+	
+	/// Tells the delegate when the user finishes scrolling the content.
+	/// - Parameters:
+	///   - scrollView: The scroll-view object where the user ended the touch..
+	///   - velocity: The velocity of the scroll view (in points) at the moment the touch was released.
+	///   - targetContentOffset: The expected offset when the scrolling action decelerates to a stop.
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         isDragReleased = true
         if aiv.isAnimating == false {
             hidePDR()
         }
     }
-
+	
+	/// Tells the delegate when the user scrolls the content view within the receiver.
+	/// - Parameter scrollView: The scroll-view object in which the scrolling occurred.
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if aiv.isAnimating {
             return
@@ -532,7 +581,6 @@ extension ListingViewController {
             self.aiv.stopAnimating()
         }
         if scrollView.contentOffset.y < -65 { // arrow will turn up
-            var val = 0.0
 
             UIView.animate(withDuration: 0.1, animations: {
                 self.aiv.startAnimating()
@@ -548,15 +596,18 @@ extension ListingViewController {
             return
         }
     }
-
+	
+	/// hidePDR
     func hidePDR() {
+		//TODO: Ali ile konuş
         refreshIcon.isHidden = true
         self.refreshIcon.superview!.isHidden = true
         aiv.hidesWhenStopped = true
         self.aiv.stopAnimating()
         self.refreshIcon.transform = CGAffineTransform(rotationAngle: 0)
     }
-
+	
+	/// showPDR
     func showPDR() {
         refreshIcon.isHidden = true
         self.refreshIcon.superview!.isHidden = true

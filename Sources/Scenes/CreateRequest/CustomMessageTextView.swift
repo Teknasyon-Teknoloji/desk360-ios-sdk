@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// `CustomMessageTextView`
 final class CustomMessageTextView: UIView, Layoutable {
 
 	lazy var messageTextView: UITextView = {
@@ -17,23 +18,24 @@ final class CustomMessageTextView: UIView, Layoutable {
 		return view
 	}()
 
+	/// UIView
 	lazy var frameView: UIView = {
 		var view = UIView()
 		view.backgroundColor = .clear
 		return view
 	}()
 
+	/// Override this method to set your custom views here
 	func setupViews() {
 		addSubview(frameView)
 		addSubview(messageTextView)
 	}
 
+	/// Override this method to set your custom layout here
 	func setupLayout() {
 
 		messageTextView.snp.makeConstraints { $0.edges.equalToSuperview() }
-
 		frameView.snp.makeConstraints { $0.edges.equalToSuperview() }
-
 	}
 
 }

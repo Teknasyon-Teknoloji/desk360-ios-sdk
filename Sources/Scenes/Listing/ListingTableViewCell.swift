@@ -8,15 +8,20 @@
 import UIKit
 import DeviceKit
 
+/// `ListingTableViewCell`
 final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 
+	/// Container View
 	private lazy var containerView: UIView = {
 		var view = UIView()
 		view.layer.cornerRadius = 10
 		view.clipsToBounds = true
+		view.addSubview(stackView)
+		view.addSubview(iconImageView)
 		return view
 	}()
 
+	/// Message Label
 	private lazy var messageLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 1
@@ -24,16 +29,19 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 		return label
 	}()
 
+	/// Image View for icon
 	private lazy var iconImageView: UIImageView = {
 		let view = UIImageView()
 		view.contentMode = .scaleAspectFit
 		return view
 	}()
 
+	/// Date Label
 	private lazy var dateLabel: UILabel = {
 		return UILabel()
 	}()
 
+	/// Stack View for labels
 	private lazy var stackView: UIStackView = {
 		let view = UIStackView(arrangedSubviews: [messageLabel, dateLabel])
 		view.axis = .vertical
@@ -42,6 +50,7 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 		return view
 	}()
 
+	/// Set Background Colors
 	private var containerBackgroundColor: UIColor? {
 		didSet {
 			containerView.backgroundColor = containerBackgroundColor
@@ -51,14 +60,15 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 		}
 	}
 
+	/// Override this method to set your custom views here
 	func setupViews() {
 		selectionStyle = .none
-		containerView.addSubview(stackView)
-		containerView.addSubview(iconImageView)
 		addSubview(containerView)
 	}
 
+	/// Override this method to set your custom layout here
 	func setupLayout() {
+		
 		containerView.snp.makeConstraints { make in
 			make.leading.trailing.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
 			make.height.equalTo(UIButton.preferredHeight * 2)
@@ -83,21 +93,25 @@ final class ListingTableViewCell: UITableViewCell, Reusable, Layoutable {
 // MARK: - Configure
 internal extension ListingTableViewCell {
 
+	/// Create button type 1
 	func createContainerType1() {
 		containerView.layer.cornerRadius = 10
 		remakeContainerLayout()
 	}
 
+	/// Create button type 2
 	func createContainerType2() {
 		containerView.layer.cornerRadius = 4
 		remakeContainerLayout()
 	}
 
+	/// Create button type 3
 	func createContainerType3() {
 		containerView.layer.cornerRadius = 2
 		remakeContainerLayout()
 	}
 
+	/// Create button type 4
 	func createContainerType4() {
 		containerView.layer.cornerRadius = 0
 		containerView.snp.remakeConstraints { make in
@@ -107,6 +121,7 @@ internal extension ListingTableViewCell {
 		}
 	}
 
+	/// Remake container layout
 	func remakeContainerLayout() {
 		containerView.snp.remakeConstraints { make in
 			make.leading.trailing.top.equalToSuperview().inset(preferredSpacing * 0.5)
@@ -115,6 +130,7 @@ internal extension ListingTableViewCell {
 		}
 	}
 
+	/// Set default container layout
 	func setupContainerDefaultLayout() {
 		containerView.snp.remakeConstraints { make in
 			make.leading.trailing.bottom.equalToSuperview().inset(preferredSpacing * 0.5)
@@ -123,6 +139,7 @@ internal extension ListingTableViewCell {
 		}
 	}
 
+	/// Configuration for container View
 	func configureContainer() {
 		let type = Config.shared.model?.ticketListingScreen?.ticketListType
 		let shadowIsHidden = !(Config.shared.model?.ticketListingScreen?.ticketItemShadowIsHidden ?? false)
@@ -149,7 +166,10 @@ internal extension ListingTableViewCell {
 		containerView.layer.shadowOpacity = 0.3
 		containerView.clipsToBounds = false
 	}
+	
 	// swiftlint:disable function_body_length
+	/// Configuration for cell
+	/// - Parameter request: ticket for cell
 	func configure(for request: Ticket) {
 
 		self.backgroundColor = Colors.ticketListingScreenBackgroudColor

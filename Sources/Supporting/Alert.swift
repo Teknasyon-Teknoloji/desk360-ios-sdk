@@ -34,7 +34,13 @@ enum AlertButtonType: String {
 final class Alert {
 
 	static let shared = Alert()
-
+	
+	/// Showing alert. After the alert is closed, the page is also closed.
+	/// - Parameters:
+	///   - viewController: A viewcontroller to present alert on it.
+	///   - title: Alert's title
+	///   - message: Alert's message
+	///   - dissmis: If this value is true page will dismiss. If this value is false page will poping.
 	static func showAlertWithDismiss(viewController: UIViewController, title: String, message: String, dissmis: Bool ) {
 
 		let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
@@ -50,7 +56,12 @@ final class Alert {
 		viewController.present(alert, animated: true, completion: nil)
 
 	}
-
+	
+	/// Showing alert method.
+	/// - Parameters:
+	///   - viewController: A viewcontroller to present alert on it.
+	///   - title: Alert's title
+	///   - message: Alert's message
 	static func showAlert(viewController: UIViewController, title: String, message: String ) {
 
 		let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
@@ -59,7 +70,16 @@ final class Alert {
 		viewController.present(alert, animated: true, completion: nil)
 
 	}
-
+	
+	/// Showing alert method.
+	/// - Parameters:
+	///   - viewController: A viewcontroller to present alert on it.
+	///   - alertType: Alert's type
+	///   - title: Alert's title
+	///   - message: Alert's message
+	///   - buttons: Alert's buttons
+	///   - dismissAfter: if set this value alert will wait before close this time
+	///   - completion: completion action
 	func showAlert(viewController: UIViewController, withType alertType: AlertType? = .info, title: String? = "", message: String, buttons: [String]? = nil, dismissAfter: Double? = nil, completion: ((Int) -> Void)! = nil) {
 
 		let alert = UIAlertController(title: "Desk360", message: "connection.error.message".localize(), preferredStyle: UIAlertController.Style.alert)
