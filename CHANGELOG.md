@@ -1,3 +1,9 @@
+## Version 1.8.3
+
+* **Bug Fixes**
+  + Fix the email and name characters count labels layout.
+  
+
 ## Version 1.8.2
 
 * **Bug Fixes**

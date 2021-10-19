@@ -271,8 +271,8 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		}
 
         nameFieldLimit.snp.makeConstraints { make in
-            make.bottom.equalTo(nameTextField.snp.bottom).offset(8)
-            make.trailing.equalTo(nameTextField.snp.trailing)// .offset(8)
+            make.bottom.equalTo(nameTextField.snp.bottom).offset(-6)
+            make.trailing.equalTo(nameTextField.snp.trailing).offset(-6)
         }
 
 		emailTextField.snp.makeConstraints { make in
@@ -280,8 +280,8 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 		}
 
         emailFieldLimit.snp.makeConstraints { make in
-            make.bottom.equalTo(emailTextField.snp.bottom).offset(8)
-            make.trailing.equalTo(emailTextField.snp.trailing)// .offset(8)
+            make.bottom.equalTo(emailTextField.snp.bottom).offset(-6)
+            make.trailing.equalTo(emailTextField.snp.trailing).offset(-6)
         }
 
 		dropDownListView.snp.makeConstraints { make in
