@@ -114,8 +114,8 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 	func setupLayout() {
 
 		containerView.snp.makeConstraints { make in
-			make.top.trailing.equalToSuperview().inset(preferredSpacing / 2)
-			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
+            make.top.leading.trailing.equalToSuperview().inset(preferredSpacing / 2)
+            //make.w.equalToSuperview().inset(preferredSpacing * 2))
 		}
 
 		stackView.snp.makeConstraints {
@@ -138,8 +138,7 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		roundCorner()
-
+		//roundCorner()
 	}
 
     func clearCell() {
@@ -338,7 +337,7 @@ internal extension ReceiverMessageTableViewCell {
         if Desk360.conVC == nil { return }
 
         if inx == 1 {
-            previewPdfView.subviews.map({$0.removeFromSuperview()})
+           previewPdfView.subviews.map({$0.removeFromSuperview()})
         }
         self.stackView.addArrangedSubview(self.previewPdfView)
         self.previewPdfView.snp.remakeConstraints { remake in
@@ -361,10 +360,37 @@ internal extension ReceiverMessageTableViewCell {
 
         self.previewPdfView.isHidden = false
         pdfView.translatesAutoresizingMaskIntoConstraints = false
-        guard let document = PDFDocument(url: url) else { return }
-        pdfView.document = document
+       
+        
+        DispatchQueue.global(qos: .background).async {
+            guard let document = PDFDocument(url: url) else { return }
+            let image = self.drawPDFfromURL(url: url)
+            DispatchQueue.main.async {
+                pdfView.document = document
+            }
+        }
+        
     }
 
+    func drawPDFfromURL(url: URL) -> UIImage? {
+        guard let document = CGPDFDocument(url as CFURL) else { return nil }
+        guard let page = document.page(at: 1) else { return nil }
+
+        let pageRect = page.getBoxRect(.mediaBox)
+        let renderer = UIGraphicsImageRenderer(size: pageRect.size)
+        let img = renderer.image { ctx in
+            UIColor.white.set()
+            ctx.fill(pageRect)
+
+            ctx.cgContext.translateBy(x: 0.0, y: pageRect.size.height)
+            ctx.cgContext.scaleBy(x: 1.0, y: -1.0)
+
+            ctx.cgContext.drawPDFPage(page)
+        }
+
+        return img
+    }
+    
     @objc func didTapPlayButton(sender: UIButton) {
         if sender == nil {
             playButton.isSelected = !playButton.isSelected

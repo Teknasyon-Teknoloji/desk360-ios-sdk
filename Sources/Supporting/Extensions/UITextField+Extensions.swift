@@ -17,15 +17,29 @@ private var height: CGFloat = {
 }()
 
 final class SupportTextField: UITextField {
+    var padding = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
+   
+    init(padding: UIEdgeInsets = .init(top: 5, left: 10, bottom: 5, right: 10)) {
+        self.padding = padding
+        super.init(frame: .zero)
+    }
 
-	override func textRect(forBounds bounds: CGRect) -> CGRect {
-		return bounds.insetBy(dx: 10, dy: 5)
-	}
-
-	override func editingRect(forBounds bounds: CGRect) -> CGRect {
-		return bounds.inset(by: UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10))
-	}
-
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func textRect(forBounds bounds: CGRect) -> CGRect {
+        return bounds.inset(by: padding)
+    }
+    
+    override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
+        return bounds.inset(by: padding)
+    }
+    
+    override func editingRect(forBounds bounds: CGRect) -> CGRect {
+        return bounds.inset(by: padding)
+    }
+    
 }
 
 extension UITextField {

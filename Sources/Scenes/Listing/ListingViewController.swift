@@ -21,7 +21,8 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
     var refreshIcon = UIImageView()
     var aiv = UIActivityIndicatorView()
     var isDragReleased = false
-
+    private var retryCount = 0
+    
     convenience init(tickets: [Ticket]) {
         self.init()
         self.requests = tickets
@@ -63,13 +64,8 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         Desk360.isActive = true
 
         navigationItem.leftBarButtonItem = NavigationItems.close(target: self, action: #selector(didTapCloseButton))
-        // segmentcontrolButtonBarLayout()
         initialView()
-
-        try? Stores.registerCacheModel.save(Stores.registerModel.object)
-
         checkForUnreadMessageIcon()
-      //  fetchRequests(showLoading: false)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -155,7 +151,7 @@ extension ListingViewController {
 
         Desk360.token = Stores.tokenStore.object()
 
-		guard let registerModel = Stores.registerCacheModel.object else { return }
+		guard let registerModel = Stores.registerModel.object else { return }
 		guard let desk360Properties = Desk360.properties else { return }
 
 		guard registerModel.appId == desk360Properties.appID &&
@@ -328,10 +324,17 @@ private extension ListingViewController {
             self.layoutableView.setLoading(false)
             switch result {
             case .failure(let error):
+                // Check if the token has expired
                 if error.response?.statusCode == 400 {
-                    Desk360.isRegister = false
-                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
-                    return
+                    if self.retryCount <= 3 {
+                        Stores.registerExpiredAt.delete()
+                        self.initialView()
+                        self.retryCount += 1
+                    } else {
+                        self.retryCount = 0
+                        Desk360.isRegister = false
+                        Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                    }
                 }
             case .success(let response):
                 guard let tickets = try? response.map(DataResponse<[Ticket]>.self) else { return }
@@ -563,5 +566,4 @@ extension ListingViewController {
         aiv.hidesWhenStopped = false
         self.aiv.startAnimating()
     }
-
 }

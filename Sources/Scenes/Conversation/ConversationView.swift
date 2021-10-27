@@ -10,19 +10,6 @@ import UIKit
 /// This view is used to chat screen
 final class ConversationView: UIView, Layoutable, Loadingable {
 
-	/// Some keyboard library force main view. They change main view origin. This code protects this view from this situation. But if application has that keyboard libraries probably Desk360 has some viisual problems.
-	public override var frame: CGRect {
-		willSet {
-			if self.frame.origin.y < 0 {
-				isCustomKeyboardActive = true
-			}
-		}
-		didSet {
-			guard self.frame.origin.y < 0 else { return }
-			self.frame = oldValue
-		}
-	}
-
 	/// This parameter is used to detect third party keyboard actions.
 	var isCustomKeyboardActive = false
 
@@ -39,7 +26,7 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 	}()
 
 	lazy var conversationInputView: InputView = {
-		return InputView.create()
+        return InputView(frame: .init(origin: .zero, size: .init(width: frame.width, height: 96)))
 	}()
 
 	func setupViews() {
@@ -54,15 +41,6 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 		tableView.snp.makeConstraints { make in
 			make.leading.top.trailing.equalToSuperview()
 			make.bottom.equalToSuperview()
-		}
-	}
-
-	/// This method is used to adapt to keyboard actions
-	/// - Parameter bottomInset: this parameter is used to detect keyboard height
-    func remakeTableViewConstraint(bottomInset: CGFloat) {
-		tableView.snp.remakeConstraints { remakeConstraints in
-			remakeConstraints.leading.top.trailing.equalToSuperview()
-			remakeConstraints.bottom.equalToSuperview().inset(bottomInset)
 		}
 	}
 

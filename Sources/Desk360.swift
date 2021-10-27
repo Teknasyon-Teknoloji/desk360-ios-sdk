@@ -147,6 +147,7 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         Desk360.conVC?.refreshAction()
                     }
+                    Desk360.messageId = nil
                     return
                 }
             }
