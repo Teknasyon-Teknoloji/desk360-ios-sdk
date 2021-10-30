@@ -164,17 +164,14 @@ class InputView: UIView, Layoutable {
     
     
     func reset(isClearText: Bool = true) {
-        self.invalidateIntrinsicContentSize()
+      
         DispatchQueue.main.async {
-            // self.setLoading(false)
+           // self.setLoading(false)
             if isClearText {
                 self.textView.text = ""
             }
-            //     self.frame = self.initialFrame
             self.textView.isScrollEnabled = false
-            
             self.sendButton.isEnabled = false
-            self.layoutIfNeeded()
             self.attachmentView.clear()
         }
     }

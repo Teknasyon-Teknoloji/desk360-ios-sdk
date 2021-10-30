@@ -360,35 +360,9 @@ internal extension ReceiverMessageTableViewCell {
 
         self.previewPdfView.isHidden = false
         pdfView.translatesAutoresizingMaskIntoConstraints = false
-       
-        
-        DispatchQueue.global(qos: .background).async {
-            guard let document = PDFDocument(url: url) else { return }
-            let image = self.drawPDFfromURL(url: url)
-            DispatchQueue.main.async {
-                pdfView.document = document
-            }
+        PDFDocumentCache.loadDocument(fromURL: url) { document in
+            pdfView.document = document
         }
-        
-    }
-
-    func drawPDFfromURL(url: URL) -> UIImage? {
-        guard let document = CGPDFDocument(url as CFURL) else { return nil }
-        guard let page = document.page(at: 1) else { return nil }
-
-        let pageRect = page.getBoxRect(.mediaBox)
-        let renderer = UIGraphicsImageRenderer(size: pageRect.size)
-        let img = renderer.image { ctx in
-            UIColor.white.set()
-            ctx.fill(pageRect)
-
-            ctx.cgContext.translateBy(x: 0.0, y: pageRect.size.height)
-            ctx.cgContext.scaleBy(x: 1.0, y: -1.0)
-
-            ctx.cgContext.drawPDFPage(page)
-        }
-
-        return img
     }
     
     @objc func didTapPlayButton(sender: UIButton) {
@@ -536,4 +510,67 @@ internal extension ReceiverMessageTableViewCell {
 		containerView.clipsToBounds = false
 	}
 
+}
+
+import PersistenceKit
+
+@available(iOS 11.0, *)
+struct PDFDocumentSnapshot: Codable, Identifiable {
+    typealias ID = URL
+    
+    var url: URL
+    let doc: PDFDocument?
+
+    init(url: URL, doc: PDFDocument?) {
+        self.url = url
+        self.doc = doc
+    }
+    
+    static var idKey: WritableKeyPath<PDFDocumentSnapshot, URL> {
+        \PDFDocumentSnapshot.url
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case url
+        case data
+    }
+    
+    init(from decoder: Decoder) throws {
+        var continer = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.url = try continer.decode(URL.self, forKey: .url)
+        let pdfData = try continer.decode(Data.self, forKey: .data)
+        self.doc = PDFDocument(data: pdfData)
+        doc?.delegate
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var continer = try encoder.container(keyedBy: CodingKeys.self)
+        try continer.encode(doc?.dataRepresentation(), forKey: .data)
+        try continer.encode(url, forKey: .url)
+    }
+}
+
+@available(iOS 11.0, *)
+final class PDFDocumentCache {
+
+    @available(iOS 11.0, *)
+    private static var storage = FilesStore<PDFDocumentSnapshot>(uniqueIdentifier: "desk360_pdf_docs_cache")
+    
+    
+    static func loadDocument(fromURL url: URL, completion: ((PDFDocument?) -> Void)?) {
+        if let snapshot = storage.object(withId: url), let doc = snapshot.doc {
+           completion?(doc)
+        } else {
+            DispatchQueue.global(qos: .background).async {
+                if let pdfDocument = PDFDocument(url: url) {
+                    let snapShot = PDFDocumentSnapshot(url: url, doc: pdfDocument)
+                    try? storage.save(snapShot)
+                    DispatchQueue.main.async {
+                        completion?(pdfDocument)
+                    }
+                }
+            }
+        }
+    }
 }

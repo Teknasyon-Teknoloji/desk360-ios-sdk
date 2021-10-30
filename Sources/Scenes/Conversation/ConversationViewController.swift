@@ -15,6 +15,8 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	var message: String = ""
     var files = [FileData]()
     
+    lazy var chatInputView =  InputView(frame: .init(origin: .zero, size: .init(width: view.frame.width, height: 96)))
+    
 	convenience init(request: Ticket) {
 		self.init()
 		self.request = request
@@ -29,10 +31,11 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	}
 
 	override var inputAccessoryView: UIView? {
-		let view = layoutableView.conversationInputView
-		view.delegate = self
-		view.configure(for: request)
-		return view
+//		/let view = layoutableView.conversationInputView
+//		view.delegate = self
+//		view.configure(for: request)
+//		return view
+        return chatInputView
 	}
 
 	override var canBecomeFirstResponder: Bool {
@@ -74,9 +77,11 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		super.viewDidLoad()
 
 		registerForKeyboardEvents()
-		layoutableView.conversationInputView.delegate = self
-		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
-        layoutableView.tableView.contentInset.bottom = layoutableView.conversationInputView.frame.height
+        chatInputView.layoutSubviews()
+        chatInputView.delegate = self
+        chatInputView.configure(for: request)
+        chatInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
+        layoutableView.tableView.contentInset.bottom = chatInputView.frame.height
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -87,10 +92,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		currentLineCount = 0
 		layoutableView.tableView.dataSource = self
 		layoutableView.tableView.delegate = self
-
-		layoutableView.conversationInputView.layoutIfNeeded()
-		layoutableView.conversationInputView.layoutSubviews()
-
+        
 		navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 		navigationController?.interactivePopGestureRecognizer?.delegate  = self
 		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
@@ -117,11 +119,8 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
         Desk360.conVC = nil
-		layoutableView.conversationInputView.textView.resignFirstResponder()
-		layoutableView.conversationInputView.layoutIfNeeded()
-		layoutableView.conversationInputView.layoutSubviews()
+        chatInputView.textView.resignFirstResponder()
 		setRead()
-
 	}
 
 	func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -168,7 +167,7 @@ extension ConversationViewController: InputViewDelegate {
 	}
 
 	func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String) {
-		layoutableView.conversationInputView.setLoading(true)
+        chatInputView.setLoading(true)
 		isAddedMessage = true
 		addMessage(text, to: request)
 	}
@@ -206,15 +205,16 @@ extension ConversationViewController: InputViewDelegate {
         alert.addAction(showImagePicker)
         alert.addAction(cancelAction)
         if let popoverPresentationController = alert.popoverPresentationController {
-            popoverPresentationController.sourceView = layoutableView.conversationInputView.attachButton
-            popoverPresentationController.sourceRect = layoutableView.conversationInputView.attachButton.bounds
+            popoverPresentationController.sourceView = chatInputView.attachButton
+            popoverPresentationController.sourceRect = chatInputView.attachButton.bounds
         }
+
         present(alert, animated: true)
     }
 
     @objc func didTapDocumentBrowse(completion: @escaping (() -> Void)) {
 
-        let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.adobe.pdf"], in: .open)
+        let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.adobe.pdf"], in: .import)
         documentPicker.delegate = self
         self.present(documentPicker, animated: true) {
             self.isConfigure = true
@@ -244,8 +244,8 @@ extension ConversationViewController: InputViewDelegate {
             self.manageAttachView()
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-            self.layoutableView.conversationInputView.textView.becomeFirstResponder()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.chatInputView.textView.becomeFirstResponder()
         }
     }
 
@@ -324,7 +324,7 @@ extension ConversationViewController: InputViewDelegate {
     
     func manageAttachView() {
         guard files.count <= 5 else { return }
-        layoutableView.conversationInputView.attachmentView.append(attachementsData: files)
+        chatInputView.attachmentView.append(attachementsData: files)
     }
 }
 
@@ -396,7 +396,7 @@ extension ConversationViewController {
 	func addMessage(_ message: String, to request: Ticket) {
 
 		self.message = message
-        self.layoutableView.conversationInputView.reset(isClearText: true)
+        self.chatInputView.reset(isClearText: true)
 		guard Desk360.isReachable else {
 			networkError()
 			return
@@ -407,8 +407,6 @@ extension ConversationViewController {
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
-		layoutableView.conversationInputView.resignFirstResponder()
-		self.layoutableView.conversationInputView.reset()
         let attachFiles = self.files
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
             self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
@@ -419,13 +417,13 @@ extension ConversationViewController {
         var attach = [MultipartFormData]()
         if attachFiles.count > 0 {
             attach = attachFiles.map({ Moya.MultipartFormData(provider: .data($0.data), name: "attachments[]", fileName: $0.name.lowercased(), mimeType: $0.type ) })
-            layoutableView.conversationInputView.setLoading(true)
+            chatInputView.setLoading(true)
         }
         let fieldData = MultipartFormData(provider: .data(message.data(using: .utf8)!), name: "message")
         attach.insert(fieldData, at: 0)
         Desk360.apiProvider.request(.ticketMessages(request.id, attach: attach)) { [weak self] result in
 			guard let self = self else { return }
-			self.layoutableView.conversationInputView.setLoading(false)
+			self.chatInputView.setLoading(false)
 			switch result {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
@@ -437,7 +435,7 @@ extension ConversationViewController {
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 					self.isAddedMessage = false
 					self.showActiveCheckMark()
-                   self.scrollToBottom(animated: true)
+                    self.scrollToBottom(animated: true)
 				}
 			}
 		}
@@ -597,12 +595,9 @@ extension ConversationViewController {
 
 	/// This method is used to pop action on navigationcontroller
 	@objc func didTapBackButton() {
-		layoutableView.conversationInputView.textView.resignFirstResponder()
-		layoutableView.conversationInputView.layoutIfNeeded()
-		layoutableView.conversationInputView.layoutSubviews()
+        chatInputView.textView.resignFirstResponder()
 		navigationController?.popViewController(animated: true)
 	}
-
 }
 
 // MARK: - Configure
@@ -642,8 +637,8 @@ extension ConversationViewController {
         view.addSubview(refreshIcon)
         aiv.addSubview(view)
         layoutableView.tableView.tableHeaderView = aiv
-        layoutableView.conversationInputView.attachButton.isHidden = false
-        layoutableView.conversationInputView.sendButton.isHidden = false
+        chatInputView.attachButton.isHidden = false
+        chatInputView.sendButton.isHidden = false
 	}
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -874,4 +869,12 @@ extension String {
         label.sizeToFit()
         return label.frame.size
     }
+}
+
+extension UIScrollView {
+   func scrollToBottom(animated: Bool) {
+     if self.contentSize.height < self.bounds.size.height { return }
+     let bottomOffset = CGPoint(x: 0, y: self.contentSize.height - self.bounds.size.height)
+     self.setContentOffset(bottomOffset, animated: animated)
+  }
 }

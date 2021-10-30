@@ -16,18 +16,18 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 	lazy var tableView: UITableView = {
 		let view = UITableView()
 		view.separatorStyle = .none
-		view.keyboardDismissMode = .none
+		view.keyboardDismissMode = .onDrag
 		view.showsVerticalScrollIndicator = false
-		view.contentInset = UIEdgeInsets.init(top: preferredSpacing, left: 0, bottom: preferredSpacing, right: 0)
+//		view.contentInset = UIEdgeInsets.init(top: preferredSpacing, left: 0, bottom: preferredSpacing, right: 0)
 
 		view.rowHeight = UITableView.automaticDimension
 		view.estimatedRowHeight = 200.0
 		return view
 	}()
 
-	lazy var conversationInputView: InputView = {
-        return InputView(frame: .init(origin: .zero, size: .init(width: frame.width, height: 96)))
-	}()
+//	lazy var conversationInputView: InputView = {
+//        return InputView(frame: .init(origin: .zero, size: .init(width: frame.width, height: 96)))
+//	}()
 
 	func setupViews() {
 		addSubview(tableView)
@@ -50,7 +50,7 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 private extension ConversationView {
 
 	@objc func didTap() {
-		conversationInputView.resignFirstResponder()
+		// conversationInputView.resignFirstResponder()
 	}
 
 }
