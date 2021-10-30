@@ -13,7 +13,10 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 
 	var request: Ticket!
 	var message: String = ""
-    var files = [fileData]()
+    var files = [FileData]()
+    
+    lazy var chatInputView =  InputView(frame: .init(origin: .zero, size: .init(width: view.frame.width, height: 96)))
+    
 	convenience init(request: Ticket) {
 		self.init()
 		self.request = request
@@ -28,10 +31,11 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	}
 
 	override var inputAccessoryView: UIView? {
-		let view = layoutableView.conversationInputView
-		view.delegate = self
-		view.configure(for: request)
-		return view
+//		/let view = layoutableView.conversationInputView
+//		view.delegate = self
+//		view.configure(for: request)
+//		return view
+        return chatInputView
 	}
 
 	override var canBecomeFirstResponder: Bool {
@@ -65,7 +69,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	}()
 
 	func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
-		scrollToBottom(animated: false)
+        scrollToBottom(animated: false)
 		return false
 	}
 
@@ -73,8 +77,11 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		super.viewDidLoad()
 
 		registerForKeyboardEvents()
-		layoutableView.conversationInputView.delegate = self
-		layoutableView.conversationInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
+        chatInputView.layoutSubviews()
+        chatInputView.delegate = self
+        chatInputView.configure(for: request)
+        chatInputView.createRequestButton.addTarget(self, action: #selector(didTapNewRequestButton), for: .touchUpInside)
+        layoutableView.tableView.contentInset.bottom = chatInputView.frame.height
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -85,24 +92,19 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		currentLineCount = 0
 		layoutableView.tableView.dataSource = self
 		layoutableView.tableView.delegate = self
-
-		layoutableView.conversationInputView.layoutIfNeeded()
-		layoutableView.conversationInputView.layoutSubviews()
-
+        
 		navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 		navigationController?.interactivePopGestureRecognizer?.delegate  = self
 		navigationItem.leftBarButtonItem = NavigationItems.back(target: self, action: #selector(didTapBackButton))
 
 		configure()
-
-		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		layoutableView.setLoading(self.request.messages.isEmpty)
 		readRequest(request)
-//        layoutableView.conversationInputView.resetAttachView()
+        self.scrollToBottom(animated: true)
 	}
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -117,11 +119,8 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
         Desk360.conVC = nil
-		layoutableView.conversationInputView.textView.resignFirstResponder()
-		layoutableView.conversationInputView.layoutIfNeeded()
-		layoutableView.conversationInputView.layoutSubviews()
+        chatInputView.textView.resignFirstResponder()
 		setRead()
-
 	}
 
 	func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -168,7 +167,7 @@ extension ConversationViewController: InputViewDelegate {
 	}
 
 	func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String) {
-		layoutableView.conversationInputView.setLoading(true)
+        chatInputView.setLoading(true)
 		isAddedMessage = true
 		addMessage(text, to: request)
 	}
@@ -177,27 +176,27 @@ extension ConversationViewController: InputViewDelegate {
         guard files.count <= 4 else { return }
         view.attachButton.isHidden = true
         view.sendButton.isHidden = true
-        view.isHidden = true
+        self.becomeFirstResponder()
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.modalPresentationStyle = .fullScreen
         let showImagePicker = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentImagesText ?? "Images", style: .default) { _ in
             self.didTapImagePicker {
                 view.attachButton.isHidden = false
                 view.sendButton.isHidden = false
-                view.isHidden = false
+               // view.isHidden = false
             }
         }
         let showFilePicker = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentBrowseText ?? "Browse", style: .default) { _ in
             self.didTapDocumentBrowse {
                 view.attachButton.isHidden = false
                 view.sendButton.isHidden = false
-                view.isHidden = false
+               // view.isHidden = false
             }
         }
         let cancelAction = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentCancelText ?? "Cancel", style: .cancel) { _ in
             view.attachButton.isHidden = false
             view.sendButton.isHidden = false
-            view.isHidden = false
+            //view.isHidden = false
         }
 
         if #available(iOS 11.0, *) {
@@ -206,9 +205,10 @@ extension ConversationViewController: InputViewDelegate {
         alert.addAction(showImagePicker)
         alert.addAction(cancelAction)
         if let popoverPresentationController = alert.popoverPresentationController {
-            popoverPresentationController.sourceView = layoutableView.conversationInputView.attachButton
-            popoverPresentationController.sourceRect = layoutableView.conversationInputView.attachButton.bounds
+            popoverPresentationController.sourceView = chatInputView.attachButton
+            popoverPresentationController.sourceRect = chatInputView.attachButton.bounds
         }
+
         present(alert, animated: true)
     }
 
@@ -238,9 +238,14 @@ extension ConversationViewController: InputViewDelegate {
             }
             return
         }
-        files.append(fileData(name: name, data: pdfData, url: url.absoluteString, type: "pdf"))
+     
+        files.append(FileData(name: name, data: pdfData, url: url.absoluteString, type: "pdf"))
         controller.dismiss(animated: true) {
             self.manageAttachView()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.chatInputView.textView.becomeFirstResponder()
         }
     }
 
@@ -289,7 +294,7 @@ extension ConversationViewController: InputViewDelegate {
                 }
                 return
             }
-            files.append(fileData(name: name, data: Data(referencing: data), url: imgUrl.absoluteString, type: "image/jpeg"))
+            files.append(FileData(name: name, data: Data(referencing: data), url: imgUrl.absoluteString, type: "image/jpeg"))
         } else {
             if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
                 guard let data = try? NSData(contentsOf: videoUrl as URL, options: .mappedIfSafe) else { return }
@@ -299,7 +304,7 @@ extension ConversationViewController: InputViewDelegate {
                     }
                     return
                 }
-                files.append(fileData(name: name, data: Data(referencing: data), url: videoUrl.absoluteString, type: "video"))
+                files.append(FileData(name: name, data: Data(referencing: data), url: videoUrl.absoluteString, type: "video"))
             }
         }
 
@@ -316,103 +321,10 @@ extension ConversationViewController: InputViewDelegate {
             self.manageAttachView()
         }
     }
-
+    
     func manageAttachView() {
         guard files.count <= 5 else { return }
-        for v in self.layoutableView.conversationInputView.stackView.subviews {
-            v.removeFromSuperview()
-        }
-        layoutableView.conversationInputView.resetAttachView()
-        layoutableView.conversationInputView.isHidden = false
-        layoutableView.conversationInputView.attachButton.isHidden = false
-        layoutableView.conversationInputView.sendButton.isHidden = false
-        if files.count <= 0 {
-            return
-        }
-        var height: CGFloat = 22
-        var maxWidth: CGFloat = 0
-        var hStack = getAStackView()
-        hStack.frame = CGRect(x: 0, y: 0, width: self.layoutableView.conversationInputView.stackView.frame.size.width, height: 20)
-        var i = 0
-        var yPoint: CGFloat = 0
-        for file in files {
-            let lbl = UILabel()
-            lbl.numberOfLines = 0
-            lbl.text = file.name
-            lbl.textColor = Colors.receiverFileNameColor
-            lbl.font = .systemFont(ofSize: 12)
-            lbl.sizeToFit()
-            lbl.adjustsFontSizeToFitWidth = true
-            lbl.minimumScaleFactor = 0.3
-            lbl.frame = CGRect(x: 4, y: 0, width: lbl.frame.width, height: 20)
-
-            let view = UIView(frame: CGRect(x: maxWidth, y: 0, width: lbl.frame.width + 30, height: 20))
-            view.backgroundColor = Colors.attachBgColor
-            view.addSubview(lbl)
-            view.layer.cornerRadius = 4
-            view.layer.masksToBounds = true
-            maxWidth = maxWidth + lbl.frame.width + 32
-
-            if i == 0 {
-                self.layoutableView.conversationInputView.stackView.addSubview(hStack)
-            }
-            if maxWidth > self.layoutableView.conversationInputView.stackView.frame.size.width {
-                yPoint = yPoint + 22
-                height = height + 22
-                view.frame = CGRect(x: 0, y: 0, width: lbl.frame.width + 30, height: 20)
-                hStack = getAStackView()
-                hStack.frame = CGRect(x: 0, y: yPoint, width: self.layoutableView.conversationInputView.stackView.frame.size.width, height: 20)
-                self.layoutableView.conversationInputView.stackView.addSubview(hStack)
-                maxWidth = lbl.frame.width + 32
-            }
-
-            let btn = UIButton(frame: CGRect(x: lbl.frame.size.width + 4, y: 0, width: 24, height: 20))
-            btn.addTarget(self, action: #selector(removeAttach(_:)), for: .touchUpInside)
-            btn.accessibilityIdentifier = file.url
-            btn.setImage(Desk360.Config.Images.attachRemoveIcon, for: .normal)
-            btn.backgroundColor = .clear
-            view.addSubview(btn)
-            hStack.addSubview(view)
-
-            i = i + 1
-        }
-
-        self.layoutableView.conversationInputView.setFrame(height: height)
-        let text = self.layoutableView.conversationInputView.textView.text
-        if text != "" {
-            DispatchQueue.main.async {
-                self.layoutableView.conversationInputView.textView.text = "\(text)."
-                self.layoutableView.conversationInputView.textViewDidChange(self.layoutableView.conversationInputView.textView)
-                self.layoutableView.conversationInputView.textView.text = text
-                self.layoutableView.conversationInputView.textViewDidChange(self.layoutableView.conversationInputView.textView)
-            }
-        }
-    }
-
-    func getAStackView() -> UIView {
-        let hStack = UIView()
-        return hStack
-    }
-
-    @objc func removeAttach(_ sender: UIButton) {
-        var i = 0
-        for file in files {
-            if file.url == sender.accessibilityIdentifier {
-                files.remove(at: i)
-                manageAttachView()
-                break
-            }
-            i = i + 1
-        }
-        let text = self.layoutableView.conversationInputView.textView.text
-        if text != "" {
-            DispatchQueue.main.async {
-                self.layoutableView.conversationInputView.textView.text = "\(text)."
-                self.layoutableView.conversationInputView.textViewDidChange(self.layoutableView.conversationInputView.textView)
-                self.layoutableView.conversationInputView.textView.text = text
-                self.layoutableView.conversationInputView.textViewDidChange(self.layoutableView.conversationInputView.textView)
-            }
-        }
+        chatInputView.attachmentView.append(attachementsData: files)
     }
 }
 
@@ -484,7 +396,7 @@ extension ConversationViewController {
 	func addMessage(_ message: String, to request: Ticket) {
 
 		self.message = message
-
+        self.chatInputView.reset(isClearText: true)
 		guard Desk360.isReachable else {
 			networkError()
 			return
@@ -495,24 +407,23 @@ extension ConversationViewController {
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
-		layoutableView.conversationInputView.resignFirstResponder()
-		self.layoutableView.conversationInputView.reset()
         let attachFiles = self.files
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
             self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
             self.files.removeAll()
             self.manageAttachView()
+            self.scrollToBottom(animated: true)
 		}
         var attach = [MultipartFormData]()
         if attachFiles.count > 0 {
             attach = attachFiles.map({ Moya.MultipartFormData(provider: .data($0.data), name: "attachments[]", fileName: $0.name.lowercased(), mimeType: $0.type ) })
-            layoutableView.conversationInputView.setLoading(true)
+            chatInputView.setLoading(true)
         }
         let fieldData = MultipartFormData(provider: .data(message.data(using: .utf8)!), name: "message")
         attach.insert(fieldData, at: 0)
         Desk360.apiProvider.request(.ticketMessages(request.id, attach: attach)) { [weak self] result in
 			guard let self = self else { return }
-			self.layoutableView.conversationInputView.setLoading(false)
+			self.chatInputView.setLoading(false)
 			switch result {
 			case .failure(let error):
 				if error.response?.statusCode == 400 {
@@ -524,6 +435,7 @@ extension ConversationViewController {
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 					self.isAddedMessage = false
 					self.showActiveCheckMark()
+                    self.scrollToBottom(animated: true)
 				}
 			}
 		}
@@ -683,12 +595,9 @@ extension ConversationViewController {
 
 	/// This method is used to pop action on navigationcontroller
 	@objc func didTapBackButton() {
-		layoutableView.conversationInputView.textView.resignFirstResponder()
-		layoutableView.conversationInputView.layoutIfNeeded()
-		layoutableView.conversationInputView.layoutSubviews()
+        chatInputView.textView.resignFirstResponder()
 		navigationController?.popViewController(animated: true)
 	}
-
 }
 
 // MARK: - Configure
@@ -728,8 +637,8 @@ extension ConversationViewController {
         view.addSubview(refreshIcon)
         aiv.addSubview(view)
         layoutableView.tableView.tableHeaderView = aiv
-        layoutableView.conversationInputView.attachButton.isHidden = false
-        layoutableView.conversationInputView.sendButton.isHidden = false
+        chatInputView.attachButton.isHidden = false
+        chatInputView.sendButton.isHidden = false
 	}
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -818,42 +727,154 @@ extension ConversationViewController: KeyboardObserving {
 	func keyboardWillShow(_ notification: KeyboardNotification?) { }
 
 	func keyboardWillHide(_ notification: KeyboardNotification?) {
-
-		layoutableView.remakeTableViewConstraint(bottomInset: layoutableView.conversationInputView.frame.size.height)
-        if Desk360.conVC != nil {
-            scrollToBottom(animated: false)
-        }
-
-		layoutableView.conversationInputView.layoutIfNeeded()
-		layoutableView.conversationInputView.layoutSubviews()
 	}
 
 	func keyboardDidHide(_ notification: KeyboardNotification?) {}
 	func keyboardDidShow(_ notification: KeyboardNotification?) {}
 	func keyboardWillChangeFrame(_ notification: KeyboardNotification?) {
-
-		guard let keyboardEndFrame = notification?.endFrame else { return }
-
-		currentLineCount = Int(layoutableView.conversationInputView.textView.frame.height / (layoutableView.conversationInputView.textView.font?.lineHeight ?? 1))
-
-		var safeArea: CGFloat = 0
-
-		if layoutableView.isCustomKeyboardActive {
-			safeArea = safeAreaBottom
-		}
-
-		layoutableView.remakeTableViewConstraint(bottomInset: keyboardEndFrame.size.height - safeArea)
-        if Desk360.conVC != nil {
-            scrollToBottom(animated: false)
-        }
 	}
+    
 	func keyboardDidChangeFrame(_ notification: KeyboardNotification?) {}
 
 }
 
-struct fileData {
+struct FileData: Equatable {
     var name: String
     var data: Data
     var url: String
     var type: String
+}
+
+
+class AttachmentViewCell: UICollectionViewCell, Reusable {
+    static var reuseIdentifier: String {
+        String(describing: self)
+    }
+    
+    var onDelete: ((FileData) -> Void)?
+    
+    var fileData: FileData? {
+        didSet {
+            fileNameLabel.text = fileData?.name
+        }
+    }
+    
+    lazy var fileNameLabel: UILabel = {
+        let label = UILabel()
+        // label.numberOfLines = 0
+        label.textColor = .black// Colors.receiverFileNameColor
+        label.font = .systemFont(ofSize: 12)
+        label.sizeToFit()
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.3
+        return label
+    }()
+    
+    lazy var deleteButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        button.addTarget(self, action: #selector(removeAttach(_:)), for: .touchUpInside)
+        button.setImage(Desk360.Config.Images.attachRemoveIcon, for: .normal)
+        button.backgroundColor = .clear
+        return button
+    }()
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let container: UIView = .hStack(alignment: .fill, distribution: .fill, spacing: 4, [fileNameLabel, deleteButton])
+        addSubview(container)
+        container.pinToSuperviewEdges()
+    }
+
+    @objc func removeAttach(_ sender: UIButton) {
+        guard let fileData = fileData else { return }
+        onDelete?(fileData)
+    }
+}
+
+class RemovableAttachmentView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    private var attachments: [FileData] = []
+    
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 8
+        layout.minimumInteritemSpacing = 8
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(AttachmentViewCell.self, forCellWithReuseIdentifier: AttachmentViewCell.reuseIdentifier)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundColor = .clear
+        return collectionView
+    }()
+    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: UIView.noIntrinsicMetric, height: CGFloat(attachments.count) * 20.0)
+    }
+    
+    func append(attachementData data: FileData) {
+        attachments.append(data)
+        collectionView.reloadData()
+        collectionView.scrollToItem(at: IndexPath(item: attachments.count - 1, section: 0), at: .bottom, animated: true)
+    }
+    
+    func append(attachementsData data: [FileData]) {
+        attachments.removeAll()
+        data.forEach { self.append(attachementData: $0) }
+    }
+    
+    func clear() {
+        attachments.removeAll()
+        collectionView.reloadData()
+    }
+    
+    func delete(attachment: FileData) {
+        attachments.removeAll(where: { $0 == attachment })
+        collectionView.reloadData()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+       // var stack: UIView = .vStack(alignment: .fill, distribution: .fill, spacing: 4, attachments)
+        addSubview(collectionView)
+        collectionView.pinToSuperviewEdges()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AttachmentViewCell.reuseIdentifier, for: indexPath) as? AttachmentViewCell else { fatalError() }
+        cell.fileData = attachments[indexPath.item]
+        cell.onDelete = { data in
+            self.delete(attachment: data)
+        }
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = attachments[indexPath.item].name.size(constraintedWidth: collectionView.frame.width).width
+        return .init(width: width + 10, height: 30)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return attachments.count
+    }
+}
+
+
+extension String {
+    func size(constraintedWidth width: CGFloat, font: UIFont = .systemFont(ofSize: 14)) -> CGSize {
+        let label =  UILabel(frame: CGRect(x: 0, y: 0, width: width, height: .greatestFiniteMagnitude))
+        label.numberOfLines = 0
+        label.text = self
+        label.font = font
+        label.lineBreakMode = .byWordWrapping
+        label.sizeToFit()
+        return label.frame.size
+    }
+}
+
+extension UIScrollView {
+   func scrollToBottom(animated: Bool) {
+     if self.contentSize.height < self.bounds.size.height { return }
+     let bottomOffset = CGPoint(x: 0, y: self.contentSize.height - self.bounds.size.height)
+     self.setContentOffset(bottomOffset, animated: animated)
+  }
 }

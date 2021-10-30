@@ -1,3 +1,11 @@
+## Version 1.8.4
+
+* **Features**
+  + Added support for PDF docuements caching.
+* **Bug Fixes**
+  + Fix the issue that casuses the input view to be resigned when scrollling.
+  + Fix an issue preventing the SDK from opening correctly.
+
 ## Version 1.8.3
 
 * **Bug Fixes**

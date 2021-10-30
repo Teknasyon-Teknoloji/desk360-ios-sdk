@@ -37,7 +37,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	}()
 
 	internal lazy var nameTextField: UITextField = {
-		var field = SupportTextField()
+        var field = SupportTextField(padding: .init(top: 0, left: 10, bottom: 0, right: 50))
 		field.setTextType(.generic)
 		field.accessibilityIdentifier = "name"
 		field.tag = 1
@@ -61,7 +61,7 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 	}()
 
 	internal lazy var emailTextField: UITextField = {
-		var field = SupportTextField()
+		var field = SupportTextField(padding: .init(top: 0, left: 10, bottom: 0, right: 50))
 		field.setTextType(.emailAddress)
 		field.tag = 2
 		field.accessibilityIdentifier = "email"
@@ -265,25 +265,14 @@ final class CreateRequestView: UIView, Layoutable, Loadingable {
 
 	// swiftlint:disable function_body_length
 	func setupLayout() {
-
 		nameTextField.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight * 1.2)
 		}
-
-        nameFieldLimit.snp.makeConstraints { make in
-            make.bottom.equalTo(nameTextField.snp.bottom).offset(-6)
-            make.trailing.equalTo(nameTextField.snp.trailing).offset(-6)
-        }
-
+        
 		emailTextField.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight * 1.2)
 		}
-
-        emailFieldLimit.snp.makeConstraints { make in
-            make.bottom.equalTo(emailTextField.snp.bottom).offset(-6)
-            make.trailing.equalTo(emailTextField.snp.trailing).offset(-6)
-        }
-
+        
 		dropDownListView.snp.makeConstraints { make in
 			make.height.equalTo(UITextField.preferredHeight * 1.2)
 			make.width.equalTo(UIScreen.main.bounds.width - preferredSpacing * 6)
@@ -794,17 +783,8 @@ extension CreateRequestView {
 	@objc func didTap() {
 		if !dropDownListView.isCollapsed {
 			self.dropDownListView.hideList()
-			//			self.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
 		}
 		self.endEditing(true)
-		//		scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
-		guard !dropDownListView.isCollapsed else { return }
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-			//			self.dropDownListView.hideList()
-			//			self.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
-			//			self.scrollView.scroll
-			//			self.scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
-		}
 	}
 
 	// swiftlint:disable cyclomatic_complexity
@@ -931,6 +911,7 @@ private extension CreateRequestView {
 		view.tintColor = Colors.createScreenFormInputFocusColor
 
 		if let textField = view as? UITextField {
+            setupLimitFileds(textField: textField, bottomInset: 4, trailingInset: 0)
 			textField.addUnderLine()
 		}
 
@@ -941,12 +922,30 @@ private extension CreateRequestView {
 			textView.layer.borderColor = Colors.createScreenFormInputBorderColor.cgColor
 			textView.textContainerInset = UIEdgeInsets.init(top: preferredSpacing / 2, left: preferredSpacing / 2, bottom: preferredSpacing / 2, right: preferredSpacing / 2)
 		}
-
 	}
 
+    func setupLimitFileds(textField: UITextField, bottomInset: CGFloat, trailingInset: CGFloat) {
+        if textField == nameTextField {
+            nameFieldLimit.snp.makeConstraints { make in
+                make.bottom.equalTo(nameTextField.snp.bottom).offset(bottomInset)
+                make.trailing.equalTo(nameTextField.snp.trailing).offset(trailingInset)
+            }
+        }
+        
+        if textField == emailTextField {
+            emailFieldLimit.snp.makeConstraints { make in
+                make.bottom.equalTo(emailTextField.snp.bottom).offset(bottomInset)
+                make.trailing.equalTo(emailTextField.snp.trailing).offset(trailingInset)
+            }
+            
+        }
+    }
+    
 	func setFieldStyle2(_ field: UIView) {
 		field.tintColor = Colors.createScreenFormInputFocusColor
-
+        if let tf = field as? UITextField {
+            setupLimitFileds(textField: tf, bottomInset: -4, trailingInset: -6)
+        }
 		if let textView = field as? UITextView {
 			textView.textContainerInset = UIEdgeInsets.init(top: preferredSpacing, left: preferredSpacing / 2, bottom: preferredSpacing / 2, right: preferredSpacing / 2)
 		}

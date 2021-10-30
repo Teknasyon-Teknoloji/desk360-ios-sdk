@@ -114,8 +114,8 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 	func setupLayout() {
 
 		containerView.snp.makeConstraints { make in
-			make.top.trailing.equalToSuperview().inset(preferredSpacing / 2)
-			make.width.equalTo(UIScreen.main.bounds.size.minDimension - (preferredSpacing * 2))
+            make.top.leading.trailing.equalToSuperview().inset(preferredSpacing / 2)
+            //make.w.equalToSuperview().inset(preferredSpacing * 2))
 		}
 
 		stackView.snp.makeConstraints {
@@ -138,8 +138,7 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		roundCorner()
-
+		//roundCorner()
 	}
 
     func clearCell() {
@@ -338,7 +337,7 @@ internal extension ReceiverMessageTableViewCell {
         if Desk360.conVC == nil { return }
 
         if inx == 1 {
-            previewPdfView.subviews.map({$0.removeFromSuperview()})
+           previewPdfView.subviews.map({$0.removeFromSuperview()})
         }
         self.stackView.addArrangedSubview(self.previewPdfView)
         self.previewPdfView.snp.remakeConstraints { remake in
@@ -361,10 +360,11 @@ internal extension ReceiverMessageTableViewCell {
 
         self.previewPdfView.isHidden = false
         pdfView.translatesAutoresizingMaskIntoConstraints = false
-        guard let document = PDFDocument(url: url) else { return }
-        pdfView.document = document
+        PDFDocumentCache.loadDocument(fromURL: url) { document in
+            pdfView.document = document
+        }
     }
-
+    
     @objc func didTapPlayButton(sender: UIButton) {
         if sender == nil {
             playButton.isSelected = !playButton.isSelected
@@ -510,4 +510,67 @@ internal extension ReceiverMessageTableViewCell {
 		containerView.clipsToBounds = false
 	}
 
+}
+
+import PersistenceKit
+
+@available(iOS 11.0, *)
+struct PDFDocumentSnapshot: Codable, Identifiable {
+    typealias ID = URL
+    
+    var url: URL
+    let doc: PDFDocument?
+
+    init(url: URL, doc: PDFDocument?) {
+        self.url = url
+        self.doc = doc
+    }
+    
+    static var idKey: WritableKeyPath<PDFDocumentSnapshot, URL> {
+        \PDFDocumentSnapshot.url
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case url
+        case data
+    }
+    
+    init(from decoder: Decoder) throws {
+        var continer = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.url = try continer.decode(URL.self, forKey: .url)
+        let pdfData = try continer.decode(Data.self, forKey: .data)
+        self.doc = PDFDocument(data: pdfData)
+        doc?.delegate
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var continer = try encoder.container(keyedBy: CodingKeys.self)
+        try continer.encode(doc?.dataRepresentation(), forKey: .data)
+        try continer.encode(url, forKey: .url)
+    }
+}
+
+@available(iOS 11.0, *)
+final class PDFDocumentCache {
+
+    @available(iOS 11.0, *)
+    private static var storage = FilesStore<PDFDocumentSnapshot>(uniqueIdentifier: "desk360_pdf_docs_cache")
+    
+    
+    static func loadDocument(fromURL url: URL, completion: ((PDFDocument?) -> Void)?) {
+        if let snapshot = storage.object(withId: url), let doc = snapshot.doc {
+           completion?(doc)
+        } else {
+            DispatchQueue.global(qos: .background).async {
+                if let pdfDocument = PDFDocument(url: url) {
+                    let snapShot = PDFDocumentSnapshot(url: url, doc: pdfDocument)
+                    try? storage.save(snapShot)
+                    DispatchQueue.main.async {
+                        completion?(pdfDocument)
+                    }
+                }
+            }
+        }
+    }
 }
