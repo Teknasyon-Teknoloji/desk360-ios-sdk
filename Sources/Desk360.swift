@@ -82,6 +82,7 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
     /// - Parameter properties: DESK360 configuration properties.
 	@objc public init(properties: Desk360Properties) {
 		super.init()
+        listenForAppLifeCycleEvents()
         Desk360.properties = properties
 		Desk360.appVersion = Desk360.getAppVersion()
 		Desk360.sdkVersion = Desk360.getSdkVersion()
@@ -265,6 +266,18 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
 
 private extension Desk360 {
 
+    func listenForAppLifeCycleEvents() {
+        NotificationCenter.default.addObserver(self, selector: #selector(changeNotificationStatus), name: UIApplication.willTerminateNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(changeNotificationStatus), name: UIApplication.willResignActiveNotification, object: nil)
+    }
+
+    @objc func changeNotificationStatus() {
+        if #available(iOS 11.0, *) {
+            PDFDocumentCache.clear()
+        }
+    }
+    
     static func getAppVersion() -> String {
         guard let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
             return "0.0.0"

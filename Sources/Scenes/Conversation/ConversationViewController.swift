@@ -154,6 +154,7 @@ final class ConversationViewController: UIViewController, Layouting, UITableView
 		}
 		let cell = tableView.dequeueReusableCell(ReceiverMessageTableViewCell.self)
         cell.clearCell()
+        cell.delegate = self
         cell.configure(for: request.messages[indexPath.row], indexPath, attachment, hasAttach: hasAttach)
 		return cell
 	}
@@ -169,7 +170,7 @@ extension ConversationViewController: InputViewDelegate {
 	func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String) {
         chatInputView.setLoading(true)
 		isAddedMessage = true
-		addMessage(text, to: request)
+        addMessage(text.condenseNewlines.condenseWhitespacs, to: request)
 	}
 
     func inputView(_ view: InputView, didTapAttachButton button: UIButton) {
@@ -325,6 +326,7 @@ extension ConversationViewController: InputViewDelegate {
     func manageAttachView() {
         guard files.count <= 5 else { return }
         chatInputView.attachmentView.append(attachementsData: files)
+        chatInputView.setSendButton()
     }
 }
 
@@ -738,6 +740,16 @@ extension ConversationViewController: KeyboardObserving {
 
 }
 
+
+extension ConversationViewController: ReceiverMessageTableViewCellDelegate {
+    
+    func didTapPdfFile(_ file: AttachObject) {
+        if #available(iOS 11.0, *) {
+            navigationController?.pushViewController(PDFPreviewViewController(file: file), animated: true)
+        }
+    }
+}
+
 struct FileData: Equatable {
     var name: String
     var data: Data
@@ -869,12 +881,4 @@ extension String {
         label.sizeToFit()
         return label.frame.size
     }
-}
-
-extension UIScrollView {
-   func scrollToBottom(animated: Bool) {
-     if self.contentSize.height < self.bounds.size.height { return }
-     let bottomOffset = CGPoint(x: 0, y: self.contentSize.height - self.bounds.size.height)
-     self.setContentOffset(bottomOffset, animated: animated)
-  }
 }
