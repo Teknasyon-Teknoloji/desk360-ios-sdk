@@ -8,7 +8,6 @@
 import UIKit
 import PDFKit
 import PersistenceKit
-import SwiftUI
 
 @available(iOS 11.0, *)
 final class PDFPreviewViewController: UIViewController {

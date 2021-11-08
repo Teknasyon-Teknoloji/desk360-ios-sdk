@@ -1,3 +1,10 @@
+## Version 1.8.5
+
+* **Features**
+  + Added support for opening PDF docuements in a seperate view controller.
+* **Bug Fixes**
+  + Fix the performance issue for attachmnet views.
+
 ## Version 1.8.4
 
 * **Features**
