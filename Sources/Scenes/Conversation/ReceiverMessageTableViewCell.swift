@@ -12,6 +12,10 @@ import AVFoundation
 import MediaPlayer
 import AVKit
 
+protocol ReceiverMessageTableViewCellDelegate: AnyObject {
+    func didTapPdfFile(_ file: AttachObject)
+}
+
 final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable {
 
 	override var isSelected: Bool {
@@ -88,12 +92,8 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
         return view
     }()
 
-	@available(iOS 11.0, *)
-	lazy var pdfView: PDFView = {
-		let pdfView = PDFView()
-		return pdfView
-	}()
-
+    weak var delegate: ReceiverMessageTableViewCellDelegate?
+    
 	private var containerBackgroundColor: UIColor? {
 		didSet {
 			containerView.backgroundColor = containerBackgroundColor
@@ -107,8 +107,8 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
 		selectionStyle = .none
 
 		containerView.addSubview(stackView)
-		addSubview(containerView)
-		addSubview(dateLabel)
+        contentView.addSubview(containerView)
+        contentView.addSubview(dateLabel)
 	}
 
 	func setupLayout() {
@@ -155,7 +155,7 @@ internal extension ReceiverMessageTableViewCell {
         if Desk360.conVC == nil { return }
 
 		containerView.backgroundColor = Colors.ticketDetailChatReceiverBackgroundColor
-		messageTextView.text = request.message
+        messageTextView.text = request.message.condenseNewlines.condenseWhitespacs
 		messageTextView.textColor = Colors.ticketDetailChatReceiverTextColor
 		messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.chatReceiverFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.chatReceiverFontWeight ?? 400))
 		dateLabel.textColor = Colors.ticketDetailChatChatReceiverDateColor
@@ -176,14 +176,12 @@ internal extension ReceiverMessageTableViewCell {
 		}
 		previewImageView.isHidden = true
 		previewVideoView.isHidden = true
-		if #available(iOS 11.0, *) {
-			pdfView.isHidden = true
-		}
 
         if hasAttach == false { // hasAttach flag is holds is there attachments sent from messages not ticket creation.
             if let attachmentUrl = attachment { // function's attachment parameter is holds, ticket creation attachment.
                 guard indexPath.row == 0 else { return } // ticket attachments will allways at zero row, so, now we can return.
-                checkFile(attachmentUrl, fileName: "", i: 1, fileInx: 1)
+                let att = AttachObject(url: attachmentUrl.absoluteString, name: "", type: "")
+                checkFile(file: att, i: 1, fileInx: 1)
                 return
             }
         }
@@ -196,7 +194,7 @@ internal extension ReceiverMessageTableViewCell {
             if val.count > 0 { fileInx = fileInx + 1 }
             for image in val {
                 if let url = URL(string: image.url) {
-                    self.checkFile(url, fileName: image.name, i: i, fileInx: fileInx)
+                    self.checkFile(file: image, i: i, fileInx: fileInx)
                 }
                 i = i + 1
             }
@@ -207,18 +205,18 @@ internal extension ReceiverMessageTableViewCell {
             if val.count > 0 { fileInx = fileInx + 1 }
             for video in val {
                 if let url = URL(string: video.url) {
-                    self.checkFile(url, fileName: video.name, i: i, fileInx: fileInx)
+                    self.checkFile(file: video, i: i, fileInx: fileInx)
                 }
                 i = i + 1
             }
         }
         if let files = request.attachments?.files {
-            let val = files.filter({$0 != nil })
+            let val = files.filter { $0 != nil }
             var i = 1
             if val.count > 0 { fileInx = fileInx + 1 }
             for file in val {
                 if let url = URL(string: file.url) {
-                    self.checkFile(url, fileName: file.name, i: i, fileInx: fileInx)
+                    self.checkFile(file: file, i: i, fileInx: fileInx)
                 }
                 i = i + 1
             }
@@ -229,21 +227,22 @@ internal extension ReceiverMessageTableViewCell {
             if val.count > 0 { fileInx = fileInx + 1 }
             for otherFile in val {
                 if let url = URL(string: otherFile.url) {
-                    self.checkFile(url, fileName: otherFile.name, i: i, fileInx: fileInx)
+                    self.checkFile(file: otherFile, i: i, fileInx: fileInx)
                 }
                 i = i + 1
             }
         }
 	}
 
-    func checkFile(_ url: URL, fileName: String, i: Int = 1, fileInx: Int) {
-
+    func checkFile(file: AttachObject, i: Int = 1, fileInx: Int) {
         if Desk360.conVC == nil { return }
+        guard let url = URL(string: file.url) else { return }
+        let fileName = file.name
         guard let path = url.pathComponents.last else { return }
         let words = path.split(separator: ".")
         guard var word = words.last?.lowercased() else { return }
         if word == "pdf" {
-            self.addPdf(url, fileName: fileName, inx: i, fileInx: fileInx)
+            self.addPdf(file: file, inx: i, fileInx: fileInx)
         } else if word == "png" || word == "jpeg" || word == "jpg" {
             self.addImageView(url, fileExt: String(word), fileName: fileName, inx: i, fileInx: fileInx)
         } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" || word == "qt" {
@@ -331,9 +330,18 @@ internal extension ReceiverMessageTableViewCell {
         self.previewImageView.isHidden = false
 	}
 
-    func addPdf(_ url: URL, fileName: String, inx: Int, fileInx: Int) {
+    func addPdf(file: AttachObject, inx: Int, fileInx: Int) {
         guard #available(iOS 11.0, *) else { return }
-
+        guard let url = URL(string: file.url) else { return }
+        var file = file
+        if file.name.isEmpty {
+            file.name = "File.pdf"
+        }
+        if file.type.isEmpty {
+            file.type = "file"
+        }
+        
+        PDFDocumentCache.loadDocument(fromURL: url, completion: nil)
         if Desk360.conVC == nil { return }
 
         if inx == 1 {
@@ -342,15 +350,24 @@ internal extension ReceiverMessageTableViewCell {
         self.stackView.addArrangedSubview(self.previewPdfView)
         self.previewPdfView.snp.remakeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
-            remake.height.equalTo(self.previewPdfView.snp.width).multipliedBy(inx).offset(4 * inx)
+            if inx == 1 {
+                remake.height.equalTo(50)
+            } else {
+                remake.height.equalTo(containerView.frame.width * 0.2 * CGFloat(inx))
+            }
         }
-
-        let pdfView = PDFView()
+        layoutIfNeeded()
+        let pdfView = FileView()
         pdfView.tag = inx
+        pdfView.file = file
+        pdfView.onFileSelected = { [weak self] file in
+            self?.delegate?.didTapPdfFile(file)
+        }
+        
         previewPdfView.addSubview(pdfView)
         pdfView.snp.makeConstraints { remake in
             remake.leading.trailing.equalToSuperview()
-            remake.height.equalTo(previewPdfView.snp.width)
+            remake.height.equalTo(previewPdfView.frame.width * 0.2)
             if inx == 1 {
                 remake.top.equalToSuperview()
             } else {
@@ -359,10 +376,6 @@ internal extension ReceiverMessageTableViewCell {
         }
 
         self.previewPdfView.isHidden = false
-        pdfView.translatesAutoresizingMaskIntoConstraints = false
-        PDFDocumentCache.loadDocument(fromURL: url) { document in
-            pdfView.document = document
-        }
     }
     
     @objc func didTapPlayButton(sender: UIButton) {
@@ -429,22 +442,6 @@ internal extension ReceiverMessageTableViewCell {
         task.resume()
     }
 
-	func addPdf(_ url: URL) {
-		guard #available(iOS 11.0, *) else { return }
-		pdfView.translatesAutoresizingMaskIntoConstraints = false
-		pdfView.isHidden = false
-		stackView.addArrangedSubview(pdfView)
-
-		pdfView.snp.remakeConstraints { remake  in
-			remake.leading.trailing.equalToSuperview()
-			remake.height.equalTo(pdfView.snp.width)
-		}
-
-		guard let document = PDFDocument(url: url) else { return }
-		pdfView.document = document
-
-	}
-
 	func roundCorner() {
 		let type = Config.shared.model?.ticketDetail?.chatBoxStyle
 
@@ -510,67 +507,4 @@ internal extension ReceiverMessageTableViewCell {
 		containerView.clipsToBounds = false
 	}
 
-}
-
-import PersistenceKit
-
-@available(iOS 11.0, *)
-struct PDFDocumentSnapshot: Codable, Identifiable {
-    typealias ID = URL
-    
-    var url: URL
-    let doc: PDFDocument?
-
-    init(url: URL, doc: PDFDocument?) {
-        self.url = url
-        self.doc = doc
-    }
-    
-    static var idKey: WritableKeyPath<PDFDocumentSnapshot, URL> {
-        \PDFDocumentSnapshot.url
-    }
-    
-    enum CodingKeys: String, CodingKey {
-        case url
-        case data
-    }
-    
-    init(from decoder: Decoder) throws {
-        var continer = try decoder.container(keyedBy: CodingKeys.self)
-        
-        self.url = try continer.decode(URL.self, forKey: .url)
-        let pdfData = try continer.decode(Data.self, forKey: .data)
-        self.doc = PDFDocument(data: pdfData)
-        doc?.delegate
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var continer = try encoder.container(keyedBy: CodingKeys.self)
-        try continer.encode(doc?.dataRepresentation(), forKey: .data)
-        try continer.encode(url, forKey: .url)
-    }
-}
-
-@available(iOS 11.0, *)
-final class PDFDocumentCache {
-
-    @available(iOS 11.0, *)
-    private static var storage = FilesStore<PDFDocumentSnapshot>(uniqueIdentifier: "desk360_pdf_docs_cache")
-    
-    
-    static func loadDocument(fromURL url: URL, completion: ((PDFDocument?) -> Void)?) {
-        if let snapshot = storage.object(withId: url), let doc = snapshot.doc {
-           completion?(doc)
-        } else {
-            DispatchQueue.global(qos: .background).async {
-                if let pdfDocument = PDFDocument(url: url) {
-                    let snapShot = PDFDocumentSnapshot(url: url, doc: pdfDocument)
-                    try? storage.save(snapShot)
-                    DispatchQueue.main.async {
-                        completion?(pdfDocument)
-                    }
-                }
-            }
-        }
-    }
 }

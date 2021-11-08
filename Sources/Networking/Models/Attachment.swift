@@ -66,6 +66,11 @@ public struct AttachObject {
     var url: String
     var name: String
     var type: String
+    
+    var image: UIImage? {
+        guard let fileType = name.split(separator: ".").last else { return nil }
+        return Desk360.Config.Images.image(withName: String(fileType))
+    }
 }
 
 extension AttachObject: Codable {

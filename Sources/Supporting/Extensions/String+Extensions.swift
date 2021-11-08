@@ -76,5 +76,14 @@ extension String {
 		guard let bundle = Bundle.localizedBundle else { return "" }
 		return NSLocalizedString(self, bundle: bundle, comment: "")
 	}
-
+    
+    var condenseWhitespacs: String {
+        let components = self.components(separatedBy: .whitespaces)
+        return components.filter { !$0.isEmpty }.joined(separator: " ")
+    }
+    
+    var condenseNewlines: String {
+        let components = self.components(separatedBy: .newlines)
+        return components.filter { !$0.isEmpty }.joined(separator: "\n")
+    }
 }
