@@ -35,6 +35,14 @@ To integrate Desk360 in your Xcode project using [CocoaPods](https://cocoapods.o
 pod 'Desk360'
 ```
 
+### Using SPM
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/Teknasyon-Teknoloji/desk360-ios-sdk", .branch("master"))
+]
+```
+
 ## Usage
 
 ### Important footnot
