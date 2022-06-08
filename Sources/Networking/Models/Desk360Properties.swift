@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 @objc open class Desk360Properties: NSObject {
 

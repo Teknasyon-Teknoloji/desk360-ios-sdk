@@ -5,6 +5,8 @@
 //  Created by samet on 5.11.2019.
 //
 
+import UIKit
+
 public struct CreatePreScreenConfigModel {
 
 	var navigationTitle: String?

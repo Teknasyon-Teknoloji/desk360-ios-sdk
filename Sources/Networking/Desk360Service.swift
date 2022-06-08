@@ -6,6 +6,7 @@
 //
 
 import Moya
+import Foundation
 
 enum Service {
     case register(appKey: String, deviceId: String, appPlatform: String, appVersion: String, timeZone: String, languageCode: String)

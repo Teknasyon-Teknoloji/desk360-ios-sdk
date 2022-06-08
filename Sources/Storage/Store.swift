@@ -6,6 +6,7 @@
 //
 
 import PersistenceKit
+import Foundation
 
 /// Application data stores.
 struct Stores {
