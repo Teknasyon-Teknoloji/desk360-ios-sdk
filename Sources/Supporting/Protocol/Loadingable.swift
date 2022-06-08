@@ -7,6 +7,7 @@
 
 import UIKit
 import NVActivityIndicatorView
+import NVActivityIndicatorViewExtended
 import SnapKit
 
 /// `Loadingable` protocol offers a convenient way to show loading in `UIView` objects.
@@ -224,7 +225,7 @@ private extension Loadingable where Self: UIView {
 		return indicator
 	}
 
-	func createActivityData() -> ActivityData? {
+    func createActivityData() -> ActivityData? {
 		guard useSharedIndicatorPresenter else { return nil }
 		return ActivityData(
 			size: CGSize(width: indicatorSize.width / 2.5, height: indicatorSize.height / 2.5),
