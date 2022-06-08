@@ -5,6 +5,8 @@
 //  Created by samet on 5.11.2019.
 //
 
+import UIKit
+
 /// Use `SupportMessage` to map JSON object returned from the methods in `SupportService`
 public struct TicketListScreenConfigModel {
 

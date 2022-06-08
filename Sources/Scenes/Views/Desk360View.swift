@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// This view using for bottom desk360 bottom bar
 final class Desk360View: UIView, Layoutable {

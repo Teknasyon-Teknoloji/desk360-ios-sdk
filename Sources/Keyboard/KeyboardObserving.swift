@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// Conform to `KeyboardObserving` protocol in view controllers to observe keyboard events and pass them to a `KeyboardHandling` view.
 public protocol KeyboardObserving: AnyObject {

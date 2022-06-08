@@ -5,6 +5,8 @@
 //  Created by samet on 4.11.2019.
 //
 
+import UIKit
+
 public struct FirstScreenConfigModel {
 
 	var navigationTitle: String?

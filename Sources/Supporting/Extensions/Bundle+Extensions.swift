@@ -5,6 +5,8 @@
 //  Created by samet on 31.05.2019.
 //
 
+import Foundation
+
 extension Bundle {
 
 	static var assetsBundle: Bundle? {

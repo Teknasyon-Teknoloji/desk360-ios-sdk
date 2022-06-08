@@ -5,6 +5,8 @@
 //  Created by samet on 18.05.2019.
 //
 
+import Foundation
+
 extension String {
 
 	/// Check validate email adress

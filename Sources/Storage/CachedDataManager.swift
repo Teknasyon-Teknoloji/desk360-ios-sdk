@@ -7,6 +7,7 @@
 
 import Moya
 import PersistenceKit
+import Foundation
 
 final class CachedDataManager: NSObject {
 

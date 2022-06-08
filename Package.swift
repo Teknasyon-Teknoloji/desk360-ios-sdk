@@ -19,7 +19,7 @@ let package = Package(
         .package(url: "https://github.com/Moya/Moya.git", .upToNextMajor(from: "14.0.0")),
         .package(url: "https://github.com/Teknasyon-Teknoloji/PersistenceKit.git", .branch("master")),
         .package(url: "https://github.com/devicekit/DeviceKit.git", .upToNextMajor(from: "4.0.0")),
-        .package(url: "https://github.com/ninjaprox/NVActivityIndicatorView.git", from: "5.1.1")
+        .package(url: "https://github.com/ninjaprox/NVActivityIndicatorView.git", .exact("4.8.0"))
 
         
     ],

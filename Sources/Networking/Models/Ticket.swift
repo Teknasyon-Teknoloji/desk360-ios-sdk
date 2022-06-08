@@ -6,6 +6,7 @@
 //
 
 import PersistenceKit
+import Foundation
 
 /// Use `SupportRequest` to map JSON objects returned from methods in `SupportService`
 public struct Ticket {
