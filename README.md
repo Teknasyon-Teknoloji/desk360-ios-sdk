@@ -65,7 +65,7 @@ let props = Desk360Properties(appID: "1234")
 
 // Or if you would like to provide more info here is a full list of the params
 let props = Desk360Properties(
-        appID: "1234",
+        appKey: "1234",
         deviceID: "34567",
         environment: .production,
         language: "en",
