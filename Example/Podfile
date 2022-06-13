@@ -5,6 +5,6 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 target 'Example' do
 
-  pod 'Desk360', :path => '..'
+  pod 'Desk360'#, :path => '..'
   # pod 'PersistanceKit'
 end

@@ -5,16 +5,16 @@ PODS:
     - Moya/Core (= 15.0.0)
   - Moya/Core (15.0.0):
     - Alamofire (~> 5.0)
-  - NVActivityIndicatorView (5.0.0):
-    - NVActivityIndicatorView/Base (= 5.0.0)
-  - NVActivityIndicatorView/Base (5.0.0)
+  - NVActivityIndicatorView/Base (5.1.1)
+  - NVActivityIndicatorView/Extended (5.1.1):
+    - NVActivityIndicatorView/Base
   - PersistenceKit (1.4)
   - SnapKit (5.6.0)
 
 DEPENDENCIES:
   - DeviceKit
   - Moya
-  - NVActivityIndicatorView (= 5.0.0)
+  - NVActivityIndicatorView/Extended
   - PersistenceKit
   - SnapKit
 
@@ -31,10 +31,10 @@ SPEC CHECKSUMS:
   Alamofire: 87bd8c952f9a4454320fce00d9cc3de57bcadaf5
   DeviceKit: 834dd8aa1be53cd85364d8f49aa5d98bfac397c4
   Moya: 138f0573e53411fb3dc17016add0b748dfbd78ee
-  NVActivityIndicatorView: f109ed069924ac1b4adbc1ae9cfaeac0be1d6c2c
+  NVActivityIndicatorView: 1f6c5687f1171810aa27a3296814dc2d7dec3667
   PersistenceKit: 3a9a8e760a686576eed37dbba5da7a11ac2f0603
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
 
-PODFILE CHECKSUM: 47b4b7193255e193f2d3d8dd941285b97ddee792
+PODFILE CHECKSUM: ed8d22e73b2bda8f31c047eafda69b96839f0352
 
 COCOAPODS: 1.11.3
