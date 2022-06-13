@@ -61,7 +61,7 @@ Permission text is optional. you can type whatever you want. But this permission
 ```swift
 import Desk360
 
-let props = Desk360Properties(appID: "1234")
+let props = Desk360Properties(appKey: "1234")
 
 // Or if you would like to provide more info here is a full list of the params
 let props = Desk360Properties(
