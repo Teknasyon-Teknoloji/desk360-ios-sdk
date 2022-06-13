@@ -71,6 +71,21 @@ extension ViewController {
 		jsonObject = nil
 		appId = ""
 		Desk360.show(on: self, animated: true)
+        
+        // Or if you would like to provide more info here is a full list of the params
+        let props = Desk360Properties(
+                appID: "1234",
+                deviceID: "34567",
+                environment: .production,
+                language: "en",
+                country: "TR",
+                userCredentials: .init(name: "John Doe", email: "john@doe.com"),
+                bypassCreateTicketIntro: true,
+                jsonInfo: ["a": 500, "b": "c"]
+        )
+
+        Desk360.start(using: props)
+        
 	}
 
 }
