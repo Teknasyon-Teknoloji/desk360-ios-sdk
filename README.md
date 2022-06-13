@@ -70,9 +70,9 @@ let props = Desk360Properties(
         environment: .production,
         language: "en",
         country: "TR",
-        userCredentials: .init(userName: "John Appleased", email: "test@test.com"),
+        userCredentials: .init(name: "John Doe", email: "john@doe.com"),
         bypassCreateTicketIntro: true,
-        jsonInfo: [jsonObject: [String: Any] = ["yourInfoKey": "yourInfoValue"]
+        jsonInfo: ["a": 500, "b": "c"]
     )
 
 Desk360.start(using: props)

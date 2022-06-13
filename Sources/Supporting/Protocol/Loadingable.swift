@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import NVActivityIndicatorView
 import SnapKit
 
 /// `Loadingable` protocol offers a convenient way to show loading in `UIView` objects.
