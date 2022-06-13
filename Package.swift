@@ -18,8 +18,7 @@ let package = Package(
         .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.0.1")),
         .package(url: "https://github.com/Moya/Moya.git", .upToNextMajor(from: "14.0.0")),
         .package(url: "https://github.com/Teknasyon-Teknoloji/PersistenceKit.git", .branch("master")),
-        .package(url: "https://github.com/devicekit/DeviceKit.git", .upToNextMajor(from: "4.0.0")),
-        .package(url: "https://github.com/ninjaprox/NVActivityIndicatorView.git", .branch("master"))
+        .package(url: "https://github.com/devicekit/DeviceKit.git", .upToNextMajor(from: "4.0.0"))
 
         
     ],
@@ -32,9 +31,7 @@ let package = Package(
                 "SnapKit",
                 "Moya",
                 "PersistenceKit",
-                "DeviceKit",
-                "NVActivityIndicatorView",
-                .product(name: "NVActivityIndicatorViewExtended", package: "NVActivityIndicatorView")
+                "DeviceKit"
 
             ],
             path: "Sources"

@@ -154,7 +154,7 @@ extension ListingViewController {
 		guard let registerModel = Stores.registerModel.object else { return }
 		guard let desk360Properties = Desk360.properties else { return }
 
-		guard registerModel.appId == desk360Properties.appID &&
+		guard registerModel.appId == desk360Properties.appKey &&
 				registerModel.deviceId == desk360Properties.deviceID &&
 				registerModel.environment == desk360Properties.environment.stringValue else {
 			layoutableView.placeholderView.isHidden = true
@@ -291,7 +291,7 @@ private extension ListingViewController {
             return
         }
 
-        Desk360.apiProvider.request(.register(appKey: props.appID, deviceId: props.deviceID, appPlatform: props.appPlatform, appVersion: Desk360.appVersion, timeZone: props.timeZone, languageCode: props.language)) { [weak self]  result in
+        Desk360.apiProvider.request(.register(appKey: props.appKey, deviceId: props.deviceID, appPlatform: props.appPlatform, appVersion: Desk360.appVersion, timeZone: props.timeZone, languageCode: props.language)) { [weak self]  result in
             guard let self = self else { return }
             switch result {
             case .failure:

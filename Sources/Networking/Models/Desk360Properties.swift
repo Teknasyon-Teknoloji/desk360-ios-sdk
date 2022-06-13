@@ -10,7 +10,7 @@ import UIKit
 
 @objc open class Desk360Properties: NSObject {
 
-    let appID: String
+    let appKey: String
     let deviceID: String
     let environment: Desk360Environment
     let language: String
@@ -40,7 +40,7 @@ import UIKit
         bypassCreateTicketIntro: Bool = false,
         jsonInfo: [String: Any]? = nil
     ) {
-        self.appID = appID
+        self.appKey = appID
         self.deviceID = deviceID
 		self.environment = environment
         self.language = language

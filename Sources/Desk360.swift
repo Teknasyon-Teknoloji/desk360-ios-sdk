@@ -208,7 +208,7 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
         isActive = true
         desk = Desk360(properties: properties)
 
-        let registerModel = RegisterModel(appId: properties.appID, deviceId: properties.deviceID, environment: properties.environment, language: properties.language, country: properties.language)
+        let registerModel = RegisterModel(appId: properties.appKey, deviceId: properties.deviceID, environment: properties.environment, language: properties.language, country: properties.language)
         try? Stores.registerModel.save(registerModel)
 
         Stores.setStoresInitialValues()
@@ -348,7 +348,7 @@ private final class Desk360Networking {
             return
         }
 
-        Desk360.apiProvider.request(.register(appKey: props.appID, deviceId: props.deviceID, appPlatform: props.appPlatform, appVersion: Desk360.appVersion, timeZone: props.timeZone, languageCode: props.language)) {  result in
+        Desk360.apiProvider.request(.register(appKey: props.appKey, deviceId: props.deviceID, appPlatform: props.appPlatform, appVersion: Desk360.appVersion, timeZone: props.timeZone, languageCode: props.language)) {  result in
             switch result {
             case .failure(let error):
                 completion(.failure(error))

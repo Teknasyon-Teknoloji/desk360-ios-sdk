@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import NVActivityIndicatorView
 
 protocol InputViewDelegate: AnyObject {
 	func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String)
