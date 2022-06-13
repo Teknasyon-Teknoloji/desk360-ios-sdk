@@ -11,6 +11,5 @@ target 'Desk360' do
   pod 'SnapKit'
   pod 'Moya'
   pod 'DeviceKit'
-  pod 'NVActivityIndicatorView/Extended'
   pod 'PersistenceKit'
 end
