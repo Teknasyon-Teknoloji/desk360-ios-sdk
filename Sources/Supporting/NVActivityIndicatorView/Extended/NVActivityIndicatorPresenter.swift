@@ -27,7 +27,6 @@
 
 #if canImport(UIKit)
 import UIKit
-import NVActivityIndicatorView
 
 /// Class packages information used to display UI blocker.
 @available(*, deprecated, message: "")
