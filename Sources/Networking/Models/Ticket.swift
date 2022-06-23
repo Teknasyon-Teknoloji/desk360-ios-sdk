@@ -32,25 +32,31 @@ public struct Ticket {
 	public var id: Int
 
 	/// Name.
-    public let name: String
+    public var name: String
 
 	/// Email
-    public let email: String
+    public var email: String
 
 	/// Status
     public var status: Status
 
 	/// Date the request was created.
-    public let createdAt: Date
+    public var createdAt: Date
 
     public var message: String
 
 	/// Array of conversation `SupportMessage`s.
     public var messages: [Message]
 
-    public let attachmentUrl: URL?
+    public var attachmentUrl: URL?
 
-    public let createDateString: String?
+    public var createDateString: String?
+    
+    public var agentId: Int?
+    
+    public var agentName: String?
+    
+    public var agentImage: String?
 
 }
 
@@ -106,7 +112,28 @@ extension Ticket: Codable {
 		try container.encode(messages, forKey: .messages)
 		try container.encode(attachmentUrl, forKey: .attachment_url)
 	}
-
+    
+     public init(id: Int,
+                 name: String,
+                 email: String,
+                 status: Status,
+                 createdAt: Date,
+                 message: String,
+                 messages: [Message],
+                 agentId: Int?,
+                 agentName: String?,
+                 agentImage: String?) {
+        self.id = id
+        self.name = name
+        self.email = email
+        self.status = status
+        self.createdAt = createdAt
+        self.message = message
+        self.messages = messages
+        self.agentId = agentId
+        self.agentName = agentName
+        self.agentImage = agentImage
+    }
 }
 
 extension Ticket: Comparable {

@@ -18,11 +18,18 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
         view.clipsToBounds = true
         return view
     }()
+    
+    private lazy var userImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = Desk360.Config.Images.chatUserIcon
+        return imageView
+    }()
 
     private lazy var messageTextView: UITextView = {
         let textView = UITextView()
         textView.isEditable = false
         textView.isScrollEnabled = false
+        textView.isUserInteractionEnabled = false
         textView.allowsEditingTextAttributes = false
         textView.dataDetectorTypes = .link
         textView.font = Desk360.Config.Conversation.MessageCell.Receiver.messageFont
@@ -83,26 +90,36 @@ final class SenderMessageTableViewCell: UITableViewCell, Reusable, Layoutable {
         containerView.addSubview(stackView)
         addSubview(containerView)
         addSubview(dateLabel)
+        addSubview(userImageView)
     }
 
     func setupLayout() {
-        self.containerView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().inset(self.preferredSpacing / 2)
-            make.width.equalTo(UIScreen.main.bounds.size.minDimension - (self.preferredSpacing * 2))
+        containerView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(preferredSpacing / 2)
         }
-        self.stackView.snp.makeConstraints { $0.edges.equalToSuperview().inset(self.preferredSpacing / 2) }
-        self.dateLabel.snp.makeConstraints { make in
-            make.leading.equalTo(self.containerView.snp.leading).offset(self.preferredSpacing * 0.5)
-            make.top.equalTo(self.containerView.snp.bottom).offset(self.preferredSpacing * 0.25)
-            make.bottom.equalToSuperview().inset(self.preferredSpacing * 0.25)
-            make.height.equalTo(self.preferredSpacing)
+
+        stackView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(preferredSpacing / 2)
+        }
+
+        dateLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(containerView.snp.trailing)
+            make.top.equalTo(containerView.snp.bottom).offset(preferredSpacing * 0.25)
+            make.bottom.equalToSuperview().inset(preferredSpacing * 0.25)
+            make.height.equalTo(preferredSpacing)
+        }
+
+        userImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(40)
+            make.leading.equalTo(containerView.snp.trailing).offset(10)
+            make.trailing.equalToSuperview().inset(preferredSpacing / 2)
+            make.bottom.equalTo(containerView.snp.bottom)
         }
     }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-
         roundCorner()
-
     }
 
     func clearCell() {
@@ -505,33 +522,8 @@ internal extension SenderMessageTableViewCell {
     }
 
     func roundCorner() {
-        let type = Config.shared.model?.ticketDetail?.chatBoxStyle
-
-        let containerShadowIsHidden = Config.shared.model?.ticketDetail?.chatSenderShadowIsHidden ?? true
-
-        switch type {
-        case 1:
-            containerView.roundCorners([.topLeft, .bottomRight, .topRight], radius: 10, isShadow: !containerShadowIsHidden)
-        case 2:
-            containerView.roundCorners([.topLeft, .bottomRight, .topRight], radius: 30, isShadow: !containerShadowIsHidden)
-        case 3:
-            containerView.roundCorners([.topLeft, .bottomRight, .topRight], radius: 19, isShadow: !containerShadowIsHidden)
-        case 4:
-            containerView.layer.cornerRadius = 0
-            addSubLayerChatBubble()
-            containerBackgroundColor = .clear
-        default:
-            containerView.roundCorners([.topLeft, .bottomRight, .topRight], radius: 10, isShadow: !containerShadowIsHidden)
-        }
-
-        if containerShadowIsHidden {
-            containerView.layer.shadowColor = UIColor.black.cgColor
-            containerView.layer.shadowOffset = CGSize.zero
-            containerView.layer.shadowRadius = 10
-            containerView.layer.shadowOpacity = 0.3
-            containerView.layer.masksToBounds = false
-        }
-
+        containerView.roundCorners([.topLeft, .bottomLeft, .topRight], radius: 16, isShadow: false)
+        userImageView.roundCorners(.allCorners, radius: userImageView.frame.height / 2, isShadow: false)
     }
 
     func addSubLayerChatBubble() {

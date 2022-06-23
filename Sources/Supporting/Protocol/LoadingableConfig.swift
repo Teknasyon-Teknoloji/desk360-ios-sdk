@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import NVActivityIndicatorView
 
 /// `LoadingableConfig` contains default configurations for `Loadingable` protocol.
 ///

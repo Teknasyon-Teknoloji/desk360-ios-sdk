@@ -67,25 +67,19 @@ extension ViewController {
 extension ViewController {
 
 	func showDesk360() {
-        Desk360.start(using: .init(appID: appId))
-		jsonObject = nil
-		appId = ""
-		Desk360.show(on: self, animated: true)
-        
-        // Or if you would like to provide more info here is a full list of the params
         let props = Desk360Properties(
-                appID: "1234",
-                deviceID: "34567",
+                appID: "uWtQkCFyNU2BRIVlRyLqhPPFQNkZlU5L",
+                deviceID: UIDevice.current.identifierForVendor!.uuidString,
                 environment: .production,
                 language: "en",
                 country: "TR",
-                userCredentials: .init(name: "John Doe", email: "john@doe.com"),
+                userCredentials: .init(name: "Test", email: "osmanyildirim@teknasyon.com"),
                 bypassCreateTicketIntro: true,
-                jsonInfo: ["a": 500, "b": "c"]
+                jsonInfo: [:]
         )
 
         Desk360.start(using: props)
-        
+        Desk360.show(on: self, animated: true)
 	}
 
 }

@@ -104,7 +104,7 @@ public extension Desk360.Config {
 		}()
 
 		static var backIcon: UIImage = {
-			return Desk360.Config.Images.createImage(resources: "Images/backButtonLight")
+			return Desk360.Config.Images.createImage(resources: "Images/backIcon")
 		}()
 
 		static var readIcon: UIImage = {
@@ -116,7 +116,7 @@ public extension Desk360.Config {
 		}()
 
 		static var sendIcon: UIImage = {
-			return Desk360.Config.Images.createImage(resources: "Images/sendLight")
+			return Desk360.Config.Images.createImage(resources: "Images/send")
 		}()
 
         static var attachIcon: UIImage = {
@@ -148,6 +148,26 @@ public extension Desk360.Config {
 
         static var agreementUnCheckIcon: UIImage = {
             return Desk360.Config.Images.createImageOriginal(resources: "Images/agreementUnCheck")
+        }()
+        
+        static var conversationBackgroundFile: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/backgroundConversation")
+        }()
+        
+        static var emojiIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/emoji")
+        }()
+        
+        static var addCoinIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/coinAdd")
+        }()
+        
+        static var chatUserIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/chatUser")
+        }()
+        
+        static var chatUserGrayIcon: UIImage = {
+            return Desk360.Config.Images.createImageOriginal(resources: "Images/chatUserGray")
         }()
 	}
 

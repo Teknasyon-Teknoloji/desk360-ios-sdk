@@ -154,7 +154,7 @@ struct Colors {
 		return Config.shared.model?.ticketDetail?.writeMessageBackgroundColor ?? UIColor.init(hex: "FFFFFF")!
 	}
 	static var ticketDetailWriteMessageTextColor: UIColor {
-		return Config.shared.model?.ticketDetail?.writeMessageTextColor ?? UIColor.init(hex: "FFFFFF")!
+        return Config.shared.model?.ticketDetail?.writeMessageTextColor ?? typography!
 	}
 	static var ticketDetailWriteMessageBorderActiveColor: UIColor {
 		return Config.shared.model?.ticketDetail?.writeMessageBorderActiveColor ?? UIColor.init(hex: "FFFFFF")!
@@ -222,8 +222,24 @@ struct Colors {
         return UIColor(hex: "#eeeff0")
     }
 
-    static var writeMessagePHTextColor: UIColor? {
-        return UIColor(hex: "#9298b1")
+    static var writeMessagePHTextColor: UIColor {
+        return ticketDetailWriteMessageTextColor.withAlphaComponent(0.25)
+    }
+    
+    static var paleLilac: UIColor? {
+        return UIColor(hex: "#e5e5ea")
+    }
+    
+    static var grayInput: UIColor? {
+        return UIColor(hex: "#fbfbfb")
+    }
+    
+    static var typography: UIColor? {
+        return UIColor(hex: "#0d0626")
+    }
+    
+    static var crayola: UIColor? {
+        return UIColor(hex: "#adb3bc")
     }
 
 }

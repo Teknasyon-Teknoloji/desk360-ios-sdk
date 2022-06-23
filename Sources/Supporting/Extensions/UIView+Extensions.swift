@@ -203,5 +203,19 @@ extension UIView {
 			}
 		}
 	}
+    
+    func setBorder(width: CGFloat? = nil, color: UIColor? = nil, radius: CGFloat? = nil) {
+        if let aWidth = width {
+            layer.borderWidth = aWidth
+        }
 
+        if let aColor = color?.cgColor {
+            layer.borderColor = aColor
+        }
+
+        if let aRadius = radius {
+            layer.cornerRadius = aRadius
+            layer.masksToBounds = true
+        }
+    }
 }

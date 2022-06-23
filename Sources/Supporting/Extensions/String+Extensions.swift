@@ -88,4 +88,17 @@ extension String {
         let components = self.components(separatedBy: .newlines)
         return components.filter { !$0.isEmpty }.joined(separator: "\n")
     }
+    
+    private var convertStringToDictionary: Dictionary<Self, Self> {
+        guard let data = self.data(using: .utf8), let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? [Self: Self] else {
+            return Dictionary()
+        }
+        return dictionary
+    }
+    
+    var localizationValue: Self {
+        guard let registerModel = Stores.registerModel.object else { return "" }
+        let dictionary = self.convertStringToDictionary
+        return dictionary[registerModel.language] ?? self
+    }
 }

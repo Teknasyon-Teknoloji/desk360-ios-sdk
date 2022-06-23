@@ -12,17 +12,20 @@ import Desk360
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-	var window: UIWindow?
+    var window: UIWindow?
 
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-		Stores.setStoresInitialValues()
+        guard let nav = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MainNav") as? UINavigationController else { return true }
+
+
+        Stores.setStoresInitialValues()
 //		Desk360.start(appId: "123456")
-		window = UIWindow()
-		window?.rootViewController = UINavigationController(rootViewController: DemoViewController())
-		window?.makeKeyAndVisible()
+        window = UIWindow()
+        window?.rootViewController = nav
+        window?.makeKeyAndVisible()
 
-		return true
-	}
+        return true
+    }
 
 }

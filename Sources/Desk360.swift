@@ -201,7 +201,7 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
 
 	}
 
-    @objc public static func start(using properties: Desk360Properties) {
+    @objc public static func start(using properties: Desk360Properties, requireRegister: Bool = false) {
         try? Stores.userName.save(properties.userCredentials?.name)
         try? Stores.userMail.save(properties.userCredentials?.email)
 
@@ -213,6 +213,10 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
 
         Stores.setStoresInitialValues()
         print("Desk360 SDK was initialized successfully!")
+        
+        if requireRegister {
+            Desk360Networking.register(completion: { _ in })
+        }
     }
 
 	@objc public static func show(on viewController: UIViewController, animated: Bool = true) {
@@ -395,5 +399,31 @@ private final class Desk360Networking {
                 completion(.success(data))
             }
         }
+    }
+}
+
+extension Desk360 {
+    /// returns Conversation(Chat) View Controller for using to another app
+    /// - Parameters:
+    ///   - ticket: will use for ticketWithId API
+    ///   - characterPerCoin: character value of 1 coin
+    ///   - totalCoin: user's total coin balance
+    /// - Returns: Conversation(Chat) View Controller
+    public static func getConversationViewController(ticket: Ticket?,
+                                                     characterPerCoin: Int,
+                                                     totalCoin: Int) -> ConversationViewController {
+        guard let ticket = ticket else { return .init() }
+        let viewController = ConversationViewController(request: ticket,
+                                                        characterPerCoin: characterPerCoin,
+                                                        totalCoin: totalCoin)
+        return viewController
+    }
+    
+    /// set SDK's language from App
+    /// - Parameter code: language code
+    public static func setLanguage(code: String) {
+        guard var registerModel = Stores.registerModel.object else { return }
+        registerModel.language = code
+        try? Stores.registerModel.save(registerModel)
     }
 }
