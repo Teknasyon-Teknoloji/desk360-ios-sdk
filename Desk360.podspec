@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
     s.module_name  = "Desk360"
     s.source = { :git => "https://github.com/Teknasyon-Teknoloji/desk360-ios-sdk.git", :tag => s.version }
     s.source_files = "Sources/**/*.swift"
-    s.ios.resource_bundle = { "Desk360Assets" => "Assets/Desk360Assets.bundle/Images" }
+    s.ios.resource_bundle = { "Desk360Assets" => "Assets/Desk360Assets.bundle/Images", "Desk360Fonts" => "Assets/Desk360Assets.bundle/Fonts" }
     s.resource_bundle = { "Desk360" => ["Assets/*.lproj/*.strings"] }
     s.swift_version = "5.0"
     s.requires_arc = true
@@ -22,5 +22,6 @@ Pod::Spec.new do |s|
     s.dependency "Moya", '~> 14.0'
     s.dependency "PersistenceKit"
     s.dependency "DeviceKit"
+    s.dependency "ISEmojiView"
     
 end

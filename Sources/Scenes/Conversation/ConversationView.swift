@@ -24,7 +24,7 @@ final class ConversationView: UIView, Layoutable, Loadingable {
         let label = UILabel()
         label.textColor = Colors.typography
         label.textAlignment = .center
-//        label.font = FontFamily.Montserrat.semiBold.font(size: 18)
+        label.font = Fonts.Montserrat.semiBold.font(size: 18)
         return label
     }()
 

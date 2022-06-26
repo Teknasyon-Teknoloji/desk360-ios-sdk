@@ -22,6 +22,13 @@ extension Bundle {
 		guard let localizedBundle = Bundle(path: path) else { return nil }
 		return localizedBundle
 	}
+    
+    static var fontsBundle: Bundle? {
+        let bundle = Bundle(for: Desk360.self)
+        guard let path = bundle.path(forResource: "Desk360Fonts", ofType: "bundle") else { return nil }
+        guard let localizedBundle = Bundle(path: path) else { return nil }
+        return localizedBundle
+    }
 
 	static var base: Bundle? {
 		let bundle = Bundle(identifier: "test")

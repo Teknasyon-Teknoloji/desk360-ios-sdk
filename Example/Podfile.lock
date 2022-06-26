@@ -2,11 +2,12 @@ PODS:
   - Alamofire (5.6.1)
   - Desk360 (1.8.7):
     - DeviceKit
+    - ISEmojiView
     - Moya (~> 14.0)
     - PersistenceKit
     - SnapKit
   - DeviceKit (4.6.0)
-  - LookinServer (1.0.6)
+  - ISEmojiView (0.3.2)
   - Moya (14.0.0):
     - Moya/Core (= 14.0.0)
   - Moya/Core (14.0.0):
@@ -16,13 +17,12 @@ PODS:
 
 DEPENDENCIES:
   - Desk360 (from `..`)
-  - LookinServer
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - DeviceKit
-    - LookinServer
+    - ISEmojiView
     - Moya
     - PersistenceKit
     - SnapKit
@@ -33,13 +33,13 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 87bd8c952f9a4454320fce00d9cc3de57bcadaf5
-  Desk360: 5f4da5707edf26ef2ff0f1032d8fe729d8818f78
+  Desk360: 8702920102e9ac6b27d0fb5ca0cdf17c13761a69
   DeviceKit: 834dd8aa1be53cd85364d8f49aa5d98bfac397c4
-  LookinServer: 18155b1e4a08213c236a1dd6b7ca52328a70a1e3
+  ISEmojiView: 58675ffd39b268c49cefd4924643552b94ef1d6c
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   PersistenceKit: 3a9a8e760a686576eed37dbba5da7a11ac2f0603
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
 
-PODFILE CHECKSUM: cf9d8463577dcbb9cf405d1f1eb501e1358a52d5
+PODFILE CHECKSUM: b10863454b37918fd655db594274c4d2f5b64c9d
 
 COCOAPODS: 1.11.3

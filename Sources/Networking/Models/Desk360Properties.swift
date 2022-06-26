@@ -20,6 +20,9 @@ import UIKit
     let timeZone = TimeZone.current.identifier
     let appPlatform = "iOS"
     let bypassCreateTicketIntro: Bool
+    var coinCountText: String
+    var characterCountText: String
+    var writeSomethingCountText: String
 
     /// Creates a new instance of `Desk360Properties`
     /// - Parameters:
@@ -38,7 +41,10 @@ import UIKit
         country: String = Locale.current.regionCode?.uppercased() ?? "XX",
         userCredentials: Desk360UserCredentials? = nil,
         bypassCreateTicketIntro: Bool = false,
-        jsonInfo: [String: Any]? = nil
+        jsonInfo: [String: Any]? = nil,
+        coinCountText: String = "",
+        characterCountText: String = "",
+        writeSomethingCountText: String = ""
     ) {
         self.appKey = appID
         self.deviceID = deviceID
@@ -48,6 +54,9 @@ import UIKit
 		self.userCredentials = userCredentials
         self.bypassCreateTicketIntro = bypassCreateTicketIntro
 		self.jsonInfo = jsonInfo
+        self.coinCountText = coinCountText
+        self.characterCountText = characterCountText
+        self.writeSomethingCountText = writeSomethingCountText
     }
 
 }

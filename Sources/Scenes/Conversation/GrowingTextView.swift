@@ -160,7 +160,7 @@ import UIKit
             if let attributedPlaceholder = attributedPlaceholder {
                 // Prefer to use attributedPlaceholder
                 attributedPlaceholder.draw(in: placeholderRect)
-            } else if let placeholder = placeholder {
+            } else if let placeholder = Desk360.properties?.writeSomethingCountText {
                 // Otherwise user placeholder and inherit `text` attributes
                 let paragraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.alignment = textAlignment

@@ -54,14 +54,14 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
         textView.isUserInteractionEnabled = false
 		textView.allowsEditingTextAttributes = false
 		textView.dataDetectorTypes = .link
-		textView.font = Desk360.Config.Conversation.MessageCell.Receiver.messageFont
+		//textView.font = Fonts.Montserrat.medium.font(size: 14)
 		textView.backgroundColor = .clear
 		return textView
 	}()
 
 	private lazy var dateLabel: UILabel = {
 		let label = UILabel()
-		label.font = Desk360.Config.Conversation.MessageCell.Receiver.dateFont
+		//label.font = Fonts.Montserrat.regular.font(size: 10)
 		label.textAlignment = .right
 		return label
 	}()
@@ -161,7 +161,7 @@ internal extension ReceiverMessageTableViewCell {
         containerView.backgroundColor = Colors.ticketDetailChatReceiverBackgroundColor
         messageTextView.text = request.message.localizationValue.condenseNewlines.condenseWhitespacs
         messageTextView.textColor = Colors.ticketDetailChatReceiverTextColor
-        messageTextView.font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.chatReceiverFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.chatReceiverFontWeight ?? 400))
+        //messageTextView.font = Fonts.Montserrat.medium.font(size: 14)
         dateLabel.textColor = Colors.ticketDetailChatChatReceiverDateColor
         userImageView.setImage(url: agentImage, placeHolderImage: Desk360.Config.Images.chatUserGrayIcon)
 

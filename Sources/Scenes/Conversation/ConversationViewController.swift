@@ -77,11 +77,13 @@ public final class ConversationViewController: UIViewController, Layouting, UITa
 
         registerForKeyboardEvents()
         chatInputView.layoutSubviews()
-        chatInputView.configure(for: request)
         layoutableView.titleLabel.text = request.agentName
         layoutableView.tableView.contentInset.bottom = chatInputView.frame.height
 
         layoutableView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
+        layoutableView.tableView.addGestureRecognizer(tapGesture)
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -865,5 +867,9 @@ extension ConversationViewController {
     public func updateTicket(ticketId: Int) {
         request.id = ticketId
         readRequest(request)
+    }
+    
+    @objc private func tableViewTapped() {
+        chatInputView.textView.resignFirstResponder()
     }
 }

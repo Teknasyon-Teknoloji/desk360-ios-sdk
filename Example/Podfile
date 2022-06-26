@@ -7,5 +7,4 @@ target 'Example' do
 
   pod 'Desk360', :path => '..'
   # pod 'PersistanceKit'
-  pod 'LookinServer', :configurations => ['Debug']
 end

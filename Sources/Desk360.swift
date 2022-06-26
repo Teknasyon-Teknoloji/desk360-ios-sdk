@@ -86,6 +86,7 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
         Desk360.properties = properties
 		Desk360.appVersion = Desk360.getAppVersion()
 		Desk360.sdkVersion = Desk360.getSdkVersion()
+        Fonts.Montserrat.registerFonts()
     }
 
 	public static var shared: Desk360 {
@@ -341,6 +342,12 @@ private extension Desk360 {
             viewController.hidesBottomBarWhenPushed = true
             navigationController.pushViewController(viewController, animated: false)
         }
+    }
+    
+    @objc public static func updateChatLocalization(coinCountText: String, characterCountText: String, writeSomethingCountText: String) {
+        Desk360.properties?.coinCountText = coinCountText
+        Desk360.properties?.characterCountText = characterCountText
+        Desk360.properties?.writeSomethingCountText = writeSomethingCountText
     }
 }
 

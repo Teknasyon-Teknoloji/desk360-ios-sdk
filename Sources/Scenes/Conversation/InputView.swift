@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import ISEmojiView
 
 protocol InputViewDelegate: AnyObject {
-	func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String)
+    func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String)
     func inputView(_ view: InputView, didTapAttachButton button: UIButton)
-	func inputView(_ view: InputView, didTapCreateRequestButton button: UIButton)
+    func inputView(_ view: InputView, didTapCreateRequestButton button: UIButton)
 }
 
 class InputView: UIView, Layoutable {
@@ -21,7 +22,7 @@ class InputView: UIView, Layoutable {
     private var totalCoin: Int = 0
     private var coinCounter: Int = 0
     private var characterCounter: Int = 0
-    
+
     private lazy var messageInputContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -52,7 +53,9 @@ class InputView: UIView, Layoutable {
         view.tintColor = Colors.ticketDetailWriteMessageTextColor
         view.placeholderColor = Colors.writeMessagePHTextColor
         view.placeholder = Config.shared.model?.ticketDetail?.writeMessagePlaceHolderText
-        view.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right: .left
+        view.font = Fonts.Montserrat.regular.font(size: 14)
+        view.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right : .left
+        view.autocorrectionType = .no
         return view
     }()
 
@@ -67,7 +70,7 @@ class InputView: UIView, Layoutable {
         button.setImage(Desk360.Config.Images.sendIcon, for: .normal)
         return button
     }()
-    
+
     private lazy var coinBarView: UIView = {
         let view = UIView()
         view.isHidden = true
@@ -77,63 +80,77 @@ class InputView: UIView, Layoutable {
         view.addSubview(addCoinView)
         return view
     }()
-    
+
     private lazy var spentCoinValue: UILabel = {
         let label = UILabel()
-        label.text = "0 coin"
+        label.text = String(format: Desk360.properties?.coinCountText ?? "", coinCounter)
         label.textColor = .white
+        label.font = Fonts.Montserrat.semiBold.font(size: 14)
         return label
     }()
 
     private lazy var spentCharacterValue: UILabel = {
         let label = UILabel()
-        label.text = "0 karakter"
+        label.text = String(format: Desk360.properties?.characterCountText ?? "", characterCounter)
         label.textColor = Colors.paleLilac
+        label.font = Fonts.Montserrat.regular.font(size: 14)
         return label
     }()
 
     private lazy var totalCoinValue: UILabel = {
         let label = UILabel()
         label.textColor = .white
+        label.font = Fonts.Montserrat.semiBold.font(size: 18)
         return label
     }()
-    
+
     private lazy var addCoinImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = Desk360.Config.Images.addCoinIcon
         return imageView
     }()
-    
+
     private lazy var addCoinView: UIView = {
         let view = UIView()
         view.addSubview(totalCoinValue)
         view.addSubview(addCoinImageView)
         return view
     }()
-    
+
+    private lazy var emojiView: EmojiView = {
+        let settings = KeyboardSettings(bottomType: .categories)
+        settings.needToShowAbcButton = true
+        settings.updateRecentEmojiImmediately = false
+
+        let emojiView = EmojiView(keyboardSettings: settings)
+        return emojiView
+    }()
+
     lazy var attachButton = UIButton()
 
     override var intrinsicContentSize: CGSize {
         let height: CGFloat = 96
         return CGSize(width: UIView.noIntrinsicMetric, height: height)
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         setupViews()
         setupLayout()
     }
-    
+
     func setupViews() {
         backgroundColor = .clear
         addSubview(messageInputContainerView)
         addSubview(coinBarView)
-        
+
         textView.delegate = self
+        emojiView.delegate = self
         sendButton.isEnabled = textView.text.condenseNewlines.condenseNewlines.isEmpty == false
         sendButton.addTarget(self, action: #selector(didTapSendButton(_:)), for: .touchUpInside)
+        emojiButton.addTarget(self, action: #selector(didTapEmojiButton(_:)), for: .touchUpInside)
     }
-    
+
     func setupLayout() {
         messageInputContainerView.snp.makeConstraints { make in
             make.top.equalTo(coinBarView.snp.bottom)
@@ -144,7 +161,7 @@ class InputView: UIView, Layoutable {
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(1)
         }
-        
+
         textViewContainerView.snp.makeConstraints { make in
             make.top.equalTo(inputTopView.snp.bottom).offset(10)
             make.leading.equalToSuperview().offset(10)
@@ -170,43 +187,43 @@ class InputView: UIView, Layoutable {
             make.leading.equalTo(textView.snp.trailing).offset(10)
             make.trailing.equalTo(textViewContainerView.snp.trailing).inset(10)
         }
-        
+
         coinBarView.snp.makeConstraints { make in
             make.height.equalTo(36)
             make.top.leading.trailing.equalToSuperview()
         }
-        
+
         spentCoinValue.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(14)
             make.top.bottom.equalToSuperview()
         }
-        
+
         spentCharacterValue.snp.makeConstraints { make in
             make.leading.equalTo(spentCoinValue.snp.trailing).offset(5)
             make.top.bottom.equalToSuperview()
         }
-        
+
         addCoinView.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(18)
             make.top.bottom.equalToSuperview()
         }
-        
+
         addCoinImageView.snp.makeConstraints { make in
             make.width.height.equalTo(24)
             make.trailing.equalToSuperview()
             make.centerY.equalToSuperview()
             make.leading.equalTo(totalCoinValue.snp.trailing).offset(5)
         }
-        
+
         totalCoinValue.snp.makeConstraints { make in
             make.top.bottom.leading.equalToSuperview()
         }
     }
-    
+
     func reset(isClearText: Bool = true) {
-      
+
         DispatchQueue.main.async {
-           // self.setLoading(false)
+            // self.setLoading(false)
             if isClearText {
                 self.textView.text = ""
             }
@@ -214,31 +231,30 @@ class InputView: UIView, Layoutable {
 //            self.attachmentView.clear()
         }
     }
-    
+
     func resetAttachView() {
         reset(isClearText: false)
         self.hasAttachView = false
     }
-    
+
     func setValues(characterPerCoin: Int, totalCoin: Int) {
         self.characterPerCoin = characterPerCoin
         self.totalCoin = totalCoin
         totalCoinValue.text = String(self.totalCoin)
     }
-    
+
     private func calculateWithMessageText() {
         guard let text = textView.text else { return }
 
         if text.isEmpty {
             coinCounter = 0
         } else {
-            coinCounter = (text.count / characterPerCoin) + (text.count % characterPerCoin == 0 ? 0 : 1)
+            coinCounter = characterPerCoin == 0 ? 0 : (text.count / characterPerCoin) + (text.count % characterPerCoin == 0 ? 0 : 1)
         }
         characterCounter = text.count
-        
-        #warning("osmanyildirim: localization parametre kullan")
-        spentCoinValue.text = String(coinCounter) + " coin"
-        spentCharacterValue.text = String(characterCounter) + " karakter"
+
+        spentCoinValue.text = String(format: Desk360.properties?.coinCountText ?? "", coinCounter)
+        spentCharacterValue.text = String(format: Desk360.properties?.characterCountText ?? "", characterCounter)
     }
 }
 
@@ -267,17 +283,12 @@ extension InputView: UITextViewDelegate {
         coinBarView.isHidden = false
         return true
     }
-    
+
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         coinBarView.isHidden = true
         return true
     }
 
-    func configure(for request: Ticket) {
-        let font = UIFont.systemFont(ofSize: CGFloat(Config.shared.model?.ticketDetail?.writeMessageFontSize ?? 18), weight: Font.weight(type: Config.shared.model?.ticketDetail?.writeMessageFontWeight ?? 400))
-        textView.font = font
-    }
-    
     func setSendButton() {
         sendButton.isEnabled = textView.text.condenseNewlines.condenseWhitespacs.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
     }
@@ -293,11 +304,22 @@ private extension InputView {
 
     @objc
     func didTapAttachButton(_ button: UIButton) {
-       delegate?.inputView(self, didTapAttachButton: button)
+        delegate?.inputView(self, didTapAttachButton: button)
     }
 
     @objc
     func didTapCreateRequestButton(_ button: UIButton) {
         delegate?.inputView(self, didTapCreateRequestButton: button)
+    }
+
+    @objc
+    func didTapEmojiButton(_ button: UIButton) {
+        
+    }
+}
+
+extension InputView: EmojiViewDelegate {
+    func emojiViewDidSelectEmoji(_ emoji: String, emojiView: EmojiView) {
+        textView.insertText(emoji)
     }
 }
