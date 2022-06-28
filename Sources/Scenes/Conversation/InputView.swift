@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import ISEmojiView
 
 protocol InputViewDelegate: AnyObject {
     func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String, spentCoin: Int)
@@ -118,15 +117,6 @@ class InputView: UIView, Layoutable {
         return view
     }()
 
-    private lazy var emojiView: EmojiView = {
-        let settings = KeyboardSettings(bottomType: .categories)
-        settings.needToShowAbcButton = true
-        settings.updateRecentEmojiImmediately = false
-
-        let emojiView = EmojiView(keyboardSettings: settings)
-        return emojiView
-    }()
-
     lazy var attachButton = UIButton()
 
     override var intrinsicContentSize: CGSize {
@@ -146,7 +136,6 @@ class InputView: UIView, Layoutable {
         addSubview(coinBarView)
 
         textView.delegate = self
-        emojiView.delegate = self
         sendButton.isEnabled = textView.text.condenseNewlines.condenseNewlines.isEmpty == false
         sendButton.addTarget(self, action: #selector(didTapSendButton(_:)), for: .touchUpInside)
         emojiButton.addTarget(self, action: #selector(didTapEmojiButton(_:)), for: .touchUpInside)
@@ -324,11 +313,5 @@ private extension InputView {
     @objc
     func didTapAddCoinView() {
         delegate?.inputViewDidTapAddCoin(self)
-    }
-}
-
-extension InputView: EmojiViewDelegate {
-    func emojiViewDidSelectEmoji(_ emoji: String, emojiView: EmojiView) {
-        textView.insertText(emoji)
     }
 }
