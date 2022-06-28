@@ -9,14 +9,29 @@ import UIKit
 import Photos
 import Moya
 
+public protocol ConversationViewControllerCoinDelegate: AnyObject {
+    
+    /// message did send and return spent coin value
+    /// - Parameter spentCoin: calculate spent coin with characterPerCoin and message character count
+    func didMessageSent(spentCoin: Int)
+    
+    /// total coin balance not enough for message send
+    func coinBalanceNotEnough()
+    
+    /// did tap Add Coin button, will open landing
+    func didTapAddCoin()
+}
+
 public final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIDocumentBrowserViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIDocumentPickerDelegate {
 
     typealias ViewType = ConversationView
 
     var request: Ticket!
     public var ticketWillCreateOnViewController: ((String) -> (Void))?
+    public weak var delegate: ConversationViewControllerCoinDelegate?
     private var characterPerCoin: Int = 0
     private var totalCoin: Int = 0
+    private var spentCoin: Int = 0
     private var message: String = ""
     private var files = [FileData]()
     private lazy var chatInputView = InputView(frame: .init(origin: .zero, size: .init(width: view.frame.width, height: (96 + safeAreaBottom))))
@@ -158,12 +173,18 @@ extension ConversationViewController: InputViewDelegate {
     func inputView(_ view: InputView, didTapCreateRequestButton button: UIButton) {
     }
 
-    func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String) {
-        chatInputView.setLoading(true)
-        if request.id == 0 {
-            ticketWillCreateOnViewController?(text)
+    func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String, spentCoin: Int) {
+        self.spentCoin = spentCoin
+        
+        if totalCoin == 0 || totalCoin < spentCoin {
+            delegate?.coinBalanceNotEnough()
         } else {
-            addMessage(text.condenseNewlines.condenseWhitespacs, to: request)
+            chatInputView.setLoading(true)
+            if request.id == 0 {
+                ticketWillCreateOnViewController?(text)
+            } else {
+                addMessage(text.condenseNewlines.condenseWhitespacs, to: request)
+            }
         }
     }
 
@@ -205,6 +226,11 @@ extension ConversationViewController: InputViewDelegate {
         }
 
         present(alert, animated: true)
+    }
+    
+    func inputViewDidTapAddCoin(_ view: InputView) {
+        chatInputView.textView.resignFirstResponder()
+        delegate?.didTapAddCoin()
     }
 
     @objc func didTapDocumentBrowse(completion: @escaping (() -> Void)) {
@@ -434,6 +460,7 @@ extension ConversationViewController {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.showActiveCheckMark()
                     self.scrollToBottom(animated: true)
+                    self.delegate?.didMessageSent(spentCoin: self.spentCoin)
                 }
             }
         }

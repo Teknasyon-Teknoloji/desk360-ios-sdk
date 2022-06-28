@@ -9,9 +9,10 @@ import UIKit
 import ISEmojiView
 
 protocol InputViewDelegate: AnyObject {
-    func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String)
+    func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String, spentCoin: Int)
     func inputView(_ view: InputView, didTapAttachButton button: UIButton)
     func inputView(_ view: InputView, didTapCreateRequestButton button: UIButton)
+    func inputViewDidTapAddCoin(_ view: InputView)
 }
 
 class InputView: UIView, Layoutable {
@@ -149,6 +150,9 @@ class InputView: UIView, Layoutable {
         sendButton.isEnabled = textView.text.condenseNewlines.condenseNewlines.isEmpty == false
         sendButton.addTarget(self, action: #selector(didTapSendButton(_:)), for: .touchUpInside)
         emojiButton.addTarget(self, action: #selector(didTapEmojiButton(_:)), for: .touchUpInside)
+        
+        let addCoinGesture = UITapGestureRecognizer(target: self, action: #selector(didTapAddCoinView))
+        addCoinView.addGestureRecognizer(addCoinGesture)
     }
 
     func setupLayout() {
@@ -299,7 +303,7 @@ private extension InputView {
     @objc
     func didTapSendButton(_ button: UIButton) {
         guard let text = textView.trimmedText else { return }
-        delegate?.inputView(self, didTapSendButton: button, withText: text)
+        delegate?.inputView(self, didTapSendButton: button, withText: text, spentCoin: coinCounter)
     }
 
     @objc
@@ -315,6 +319,11 @@ private extension InputView {
     @objc
     func didTapEmojiButton(_ button: UIButton) {
         
+    }
+    
+    @objc
+    func didTapAddCoinView() {
+        delegate?.inputViewDidTapAddCoin(self)
     }
 }
 
