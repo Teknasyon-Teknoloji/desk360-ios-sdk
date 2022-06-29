@@ -2,10 +2,12 @@ PODS:
   - Alamofire (5.6.1)
   - Desk360 (1.8.7):
     - DeviceKit
+    - "Keyboard+LayoutGuide"
     - Moya (~> 14.0)
     - PersistenceKit
     - SnapKit
   - DeviceKit (4.6.0)
+  - "Keyboard+LayoutGuide (1.6.0)"
   - Moya (14.0.0):
     - Moya/Core (= 14.0.0)
   - Moya/Core (14.0.0):
@@ -20,6 +22,7 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - DeviceKit
+    - "Keyboard+LayoutGuide"
     - Moya
     - PersistenceKit
     - SnapKit
@@ -30,8 +33,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 87bd8c952f9a4454320fce00d9cc3de57bcadaf5
-  Desk360: 58b55a939fb89fe65a4afd5495172526609d6978
+  Desk360: 58371d9ad8c1d23ec852eb2849485cb8472591fd
   DeviceKit: 834dd8aa1be53cd85364d8f49aa5d98bfac397c4
+  "Keyboard+LayoutGuide": db44b1764e2bb5d9824cc9cea9d9006cd4442045
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   PersistenceKit: 3a9a8e760a686576eed37dbba5da7a11ac2f0603
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25

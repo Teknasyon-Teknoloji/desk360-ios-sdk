@@ -22,5 +22,6 @@ Pod::Spec.new do |s|
     s.dependency "Moya", '~> 14.0'
     s.dependency "PersistenceKit"
     s.dependency "DeviceKit"
+    s.dependency "Keyboard+LayoutGuide"
     
 end

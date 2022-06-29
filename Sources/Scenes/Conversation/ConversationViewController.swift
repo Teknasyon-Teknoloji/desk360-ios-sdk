@@ -20,6 +20,9 @@ public protocol ConversationViewControllerCoinDelegate: AnyObject {
     
     /// did tap Add Coin button, will open landing
     func didTapAddCoin()
+    
+    /// ticket created, ticketId and agentId will request to backend
+    func didTicketCreated(agentId: Int, ticketId: Int)
 }
 
 public final class ConversationViewController: UIViewController, Layouting, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, UIDocumentBrowserViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIDocumentPickerDelegate {
@@ -27,16 +30,14 @@ public final class ConversationViewController: UIViewController, Layouting, UITa
     typealias ViewType = ConversationView
 
     var request: Ticket!
-    public var ticketWillCreateOnViewController: ((String) -> (Void))?
     public weak var delegate: ConversationViewControllerCoinDelegate?
     private var characterPerCoin: Int = 0
     private var totalCoin: Int = 0
     private var spentCoin: Int = 0
+    private var name: String = ""
+    private var email: String = ""
     private var message: String = ""
-    private var files = [FileData]()
-    private lazy var chatInputView = InputView(frame: .init(origin: .zero, size: .init(width: view.frame.width, height: (96 + safeAreaBottom))))
 
-    private var attachment: URL?
     private var isConfigure = false
     private var previousLineCount = 0
     private var currentLineCount = 0
@@ -44,42 +45,20 @@ public final class ConversationViewController: UIViewController, Layouting, UITa
     private var aiv = UIActivityIndicatorView()
     private var isDragReleased = false
 
-    private var safeAreaBottom: CGFloat = {
-        if #available(iOS 11.0, *) {
-            return UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
-        } else {
-            return 0
-        }
-    }()
-
-    private var safeAreaTop: CGFloat = {
-        if #available(iOS 11.0, *) {
-            return UIApplication.shared.keyWindow?.safeAreaInsets.top ?? 0
-        } else {
-            return 0
-        }
-    }()
-
-    convenience init(request: Ticket, characterPerCoin: Int = 0, totalCoin: Int = 0) {
+    convenience init(request: Ticket, characterPerCoin: Int = 0, totalCoin: Int = 0, name: String = "", email: String = "") {
         self.init()
         self.request = request
         self.characterPerCoin = characterPerCoin
         self.totalCoin = totalCoin
+        self.name = name
+        self.email = email
 
-        chatInputView.setValues(characterPerCoin: self.characterPerCoin, totalCoin: self.totalCoin)
-        chatInputView.delegate = self
+        layoutableView.chatInputView.setValues(characterPerCoin: self.characterPerCoin, totalCoin: self.totalCoin)
+        layoutableView.chatInputView.delegate = self
     }
 
     public override func loadView() {
         view = ViewType.create()
-    }
-
-    public override var inputAccessoryView: UIView? {
-        return chatInputView
-    }
-
-    public override var canBecomeFirstResponder: Bool {
-        return true
     }
 
     public func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
@@ -91,10 +70,7 @@ public final class ConversationViewController: UIViewController, Layouting, UITa
         super.viewDidLoad()
 
         registerForKeyboardEvents()
-        chatInputView.layoutSubviews()
         layoutableView.titleLabel.text = request.agentName
-        layoutableView.tableView.contentInset.bottom = chatInputView.frame.height
-
         layoutableView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
@@ -135,7 +111,7 @@ public final class ConversationViewController: UIViewController, Layouting, UITa
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         Desk360.conVC = nil
-        chatInputView.textView.resignFirstResponder()
+        layoutableView.chatInputView.textView.resignFirstResponder()
         setRead()
     }
 
@@ -146,24 +122,15 @@ public final class ConversationViewController: UIViewController, Layouting, UITa
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = request.messages[indexPath.row]
 
-        var hasAttach = false
-        if message.attachments?.images?.count ?? 0 > 0 ||
-            message.attachments?.videos?.count ?? 0 > 0 ||
-            message.attachments?.files?.count ?? 0 > 0 ||
-            message.attachments?.others?.count ?? 0 > 0 {
-            hasAttach = true
-        }
-
         if !message.isAnswer {
             let cell = tableView.dequeueReusableCell(SenderMessageTableViewCell.self)
             cell.clearCell()
-            cell.configure(for: request.messages[indexPath.row], hasAttach: hasAttach)
+            cell.configure(for: request.messages[indexPath.row], hasAttach: false)
             return cell
         }
         let cell = tableView.dequeueReusableCell(ReceiverMessageTableViewCell.self)
         cell.clearCell()
-        cell.delegate = self
-        cell.configure(for: request.messages[indexPath.row], request.agentImage, indexPath, attachment, hasAttach: hasAttach)
+        cell.configure(for: request.messages[indexPath.row], request.agentImage, indexPath, nil, hasAttach: false)
         return cell
     }
 }
@@ -175,177 +142,26 @@ extension ConversationViewController: InputViewDelegate {
 
     func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String, spentCoin: Int) {
         self.spentCoin = spentCoin
-        
+
         if totalCoin == 0 || totalCoin < spentCoin {
             delegate?.coinBalanceNotEnough()
         } else {
-            chatInputView.setLoading(true)
+            layoutableView.chatInputView.setLoading(true)
             if request.id == 0 {
-                ticketWillCreateOnViewController?(text)
+                createTicket()
             } else {
                 addMessage(text.condenseNewlines.condenseWhitespacs, to: request)
             }
         }
     }
-
-    func inputView(_ view: InputView, didTapAttachButton button: UIButton) {
-        guard files.count <= 4 else { return }
-        view.attachButton.isHidden = true
-        view.sendButton.isHidden = true
-        self.becomeFirstResponder()
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.modalPresentationStyle = .fullScreen
-        let showImagePicker = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentImagesText ?? "Images", style: .default) { _ in
-            self.didTapImagePicker {
-                view.attachButton.isHidden = false
-                view.sendButton.isHidden = false
-                // view.isHidden = false
-            }
-        }
-        let showFilePicker = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentBrowseText ?? "Browse", style: .default) { _ in
-            self.didTapDocumentBrowse {
-                view.attachButton.isHidden = false
-                view.sendButton.isHidden = false
-                // view.isHidden = false
-            }
-        }
-        let cancelAction = UIAlertAction(title: Config.shared.model?.generalSettings?.attachmentCancelText ?? "Cancel", style: .cancel) { _ in
-            view.attachButton.isHidden = false
-            view.sendButton.isHidden = false
-            //view.isHidden = false
-        }
-
-        if #available(iOS 11.0, *) {
-            alert.addAction(showFilePicker)
-        }
-        alert.addAction(showImagePicker)
-        alert.addAction(cancelAction)
-        if let popoverPresentationController = alert.popoverPresentationController {
-            popoverPresentationController.sourceView = chatInputView.attachButton
-            popoverPresentationController.sourceRect = chatInputView.attachButton.bounds
-        }
-
-        present(alert, animated: true)
-    }
     
     func inputViewDidTapAddCoin(_ view: InputView) {
-        chatInputView.textView.resignFirstResponder()
+        layoutableView.chatInputView.textView.resignFirstResponder()
         delegate?.didTapAddCoin()
     }
-
-    @objc func didTapDocumentBrowse(completion: @escaping (() -> Void)) {
-
-        let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.adobe.pdf"], in: .import)
-        documentPicker.delegate = self
-        self.present(documentPicker, animated: true) {
-            self.isConfigure = true
-            completion()
-        }
-    }
-
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0]
-    }
-
-    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        guard let url = urls.first else { return }
-        guard let pdfData = try? Data(contentsOf: url) else { return }
-        guard let name = url.pathComponents.last else { return }
-        guard pdfData.count < 5242880 else {
-            controller.dismiss(animated: true) {
-                Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model?.generalSettings?.fileSizeErrorText ?? "")
-            }
-            return
-        }
-
-        files.append(FileData(name: name, data: pdfData, url: url.absoluteString, type: "pdf"))
-        controller.dismiss(animated: true) {
-            self.manageAttachView()
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.chatInputView.textView.becomeFirstResponder()
-        }
-    }
-
-    public func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-        controller.dismiss(animated: true) {
-            self.manageAttachView()
-        }
-    }
-
-    @objc func didTapImagePicker(completion: @escaping (() -> Void)) {
-        let imagePicker: UIImagePickerController = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.allowsEditing = false
-        imagePicker.mediaTypes = ["public.image", "public.movie"]
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true) {
-            self.isConfigure = true
-            completion()
-        }
-    }
-
-    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true) {
-            self.manageAttachView()
-        }
-    }
-
-    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard var imgUrl = info[UIImagePickerController.InfoKey.referenceURL] as? URL else { return }
-        guard var name = imgUrl.pathComponents.last else { return }
-        guard files.count <= 4 else { return }
-        if #available(iOS 11.0, *) {
-            imgUrl = info[UIImagePickerController.InfoKey.imageURL] as? URL ?? imgUrl
-            if let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset {
-                let assetResources = PHAssetResource.assetResources(for: asset)
-                name = assetResources.first?.originalFilename ?? ""
-                print(name)
-            }
-        }
-
-        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            guard let data = image.jpegData(compressionQuality: 0.3) as NSData? else { return }
-            guard data.length < 5242880 else {
-                picker.dismiss(animated: true) {
-                    Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model?.generalSettings?.fileSizeErrorText ?? "")
-                }
-                return
-            }
-            files.append(FileData(name: name, data: Data(referencing: data), url: imgUrl.absoluteString, type: "image/jpeg"))
-        } else {
-            if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
-                guard let data = try? NSData(contentsOf: videoUrl as URL, options: .mappedIfSafe) else { return }
-                guard data.length < 5242880 else {
-                    picker.dismiss(animated: true) {
-                        Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model?.generalSettings?.fileSizeErrorText ?? "")
-                    }
-                    return
-                }
-                files.append(FileData(name: name, data: Data(referencing: data), url: videoUrl.absoluteString, type: "video"))
-            }
-        }
-
-        let abc = files.map({ ($0.data as NSData).length })
-        let dataSize = abc.reduce(0, +)
-        guard dataSize < 5242880 else {
-            picker.dismiss(animated: true) {
-                Alert.showAlert(viewController: self, title: "Desk360", message: Config.shared.model?.generalSettings?.fileSizeErrorText ?? "")
-            }
-            return
-        }
-
-        picker.dismiss(animated: true) {
-            self.manageAttachView()
-        }
-    }
-
-    func manageAttachView() {
-        guard files.count <= 5 else { return }
-        //chatInputView.attachmentView.append(attachementsData: files)
-        chatInputView.setSendButton()
+    
+    func inputViewDidBegin() {
+        scrollToBottom(animated: true)
     }
 }
 
@@ -356,6 +172,7 @@ extension ConversationViewController {
     /// - Parameter request: this parameter is a ticket object we will use its id and we will use its properties
     func readRequest(_ request: Ticket) {
         guard request.id != 0 else {
+            hidePDR()
             layoutableView.setLoading(false)
             return
         }
@@ -383,24 +200,12 @@ extension ConversationViewController {
                 self.request = data
                 let storedTickets = Stores.ticketWithMessageStore.allObjects() // fetch previously saved tickets from the local just before save new tickets
                 try? Stores.ticketWithMessageStore.save(self.request)// save new tickets to the local.
-                if let url = data.attachmentUrl {
-                    self.attachment = url // attachments will be allways at first row of tableview.
-                }
+
                 if let msg = self.request.messages.last {
                     let currentTicketWithMessage = storedTickets.filter({ $0.id == self.request.id })
                     if currentTicketWithMessage.count > 0 {
                         if let mesaj = currentTicketWithMessage[0].messages.last {
                             if msg.id == mesaj.id {
-                                if let url = data.attachmentUrl {
-                                    if self.request != nil {
-                                        DispatchQueue.main.async {
-                                            // attachments will be allways at first row of tableview.
-                                            let indexPath = IndexPath(row: 0, section: 0)
-                                            guard self.layoutableView.tableView.isValid(indexPath: indexPath) else { return }
-                                            self.layoutableView.tableView.reloadRows(at: [indexPath], with: .none)
-                                        }
-                                    }
-                                }
                                 self.scrollToBottom(animated: false)
                                 return // don't reload table to avoid performance issues
                             }
@@ -408,8 +213,10 @@ extension ConversationViewController {
                     }
                 }
 
-                self.layoutableView.tableView.reloadData()
-                self.scrollToBottom(animated: false)
+                DispatchQueue.main.async {
+                    self.layoutableView.tableView.reloadData()
+                    self.scrollToBottom(animated: false)
+                }
             }
         }
     }
@@ -421,7 +228,7 @@ extension ConversationViewController {
     func addMessage(_ message: String, to request: Ticket) {
 
         self.message = message
-        self.chatInputView.reset(isClearText: true)
+        self.layoutableView.chatInputView.reset(isClearText: true)
         guard Desk360.isReachable else {
             networkError()
             return
@@ -432,23 +239,17 @@ extension ConversationViewController {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
-        let attachFiles = self.files
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
             self.appendMessage(message: Message(id: id, message: message, isAnswer: false, createdAt: formatter.string(from: Date())))
-            self.files.removeAll()
-            self.manageAttachView()
             self.scrollToBottom(animated: true)
         }
         var attach = [MultipartFormData]()
-        if attachFiles.count > 0 {
-            attach = attachFiles.map({ Moya.MultipartFormData(provider: .data($0.data), name: "attachments[]", fileName: $0.name.lowercased(), mimeType: $0.type) })
-            chatInputView.setLoading(true)
-        }
         let fieldData = MultipartFormData(provider: .data(message.data(using: .utf8)!), name: "message")
         attach.insert(fieldData, at: 0)
+
         Desk360.apiProvider.request(.ticketMessages(request.id, attach: attach)) { [weak self] result in
             guard let self = self else { return }
-            self.chatInputView.setLoading(false)
+            self.layoutableView.chatInputView.setLoading(false)
             switch result {
             case .failure(let error):
                 if error.response?.statusCode == 400 {
@@ -457,11 +258,95 @@ extension ConversationViewController {
                     return
                 }
             case .success(let data):
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self.showActiveCheckMark()
                     self.scrollToBottom(animated: true)
                     self.delegate?.didMessageSent(spentCoin: self.spentCoin)
                 }
+                self.coinDecrement()
+                self.layoutableView.chatInputView.clearText()
+            }
+            self.layoutableView.chatInputView.setLoading(false)
+        }
+    }
+    
+    
+    func createTicket() {
+        guard Desk360.isReachable else {
+            networkError()
+            return
+        }
+        
+        var ticket = [MultipartFormData]()
+        
+        /// Name
+        let nameData = name.data(using: String.Encoding.utf8) ?? Data()
+        ticket.append(Moya.MultipartFormData(provider: .data(nameData), name: "name"))
+        
+        /// Email
+        let emailData = email.data(using: String.Encoding.utf8) ?? Data()
+        //Stores.userMail.object?.data(using: String.Encoding.utf8) ?? Data()
+        ticket.append(Moya.MultipartFormData(provider: .data(emailData), name: "email"))
+        
+        ///  Type id
+        let typeData = "5".data(using: String.Encoding.utf8) ?? Data()
+        ticket.append(Moya.MultipartFormData(provider: .data(typeData), name: "type_id"))
+        
+        // Message
+        let messageData = layoutableView.chatInputView.textView.text.data(using: String.Encoding.utf8) ?? Data()
+        ticket.append(Moya.MultipartFormData(provider: .data(messageData), name: "message"))
+        
+        // Assign to
+        let assignToData = String(request.agentId ?? 0).data(using: String.Encoding.utf8) ?? Data()
+        ticket.append(Moya.MultipartFormData(provider: .data(assignToData), name: "assign_to"))
+        
+        guard let props = Desk360.properties else {
+            Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+            return
+        }
+
+        let sourceData = "App".data(using: String.Encoding.utf8) ?? Data()
+        ticket.append(Moya.MultipartFormData(provider: .data(sourceData), name: "source"))
+
+        let platformData = props.appPlatform.data(using: String.Encoding.utf8) ?? Data()
+        ticket.append(Moya.MultipartFormData(provider: .data(platformData), name: "platform"))
+
+        let countryCodeData = props.country.data(using: String.Encoding.utf8) ?? Data()
+        ticket.append(Moya.MultipartFormData(provider: .data(countryCodeData), name: "country_code"))
+
+        if let json = props.jsonInfo, let jsonData = try? JSONSerialization.data(withJSONObject: json) {
+            ticket.append(Moya.MultipartFormData(provider: .data(jsonData), name: "settings"))
+        }
+
+        if let pushTokenString = Desk360.pushToken {
+            let pushTokenData = pushTokenString.data(using: String.Encoding.utf8) ?? Data()
+            ticket.append(Moya.MultipartFormData(provider: .data(pushTokenData), name: "push_token"))
+        }
+
+        self.layoutableView.setLoading(true)
+        Desk360.apiProvider.request(.create(ticket: ticket)) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .failure(let error):
+                self.layoutableView.setLoading(false)
+                print(error.localizedServerDescription)
+                if error.response?.statusCode == 400 {
+                    Desk360.isRegister = false
+                    Alert.showAlertWithDismiss(viewController: self, title: "Desk360", message: "general.error.message".localize(), dissmis: true)
+                    return
+                }
+            case .success(let response):
+                guard let tickets = try? response.map(DataResponse<NewTicket>.self) else { return }
+                guard let data = tickets.data else { return }
+                self.request.id = data.id
+                self.delegate?.didTicketCreated(agentId: self.request.agentId ?? 0, ticketId: self.request.id)
+                
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+                    self.readRequest(self.request)
+                }
+                self.layoutableView.chatInputView.clearText()
+                self.coinDecrement()
             }
         }
     }
@@ -469,55 +354,10 @@ extension ConversationViewController {
 
 // MARK: - Helpers
 private extension ConversationViewController {
-    enum FileType: String {
-        case image = "image"
-        case video = "video"
-        case file = "file"
-        case unknown = "unknown"
-    }
-
-    func getFileType(url: URL) -> FileType {
-        guard let path = url.pathComponents.last else { return .unknown }
-        let words = path.split(separator: ".")
-        guard var word = words.last?.lowercased() else { return .unknown }
-        if word == "pdf" {
-            return .file
-        } else if word == "png" || word == "jpeg" || word == "jpg" || word == "svg" || word == "bmp" || word == "heic" {
-            return .image
-        } else if word == "avi" || word == "mkv" || word == "mov" || word == "wmv" || word == "mp4" || word == "3gp" || word == "qt" {
-            return .video
-        } else {
-            return .unknown
-        }
-    }
     /// This method is used to  a add a message in ticket
     /// - Parameter message: this parameter is a user message
     func appendMessage(message: Message) {
-        var attach = Attachment()
-        for file in files {
-            let type = getFileType(url: URL(string: file.url)!)
-            if type == .image {
-                if attach.images == nil {
-                    attach.images = [AttachObject]()
-                }
-                attach.images?.append(AttachObject(url: file.url, name: file.name, type: type.rawValue))
-            }
-            if type == .video {
-                if attach.videos == nil {
-                    attach.videos = [AttachObject]()
-                }
-                attach.videos?.append(AttachObject(url: file.url, name: file.name, type: type.rawValue))
-            }
-            if type == .file {
-                if attach.files == nil {
-                    attach.files = [AttachObject]()
-                }
-                attach.files?.append(AttachObject(url: file.url, name: file.name, type: type.rawValue))
-            }
-        }
         var msgObject = message
-        msgObject.attachments = attach
-
         self.request.messages.append(msgObject)
         try? Stores.ticketWithMessageStore.save(self.request)
 
@@ -527,7 +367,6 @@ private extension ConversationViewController {
         self.layoutableView.tableView.endUpdates()
 
         try? Stores.ticketsStore.save(self.request)
-
     }
 
     /// This method is used to scroll to tableview bottom
@@ -538,7 +377,7 @@ private extension ConversationViewController {
         if Desk360.conVC == nil { return }
         let lastIndexPath = IndexPath(row: row, section: 0)
         guard layoutableView.tableView.isValid(indexPath: lastIndexPath) else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
                 self.layoutableView.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: animated)
             })
     }
@@ -609,7 +448,7 @@ extension ConversationViewController {
 extension ConversationViewController {
     /// This method is used to pop action on navigationcontroller
     @objc func didTapBackButton() {
-        chatInputView.textView.resignFirstResponder()
+        layoutableView.chatInputView.textView.resignFirstResponder()
         navigationController?.popViewController(animated: true)
     }
 }
@@ -650,8 +489,7 @@ extension ConversationViewController {
         view.addSubview(refreshIcon)
         aiv.addSubview(view)
         layoutableView.tableView.tableHeaderView = aiv
-        chatInputView.attachButton.isHidden = false
-        chatInputView.sendButton.isHidden = false
+        layoutableView.chatInputView.sendButton.isHidden = false
     }
 
     public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -751,133 +589,6 @@ extension ConversationViewController: KeyboardObserving {
     public func keyboardDidChangeFrame(_ notification: KeyboardNotification?) { }
 }
 
-extension ConversationViewController: ReceiverMessageTableViewCellDelegate {
-    func didTapPdfFile(_ file: AttachObject) {
-        if #available(iOS 11.0, *) {
-            navigationController?.pushViewController(PDFPreviewViewController(file: file), animated: true)
-        }
-    }
-}
-
-struct FileData: Equatable {
-    var name: String
-    var data: Data
-    var url: String
-    var type: String
-}
-
-class AttachmentViewCell: UICollectionViewCell, Reusable {
-    static var reuseIdentifier: String {
-        String(describing: self)
-    }
-
-    var onDelete: ((FileData) -> Void)?
-
-    var fileData: FileData? {
-        didSet {
-            fileNameLabel.text = fileData?.name
-        }
-    }
-
-    lazy var fileNameLabel: UILabel = {
-        let label = UILabel()
-        // label.numberOfLines = 0
-        label.textColor = .black// Colors.receiverFileNameColor
-        label.font = .systemFont(ofSize: 12)
-        label.sizeToFit()
-        label.adjustsFontSizeToFitWidth = true
-        label.minimumScaleFactor = 0.3
-        return label
-    }()
-
-    lazy var deleteButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
-        button.addTarget(self, action: #selector(removeAttach(_:)), for: .touchUpInside)
-        button.setImage(Desk360.Config.Images.attachRemoveIcon, for: .normal)
-        button.backgroundColor = .clear
-        return button
-    }()
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let container: UIView = .hStack(alignment: .fill, distribution: .fill, spacing: 4, [fileNameLabel, deleteButton])
-        addSubview(container)
-        container.pinToSuperviewEdges()
-    }
-
-    @objc func removeAttach(_ sender: UIButton) {
-        guard let fileData = fileData else { return }
-        onDelete?(fileData)
-    }
-}
-
-class RemovableAttachmentView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    private var attachments: [FileData] = []
-
-    private lazy var collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 8
-        layout.minimumInteritemSpacing = 8
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(AttachmentViewCell.self, forCellWithReuseIdentifier: AttachmentViewCell.reuseIdentifier)
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.backgroundColor = .clear
-        return collectionView
-    }()
-
-    override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: CGFloat(attachments.count) * 20.0)
-    }
-
-    func append(attachementData data: FileData) {
-        attachments.append(data)
-        collectionView.reloadData()
-        collectionView.scrollToItem(at: IndexPath(item: attachments.count - 1, section: 0), at: .bottom, animated: true)
-    }
-
-    func append(attachementsData data: [FileData]) {
-        attachments.removeAll()
-        data.forEach { self.append(attachementData: $0) }
-    }
-
-    func clear() {
-        attachments.removeAll()
-        collectionView.reloadData()
-    }
-
-    func delete(attachment: FileData) {
-        attachments.removeAll(where: { $0 == attachment })
-        collectionView.reloadData()
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        // var stack: UIView = .vStack(alignment: .fill, distribution: .fill, spacing: 4, attachments)
-        addSubview(collectionView)
-        collectionView.pinToSuperviewEdges()
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AttachmentViewCell.reuseIdentifier, for: indexPath) as? AttachmentViewCell else { fatalError() }
-        cell.fileData = attachments[indexPath.item]
-        cell.onDelete = { data in
-            self.delete(attachment: data)
-        }
-        return cell
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = attachments[indexPath.item].name.size(constraintedWidth: collectionView.frame.width).width
-        return .init(width: width + 10, height: 30)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return attachments.count
-    }
-}
-
 extension String {
     func size(constraintedWidth width: CGFloat, font: UIFont = .systemFont(ofSize: 14)) -> CGSize {
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: .greatestFiniteMagnitude))
@@ -891,12 +602,12 @@ extension String {
 }
 
 extension ConversationViewController {
-    public func updateTicket(ticketId: Int) {
-        request.id = ticketId
-        readRequest(request)
+    @objc private func tableViewTapped() {
+        layoutableView.chatInputView.textView.resignFirstResponder()
     }
     
-    @objc private func tableViewTapped() {
-        chatInputView.textView.resignFirstResponder()
+    private func coinDecrement() {
+        totalCoin -= spentCoin
+        layoutableView.chatInputView.setValues(characterPerCoin: characterPerCoin, totalCoin: totalCoin)
     }
 }

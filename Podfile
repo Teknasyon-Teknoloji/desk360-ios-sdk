@@ -12,5 +12,5 @@ target 'Desk360' do
   pod 'Moya'
   pod 'DeviceKit'
   pod 'PersistenceKit'
-  pod 'ISEmojiView'
+  pod 'Keyboard+LayoutGuide'
 end

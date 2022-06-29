@@ -9,15 +9,14 @@ import UIKit
 
 protocol InputViewDelegate: AnyObject {
     func inputView(_ view: InputView, didTapSendButton button: UIButton, withText text: String, spentCoin: Int)
-    func inputView(_ view: InputView, didTapAttachButton button: UIButton)
     func inputView(_ view: InputView, didTapCreateRequestButton button: UIButton)
     func inputViewDidTapAddCoin(_ view: InputView)
+    func inputViewDidBegin()
 }
 
 class InputView: UIView, Layoutable {
     weak var delegate: InputViewDelegate?
 
-    private var hasAttachView: Bool = false
     private var characterPerCoin: Int = 0
     private var totalCoin: Int = 0
     private var coinCounter: Int = 0
@@ -43,7 +42,6 @@ class InputView: UIView, Layoutable {
         view.backgroundColor = Colors.grayInput
         view.setBorder(width: 1, color: Colors.paleLilac, radius: 20)
         view.addSubview(textView)
-        view.addSubview(emojiButton)
         return view
     }()
 
@@ -57,12 +55,6 @@ class InputView: UIView, Layoutable {
         view.textAlignment = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .right : .left
         view.autocorrectionType = .no
         return view
-    }()
-
-    private lazy var emojiButton: UIButton = {
-        let button = UIButton()
-        button.setImage(Desk360.Config.Images.emojiIcon, for: .normal)
-        return button
     }()
 
     lazy var sendButton: UIButton = {
@@ -117,8 +109,6 @@ class InputView: UIView, Layoutable {
         return view
     }()
 
-    lazy var attachButton = UIButton()
-
     override var intrinsicContentSize: CGSize {
         let height: CGFloat = 96
         return CGSize(width: UIView.noIntrinsicMetric, height: height)
@@ -138,7 +128,6 @@ class InputView: UIView, Layoutable {
         textView.delegate = self
         sendButton.isEnabled = textView.text.condenseNewlines.condenseNewlines.isEmpty == false
         sendButton.addTarget(self, action: #selector(didTapSendButton(_:)), for: .touchUpInside)
-        emojiButton.addTarget(self, action: #selector(didTapEmojiButton(_:)), for: .touchUpInside)
         
         let addCoinGesture = UITapGestureRecognizer(target: self, action: #selector(didTapAddCoinView))
         addCoinView.addGestureRecognizer(addCoinGesture)
@@ -163,7 +152,7 @@ class InputView: UIView, Layoutable {
 
         textView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
-            make.leading.equalToSuperview().offset(10)
+            make.leading.trailing.equalToSuperview().offset(10)
             make.height.equalTo(40)
         }
 
@@ -172,13 +161,6 @@ class InputView: UIView, Layoutable {
             make.centerY.equalTo(textViewContainerView.snp.centerY)
             make.leading.equalTo(textViewContainerView.snp.trailing).offset(12)
             make.trailing.equalToSuperview().inset(12)
-        }
-
-        emojiButton.snp.makeConstraints { make in
-            make.width.height.equalTo(20)
-            make.centerY.equalTo(textViewContainerView.snp.centerY)
-            make.leading.equalTo(textView.snp.trailing).offset(10)
-            make.trailing.equalTo(textViewContainerView.snp.trailing).inset(10)
         }
 
         coinBarView.snp.makeConstraints { make in
@@ -214,26 +196,24 @@ class InputView: UIView, Layoutable {
     }
 
     func reset(isClearText: Bool = true) {
-
         DispatchQueue.main.async {
             // self.setLoading(false)
             if isClearText {
                 self.textView.text = ""
             }
             self.sendButton.isEnabled = false
-//            self.attachmentView.clear()
         }
-    }
-
-    func resetAttachView() {
-        reset(isClearText: false)
-        self.hasAttachView = false
     }
 
     func setValues(characterPerCoin: Int, totalCoin: Int) {
         self.characterPerCoin = characterPerCoin
         self.totalCoin = totalCoin
         totalCoinValue.text = String(self.totalCoin)
+    }
+    
+    func clearText() {
+        textView.text.removeAll()
+        calculateWithMessageText()
     }
 
     private func calculateWithMessageText() {
@@ -254,13 +234,7 @@ class InputView: UIView, Layoutable {
 // MARK: - Loadingable
 extension InputView: Loadingable {
     func setLoading(_ loading: Bool) {
-        if loading {
-            textView.resignFirstResponder()
-        }
-
-//        loading ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
         sendButton.isHidden = loading
-        textView.isUserInteractionEnabled = !loading
         setSendButton()
     }
 }
@@ -274,6 +248,7 @@ extension InputView: UITextViewDelegate {
 
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         coinBarView.isHidden = false
+        delegate?.inputViewDidBegin()
         return true
     }
 
@@ -296,18 +271,8 @@ private extension InputView {
     }
 
     @objc
-    func didTapAttachButton(_ button: UIButton) {
-        delegate?.inputView(self, didTapAttachButton: button)
-    }
-
-    @objc
     func didTapCreateRequestButton(_ button: UIButton) {
         delegate?.inputView(self, didTapCreateRequestButton: button)
-    }
-
-    @objc
-    func didTapEmojiButton(_ button: UIButton) {
-        
     }
     
     @objc

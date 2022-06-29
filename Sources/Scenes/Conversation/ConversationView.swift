@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import KeyboardLayoutGuide
 
 /// This view is used to chat screen
 final class ConversationView: UIView, Layoutable, Loadingable {
 
 	/// This parameter is used to detect third party keyboard actions.
 	var isCustomKeyboardActive = false
+    
+    lazy var chatInputView = InputView(frame: .init(origin: .zero, size: .init(width: frame.width, height: (96 + safeAreaBottom))))
     
     lazy var backButton: UIButton = {
         let button = UIButton()
@@ -51,6 +54,14 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 		view.estimatedRowHeight = 200.0
 		return view
 	}()
+    
+    private var safeAreaBottom: CGFloat = {
+        if #available(iOS 11.0, *) {
+            return UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
+        } else {
+            return 0
+        }
+    }()
 
 	func setupViews() {
         addSubview(backgroundImageView)
@@ -58,6 +69,7 @@ final class ConversationView: UIView, Layoutable, Loadingable {
         addSubview(titleLabel)
         addSubview(bottomView)
         addSubview(tableView)
+        addSubview(chatInputView)
 	}
 
 	func setupLayout() {
@@ -87,8 +99,13 @@ final class ConversationView: UIView, Layoutable, Loadingable {
 		tableView.snp.makeConstraints { make in
             make.top.equalTo(bottomView.snp.bottom).offset(preferredSpacing * 0.2)
 			make.leading.trailing.equalToSuperview()
-			make.bottom.equalToSuperview()
 		}
+        
+        chatInputView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(keyboardLayoutGuide.snp.top)
+            make.top.equalTo(tableView.snp.bottom)
+        }
 	}
 }
 

@@ -54,14 +54,14 @@ final class ReceiverMessageTableViewCell: UITableViewCell, Layoutable, Reusable 
         textView.isUserInteractionEnabled = false
 		textView.allowsEditingTextAttributes = false
 		textView.dataDetectorTypes = .link
-		//textView.font = Fonts.Montserrat.medium.font(size: 14)
+		textView.font = Fonts.Montserrat.medium.font(size: 14)
 		textView.backgroundColor = .clear
 		return textView
 	}()
 
 	private lazy var dateLabel: UILabel = {
 		let label = UILabel()
-		//label.font = Fonts.Montserrat.regular.font(size: 10)
+		label.font = Fonts.Montserrat.regular.font(size: 10)
 		label.textAlignment = .right
 		return label
 	}()

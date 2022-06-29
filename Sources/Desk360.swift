@@ -418,11 +418,15 @@ extension Desk360 {
     /// - Returns: Conversation(Chat) View Controller
     public static func getConversationViewController(ticket: Ticket?,
                                                      characterPerCoin: Int,
-                                                     totalCoin: Int) -> ConversationViewController {
+                                                     totalCoin: Int,
+                                                     name: String,
+                                                     email: String) -> ConversationViewController {
         guard let ticket = ticket else { return .init() }
         let viewController = ConversationViewController(request: ticket,
                                                         characterPerCoin: characterPerCoin,
-                                                        totalCoin: totalCoin)
+                                                        totalCoin: totalCoin,
+                                                        name: name,
+                                                        email: email)
         return viewController
     }
     
