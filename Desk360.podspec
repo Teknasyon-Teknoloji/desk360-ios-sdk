@@ -23,5 +23,4 @@ Pod::Spec.new do |s|
     s.dependency "PersistenceKit"
     s.dependency "DeviceKit"
     s.dependency "NVActivityIndicatorView"
-    s.dependency "NVActivityIndicatorView/Extended"
 end
