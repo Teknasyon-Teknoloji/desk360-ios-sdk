@@ -215,11 +215,11 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
         print("Desk360 SDK was initialized successfully!")
     }
 
-	@objc public static func show(on viewController: UIViewController, animated: Bool = true) {
+	@objc public static func show(on viewController: UIViewController, animated: Bool = true, presentationStyle: UIModalPresentationStyle = .fullScreen) {
         let listingViewController = ListingViewController()
         listingViewController.hidesBottomBarWhenPushed = true
         let desk360Navcontroller = UINavigationController(rootViewController: listingViewController)
-        desk360Navcontroller.modalPresentationStyle = .fullScreen
+        desk360Navcontroller.modalPresentationStyle = presentationStyle
         viewController.present(desk360Navcontroller, animated: true, completion: nil)
     }
 
