@@ -16,8 +16,8 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.0.1")),
-        .package(url: "https://github.com/Moya/Moya.git", .upToNextMajor(from: "14.0.0")),
-        .package(url: "https://github.com/Teknasyon-Teknoloji/PersistenceKit.git", .branch("master")),
+        .package(url: "https://github.com/Moya/Moya.git", exact: "14.0.0"),
+        .package(url: "https://github.com/Teknasyon-Teknoloji/PersistenceKit.git", .upToNextMajor(from: "1.4.0")),
         .package(url: "https://github.com/devicekit/DeviceKit.git", .upToNextMajor(from: "4.0.0"))
 
         
