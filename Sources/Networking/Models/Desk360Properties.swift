@@ -20,6 +20,7 @@ import UIKit
     let timeZone = TimeZone.current.identifier
     let appPlatform = "iOS"
     let bypassCreateTicketIntro: Bool
+    let showPastTickets: Bool
 
     /// Creates a new instance of `Desk360Properties`
     /// - Parameters:
@@ -29,6 +30,7 @@ import UIKit
     ///   - country: The current user country.
     ///   - userCredentials: The logged in user credentails. Provide it if you want the credntial fields to be filled automatically.
     ///   - bypassCreateTicketIntro: A flag used to hide the intro screen shown before creating a new ticket.
+    ///   - showPastTickets: If this flag is true; Current and Past segments are hidden on List Screen.
     ///   - jsonInfo: Any extra JSON data to be passed to the backend.
 	@objc public init(
         appID: String,
@@ -38,6 +40,7 @@ import UIKit
         country: String = Locale.current.regionCode?.uppercased() ?? "XX",
         userCredentials: Desk360UserCredentials? = nil,
         bypassCreateTicketIntro: Bool = false,
+        showPastTickets: Bool = true,
         jsonInfo: [String: Any]? = nil
     ) {
         self.appKey = appID
@@ -47,6 +50,7 @@ import UIKit
         self.country = country
 		self.userCredentials = userCredentials
         self.bypassCreateTicketIntro = bypassCreateTicketIntro
+        self.showPastTickets = showPastTickets
 		self.jsonInfo = jsonInfo
     }
 

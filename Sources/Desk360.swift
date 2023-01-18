@@ -219,6 +219,7 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
         let listingViewController = ListingViewController()
         listingViewController.hidesBottomBarWhenPushed = true
         let desk360Navcontroller = UINavigationController(rootViewController: listingViewController)
+        desk360Navcontroller.view.backgroundColor = Colors.navigationBackgroundColor
         desk360Navcontroller.modalPresentationStyle = presentationStyle
         viewController.present(desk360Navcontroller, animated: true, completion: nil)
     }

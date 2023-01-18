@@ -17,7 +17,8 @@ class ListingView: UIView, Layoutable, Loadingable {
 	}()
 
 	var segmentControlHeight: CGFloat = {
-		let diagonal = Device.current.realDevice.diagonal
+        let diagonal = Device.current.realDevice.diagonal
+        if !(Desk360.properties?.showPastTickets ?? false) { return 0 }
 		if diagonal >= 6 && diagonal < 7 { return 58.0 }
 		if diagonal >= 5 && diagonal < 6 { return 55.0 }
 		if diagonal >= 4 && diagonal < 5 { return 45.0 }
