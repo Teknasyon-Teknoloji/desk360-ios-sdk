@@ -72,6 +72,7 @@ let props = Desk360Properties(
         country: "TR",
         userCredentials: .init(name: "John Doe", email: "john@doe.com"),
         bypassCreateTicketIntro: true,
+        hidePastTickets: false,
         jsonInfo: ["a": 500, "b": "c"]
     )
 

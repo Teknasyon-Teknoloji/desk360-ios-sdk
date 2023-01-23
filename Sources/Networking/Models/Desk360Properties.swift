@@ -20,7 +20,7 @@ import UIKit
     let timeZone = TimeZone.current.identifier
     let appPlatform = "iOS"
     let bypassCreateTicketIntro: Bool
-    let showPastTickets: Bool
+    let hidePastTickets: Bool
 
     /// Creates a new instance of `Desk360Properties`
     /// - Parameters:
@@ -40,7 +40,7 @@ import UIKit
         country: String = Locale.current.regionCode?.uppercased() ?? "XX",
         userCredentials: Desk360UserCredentials? = nil,
         bypassCreateTicketIntro: Bool = false,
-        showPastTickets: Bool = true,
+        hidePastTickets: Bool = false,
         jsonInfo: [String: Any]? = nil
     ) {
         self.appKey = appID
@@ -50,7 +50,7 @@ import UIKit
         self.country = country
 		self.userCredentials = userCredentials
         self.bypassCreateTicketIntro = bypassCreateTicketIntro
-        self.showPastTickets = showPastTickets
+        self.hidePastTickets = hidePastTickets
 		self.jsonInfo = jsonInfo
     }
 
