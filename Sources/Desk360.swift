@@ -208,9 +208,6 @@ public typealias TicketsHandler = ((Result<[Ticket], Error>) -> Void)
         isActive = true
         desk = Desk360(properties: properties)
 
-        let registerModel = RegisterModel(appId: properties.appKey, deviceId: properties.deviceID, environment: properties.environment, language: properties.language, country: properties.language)
-        try? Stores.registerModel.save(registerModel)
-
         Stores.setStoresInitialValues()
         print("Desk360 SDK was initialized successfully!")
     }
