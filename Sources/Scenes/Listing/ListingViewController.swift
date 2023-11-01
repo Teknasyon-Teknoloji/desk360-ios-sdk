@@ -304,7 +304,8 @@ private extension ListingViewController {
                 try? Stores.tokenStore.save(register.data?.accessToken ?? "")
                 try? Stores.registerExpiredAt.save(register.data?.expiredDate)
                 Stores.configStore.object == nil ? self.getConfig(showLoading: true) : self.getConfig(showLoading: false)
-
+                let registerModel = RegisterModel(appId: props.appKey, deviceId: props.deviceID, environment: props.environment, language: props.language, country: props.language)
+                try? Stores.registerModel.save(registerModel)
             }
         }
     }
@@ -339,6 +340,7 @@ private extension ListingViewController {
             case .success(let response):
                 guard let tickets = try? response.map(DataResponse<[Ticket]>.self) else { return }
                 guard let data = tickets.data else { return }
+                Stores.ticketsStore.deleteAll()
                 try? Stores.ticketsStore.save(data)
                 Stores.ticketsStore.delete(withId: -1)
                 self.requests = Stores.ticketsStore.allObjects().sorted()
