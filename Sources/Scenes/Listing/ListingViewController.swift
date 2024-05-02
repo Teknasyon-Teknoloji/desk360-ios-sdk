@@ -12,7 +12,7 @@ protocol ListingViewControllerDelegate: AnyObject {
     func listingViewController(_ viewController: ListingViewController, didSelectTicket ticket: Ticket)
 }
 
-final class ListingViewController: UIViewController, Layouting, UITableViewDelegate, UITableViewDataSource {
+public final class ListingViewController: UIViewController, Layouting, UITableViewDelegate, UITableViewDataSource {
 
     typealias ViewType = ListingView
 
@@ -46,11 +46,11 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
     var filterTickets: [Ticket] = []
     var isConfigFethecOnce: Bool = false
 
-    override func loadView() {
+    public override func loadView() {
         view = ViewType.create()
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         Desk360.list = self
         self.navigationController?.navigationBar.setColors(background: .white, text: .white)
@@ -59,7 +59,7 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         setLoadingabletConfig()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         Desk360.isActive = true
 
@@ -68,14 +68,14 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         checkForUnreadMessageIcon()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         let count = navigationController?.viewControllers.count ?? 0
         guard count > 1 else { return }
         // navigationController?.viewControllers.removeSubrange(0..<count-1)
     }
 
-    override func viewDidLayoutSubviews() {
+    public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
         self.layoutableView.placeholderView.bottomScrollView.contentSize = CGSize(width: self.layoutableView.placeholderView.bottomScrollView.frame.size.width, height: self.layoutableView.placeholderView.bottomDescriptionLabel.frame.size.height)
@@ -84,18 +84,18 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
 
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         setCreateNavButtonItem(show: !requests.isEmpty)
         return filterTickets.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(ListingTableViewCell.self)
         cell.configure(for: filterTickets.sorted()[indexPath.row])
         return cell
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let request = filterTickets[indexPath.row]
         guard request.id != -1 else { return }
         let viewController = ConversationViewController(request: request)
@@ -103,11 +103,11 @@ final class ListingViewController: UIViewController, Layouting, UITableViewDeleg
         navigationController?.pushViewController(viewController, animated: true)
     }
 
-    func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.isHighlighted = true
     }
 
-    func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.isHighlighted = false
     }
 
@@ -487,19 +487,19 @@ extension ListingViewController {
         self.navigationController?.navigationBar.layer.masksToBounds = false
     }
 
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if aiv.isAnimating == false {
             hidePDR()
         }
     }
 
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if aiv.isAnimating == false {
             hidePDR()
         }
     }
 
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         isDragReleased = false
         refreshIcon.isHidden = false
         if aiv.isAnimating {
@@ -507,14 +507,14 @@ extension ListingViewController {
         }
     }
 
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         isDragReleased = true
         if aiv.isAnimating == false {
             hidePDR()
         }
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if aiv.isAnimating {
             return
         }
