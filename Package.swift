@@ -18,9 +18,8 @@ let package = Package(
         .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.0.1")),
         .package(url: "https://github.com/Moya/Moya.git", .upToNextMajor(from: "15.0.0")),
         .package(url: "https://github.com/Teknasyon-Teknoloji/PersistenceKit.git", .upToNextMajor(from: "1.4.0")),
-        .package(url: "https://github.com/devicekit/DeviceKit.git", .upToNextMajor(from: "4.0.0"))
-
-        
+        .package(url: "https://github.com/devicekit/DeviceKit.git", .upToNextMajor(from: "4.0.0")),
+        .package(url: "https://github.com/ninjaprox/NVActivityIndicatorView", .upToNextMajor(from: "5.1.1"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -31,8 +30,8 @@ let package = Package(
                 "SnapKit",
                 "Moya",
                 "PersistenceKit",
-                "DeviceKit"
-
+                "DeviceKit",
+                "NVActivityIndicatorView"
             ],
             path: "Sources"
             /*resources: [
